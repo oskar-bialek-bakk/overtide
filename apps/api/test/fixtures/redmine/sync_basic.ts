@@ -1,0 +1,12 @@
+export const fixtureSync = {
+  user: { id: 7 },
+  timeEntries: [
+    { id: 100, user: { id: 7 }, issue: { id: 1 }, hours: 2, activity: { id: 8, name: "Nadgodziny" }, spent_on: "2026-01-10", comments: null, created_on: "2026-01-10T00:00:00Z", updated_on: "2026-01-10T00:00:00Z" },
+    { id: 101, user: { id: 7 }, issue: { id: 1 }, hours: 1, activity: { id: 99, name: "Other" }, spent_on: "2026-01-11", comments: null, created_on: "2026-01-11T00:00:00Z", updated_on: "2026-01-11T00:00:00Z" },
+    { id: 102, user: { id: 7 }, issue: { id: 2 }, hours: 4, activity: { id: 99, name: "Other" }, spent_on: "2026-01-15", comments: null, created_on: "2026-01-15T00:00:00Z", updated_on: "2026-01-15T00:00:00Z" },
+  ],
+  issues: [
+    { id: 1, project: { id: 1, name: "Dev" }, tracker: { id: 5, name: "Bug" }, status: { id: 1, name: "Open", is_closed: false }, subject: "Dev w/ overtime", created_on: "2026-01-01T00:00:00Z", updated_on: "2026-01-11T00:00:00Z", relations: [{ id: 500, issue_id: 1, issue_to_id: 2, relation_type: "relates" }] },
+    { id: 2, project: { id: 1, name: "Dev" }, tracker: { id: 12, name: "Odbior" }, status: { id: 1, name: "Open" }, subject: "Wolne", created_on: "2026-01-12T00:00:00Z", updated_on: "2026-01-15T00:00:00Z", relations: [{ id: 500, issue_id: 1, issue_to_id: 2, relation_type: "relates" }] },
+  ],
+};

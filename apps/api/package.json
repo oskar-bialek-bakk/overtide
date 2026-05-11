@@ -1,0 +1,30 @@
+{
+  "name": "@overtide/api",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun run scripts/migrate.ts",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.0",
+    "@overtide/shared": "workspace:*",
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.6.0",
+    "pino": "^9.5.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@sinonjs/fake-timers": "^13.0.0",
+    "@types/bun": "latest",
+    "@types/sinonjs__fake-timers": "^8.1.5",
+    "drizzle-kit": "^0.28.0",
+    "msw": "^2.6.0",
+    "pino-pretty": "^11.3.0"
+  }
+}
