@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnp.*
+.yarn/
+
+# Build output
+dist/
+build/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Bun / pnpm
+bun.lock
+bun.lockb
+
+# Env / secrets — NEVER commit
+.env
+.env.local
+.env.*.local
+apps/*/.env
+apps/*/.env.local
+
+# SQLite databases
+apps/api/data/*.db
+apps/api/data/*.db-journal
+apps/api/data/*.db-wal
+apps/api/data/*.db-shm
+
+# Test / coverage
+coverage/
+.vitest-cache/
+playwright-report/
+test-results/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Misc
+*.tmp
+*.bak
