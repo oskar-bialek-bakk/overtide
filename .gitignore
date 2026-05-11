@@ -10,9 +10,7 @@ build/
 .turbo/
 *.tsbuildinfo
 
-# Bun / pnpm
-bun.lock
-bun.lockb
+# Bun / pnpm — lockfile is committed per plan
 
 # Env / secrets — NEVER commit
 .env
