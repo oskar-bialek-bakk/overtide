@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 import { apiResponseSchema, type ApiResponse } from "./envelope";
 import { z } from "zod";
 

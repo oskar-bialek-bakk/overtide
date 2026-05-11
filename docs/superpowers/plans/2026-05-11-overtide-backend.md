@@ -6,9 +6,39 @@
 
 **Architecture:** Bun monorepo with `apps/api` (Hono + Drizzle + SQLite) and `packages/shared` (zod schemas). Sync is on-demand; matching is a pure function recomputed per request. Redmine auth is HTTP Basic with env-var fallback to API key.
 
-**Tech Stack:** Bun, Hono, Drizzle ORM, SQLite (bun:sqlite or better-sqlite3), zod, pino, Vitest, MSW. TypeScript strict mode throughout.
+**Tech Stack:** Bun, Hono, Drizzle ORM, SQLite (`bun:sqlite`), zod, pino, **`bun test`** (NOT vitest), MSW, `@sinonjs/fake-timers` for fake-timer tests. TypeScript strict mode throughout.
 
 **Spec reference:** `docs/superpowers/specs/2026-05-11-overtide-design.md`
+
+---
+
+## ⚠️ Test Runner Override (read first)
+
+**This plan was originally written for Vitest, but Vitest 2.x on Windows + Bun cannot resolve `bun:sqlite` (its worker pool runs under Node).** The repo uses **`bun test`** as the canonical test runner instead. When you implement any task in this plan, apply these substitutions to every code block:
+
+| Plan says | Use instead |
+|---|---|
+| `import { ... } from "vitest"` | `import { ... } from "bun:test"` |
+| `import { vi } from "vitest"` | Remove. Use `@sinonjs/fake-timers` for fake timers (see below); use `mock()` from `bun:test` for spies. |
+| `vi.useFakeTimers()` / `vi.useRealTimers()` | `import { install } from "@sinonjs/fake-timers";` then `const clock = install(); ... clock.uninstall();` |
+| `vi.advanceTimersByTimeAsync(N)` | `await clock.tickAsync(N)` |
+| `vi.fn()` | `import { mock } from "bun:test"; mock(impl?)` |
+| `bunx vitest run <path>` | `bun test <path>` |
+| `vitest.config.ts` | Not needed. Delete if present. |
+| `await expect(promise).rejects.toThrow()` for Drizzle inserts | Use synchronous `.run()` / `.all()` / `.get()` on Drizzle queries and `expect(() => stmt.run()).toThrow()`. Drizzle's thenable trips `expect().rejects` under `bun test`. |
+
+**Existing dependency notes:**
+- `@sinonjs/fake-timers` + `@types/sinonjs__fake-timers` are already in `apps/api/devDependencies` (added by the db fix).
+- Bun's test runner is invoked from each package: `cd apps/api && bun test` or `cd packages/shared && bun test`.
+- `bun test <path>` filters by path; `bun test src/foo` runs only files under `src/foo`.
+
+**Test scripts in `apps/api/package.json`** (already set):
+```json
+"test": "bun test",
+"test:watch": "bun test --watch"
+```
+
+If you find this note conflicts with later guidance in this plan, the note wins.
 
 ---
 
