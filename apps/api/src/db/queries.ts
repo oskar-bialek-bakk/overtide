@@ -1,4 +1,4 @@
-import { sql, eq } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import type { Db } from "./client";
 import { issues, issueRelations, timeEntries } from "./schema";
 
@@ -45,14 +45,28 @@ export async function fetchRedemptions(db: Db): Promise<RedemptionRow[]> {
 }
 
 export async function fetchRelations(db: Db): Promise<Array<{ earningId: number; redemptionId: number }>> {
-  const rows = await db.select().from(issueRelations);
-  const out: Array<{ earningId: number; redemptionId: number }> = [];
-  const ids = new Set(rows.flatMap((r) => [r.issueFromId, r.issueToId]));
-  if (ids.size === 0) return out;
-  const issueRows = await db.select().from(issues);
-  const roleById = new Map(issueRows.map((i) => [i.id, i.role]));
+  // Filter relation_type at the SQL boundary so we don't pull other types into memory.
+  const rows = await db
+    .select()
+    .from(issueRelations)
+    .where(eq(issueRelations.relationType, "relates"));
+  if (rows.length === 0) return [];
+
+  // Only the issues referenced by these relations are needed for role mapping —
+  // avoids a full-table scan on `issues` as the DB grows.
+  const idSet = new Set<number>();
   for (const r of rows) {
-    if (r.relationType !== "relates") continue;
+    idSet.add(r.issueFromId);
+    idSet.add(r.issueToId);
+  }
+  const issueRows = await db
+    .select({ id: issues.id, role: issues.role })
+    .from(issues)
+    .where(inArray(issues.id, [...idSet]));
+  const roleById = new Map(issueRows.map((i) => [i.id, i.role]));
+
+  const out: Array<{ earningId: number; redemptionId: number }> = [];
+  for (const r of rows) {
     const fromRole = roleById.get(r.issueFromId);
     const toRole = roleById.get(r.issueToId);
     if (fromRole === "earning" && toRole === "redemption") {

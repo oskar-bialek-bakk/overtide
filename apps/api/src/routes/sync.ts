@@ -25,7 +25,8 @@ export function syncRoutes(deps: { db: Db; env: Env }) {
   });
 
   r.get("/history", async (c) => {
-    const limit = Math.min(Number(c.req.query("limit") ?? 20), 100);
+    const raw = Number(c.req.query("limit") ?? 20);
+    const limit = Number.isFinite(raw) && raw > 0 ? Math.min(raw, 100) : 20;
     const rows = await deps.db.select().from(syncRuns).orderBy(desc(syncRuns.id)).limit(limit);
     return ok(c, rows);
   });

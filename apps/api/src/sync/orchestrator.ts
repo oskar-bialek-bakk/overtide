@@ -52,6 +52,9 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
       if (role) classified.push({ issue: i, role });
     }
     const keptIds = new Set(classified.map((c) => c.issue.id));
+    // O(1) lookup of role-per-issue during the time-entry pass below;
+    // a linear find() per entry would be O(n*m) at 10k+ entries.
+    const roleByIssueId = new Map(classified.map((c) => [c.issue.id, c.role] as const));
 
     // Upsert in a transaction
     let issuesUpserted = 0;
@@ -67,7 +70,7 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
 
       for (const te of fetchedTE) {
         if (!keptIds.has(te.issue.id)) continue;
-        const owningRole = classified.find((c) => c.issue.id === te.issue.id)?.role;
+        const owningRole = roleByIssueId.get(te.issue.id);
         if (owningRole === "redemption" && te.activity.id === env.overtimeActivityId) {
           logger.warn({ teId: te.id, issueId: te.issue.id }, "overtime activity on redemption issue — ignored");
           continue;

@@ -17,8 +17,8 @@ export function healthRoutes(deps: { db: Db; env: Env }) {
       await ep.currentUserId();
     } catch (e: any) {
       if (e?.code === "REDMINE_AUTH_FAILED") redmine = "auth_failed";
-      else if (e?.status === 404 || e?.status === 0) redmine = "rest_disabled";
-      else redmine = "unreachable";
+      else if (e?.status === 404) redmine = "rest_disabled";
+      else redmine = "unreachable"; // includes status 0: timeout / DNS / TCP / TLS errors
       errors.push({ code: e?.code ?? "UNKNOWN", message: e?.message ?? String(e) });
     }
     const [row] = await deps.db.select().from(appConfig).where(eq(appConfig.key, "last_sync_at")).limit(1);
