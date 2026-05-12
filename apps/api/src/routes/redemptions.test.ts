@@ -20,19 +20,20 @@ const baseEnv = {
   logLevel: "info",
 };
 
-function seedDb() {
+function seedDb(opts: { capacityHoursPerEarning?: number } = {}) {
+  const cap = opts.capacityHoursPerEarning ?? 8;
   const sqlite = new Database(":memory:");
   sqlite.exec("PRAGMA foreign_keys = ON;");
   const db = drizzle(sqlite, { schema });
   migrate(db, { migrationsFolder: "./drizzle" });
-  // Two earnings, each with 8h logged via the overtime activity.
+  // Two earnings, each with `cap`h logged via the overtime activity.
   db.insert(schema.issues).values([
     { id: 114518, role: "earning", trackerId: 5, trackerName: "Dev", projectId: 1, projectName: "P", subject: "R&D - support migracji", statusName: "Open", createdOn: "2026-04-01T00:00:00Z", updatedOn: "2026-04-01T00:00:00Z", url: "https://r.test/issues/114518", rawJson: "{}" },
     { id: 115498, role: "earning", trackerId: 5, trackerName: "Dev", projectId: 1, projectName: "P", subject: "Inny earning", statusName: "Open", createdOn: "2026-04-10T00:00:00Z", updatedOn: "2026-04-10T00:00:00Z", url: "https://r.test/issues/115498", rawJson: "{}" },
   ]).run();
   db.insert(schema.timeEntries).values([
-    { id: 1, issueId: 114518, userId: 1039, hours: 8, activityId: 7, activityName: "Nadgodziny", spentOn: "2026-04-15", comments: null, createdOn: "x", updatedOn: "x" },
-    { id: 2, issueId: 115498, userId: 1039, hours: 8, activityId: 7, activityName: "Nadgodziny", spentOn: "2026-04-20", comments: null, createdOn: "x", updatedOn: "x" },
+    { id: 1, issueId: 114518, userId: 1039, hours: cap, activityId: 7, activityName: "Nadgodziny", spentOn: "2026-04-15", comments: null, createdOn: "x", updatedOn: "x" },
+    { id: 2, issueId: 115498, userId: 1039, hours: cap, activityId: 7, activityName: "Nadgodziny", spentOn: "2026-04-20", comments: null, createdOn: "x", updatedOn: "x" },
   ]).run();
   return { db, sqlite };
 }
@@ -252,7 +253,72 @@ describe("POST /api/redemptions/create", () => {
     });
     expect(res.status).toBe(201);
     const json = await res.json() as { data: { issueId: number; warning: string } };
-    expect(json.data.warning).toContain("time entry for earning 114518 failed");
+    expect(json.data.warning).toContain("time entry for earning 114518 on 2026-05-04 failed");
+  });
+
+  it("spreads time entries across a daySchedule when provided", async () => {
+    const teCalls: Array<{ hours: number; spent_on: string }> = [];
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: { id: 1039, firstname: "Oskar", lastname: "Białek" } })),
+      http.post("https://r.test/issues.json", async () =>
+        HttpResponse.json({
+          issue: {
+            id: 999, project: { id: 12, name: "urlopy" }, tracker: { id: 19, name: "T" },
+            status: { id: 1, name: "Nowe", is_closed: false },
+            subject: "Odbiór nadgodzin OB 04-06.05",
+            start_date: "2026-05-04", due_date: "2026-05-06",
+            created_on: "2026-05-04T10:00:00Z", updated_on: "2026-05-04T10:00:00Z",
+          },
+        }, { status: 201 })),
+      http.post("https://r.test/time_entries.json", async ({ request }) => {
+        const body = (await request.json()) as { time_entry: { hours: number; spent_on: string } };
+        teCalls.push({ hours: body.time_entry.hours, spent_on: body.time_entry.spent_on });
+        return HttpResponse.json({
+          time_entry: {
+            id: 1000 + teCalls.length, user: { id: 1039 }, issue: { id: 999 },
+            hours: body.time_entry.hours, activity: { id: 8, name: "W biurze" },
+            spent_on: body.time_entry.spent_on, comments: "",
+            created_on: "x", updated_on: "x",
+          },
+        }, { status: 201 });
+      }),
+      http.post("https://r.test/issues/:id/relations.json", ({ params }) =>
+        HttpResponse.json({ relation: { id: Number(params.id), issue_id: Number(params.id), issue_to_id: 999, relation_type: "relates" } })),
+    );
+
+    const { db } = seedDb({ capacityHoursPerEarning: 24 });
+    const app = makeApp(db);
+    const res = await app.request("/api/redemptions/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startDate: "2026-05-04", endDate: "2026-05-06", totalHours: 24,
+        allocations: [
+          { earningId: 114518, hours: 16 },
+          { earningId: 115498, hours: 8 },
+        ],
+        daySchedule: [
+          { date: "2026-05-04", hours: 8 },
+          { date: "2026-05-05", hours: 8 },
+          { date: "2026-05-06", hours: 8 },
+        ],
+      }),
+    });
+    expect(res.status).toBe(201);
+    // 3 days × 2 allocations = 6 time entries. Per day they sum to 8 (16/24×8=5.33,
+    // and the last allocation absorbs the rounding so the day sums exactly).
+    expect(teCalls).toHaveLength(6);
+    const byDate: Record<string, number> = {};
+    for (const c of teCalls) byDate[c.spent_on] = (byDate[c.spent_on] ?? 0) + c.hours;
+    expect(byDate["2026-05-04"]).toBeCloseTo(8, 2);
+    expect(byDate["2026-05-05"]).toBeCloseTo(8, 2);
+    expect(byDate["2026-05-06"]).toBeCloseTo(8, 2);
+    // Allocations sum to their requested totals across days.
+    const dates = teCalls.map((c) => c.spent_on).sort();
+    expect(dates).toEqual(["2026-05-04", "2026-05-04", "2026-05-05", "2026-05-05", "2026-05-06", "2026-05-06"]);
+    const total = teCalls.reduce((s, c) => s + c.hours, 0);
+    expect(total).toBeCloseTo(24, 2);
   });
 
   it("returns 500 if vacationsProjectId env var is missing", async () => {

@@ -7,6 +7,13 @@ export const wizardAllocationSchema = z.object({
 });
 export type WizardAllocation = z.infer<typeof wizardAllocationSchema>;
 
+/** One row in the per-day breakdown step: `hours` of redemption time on `date`. */
+export const wizardDayScheduleEntrySchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  hours: z.number().positive(),
+});
+export type WizardDayScheduleEntry = z.infer<typeof wizardDayScheduleEntrySchema>;
+
 /** Input the client POSTs to /api/redemptions/create. */
 export const createRedemptionRequestSchema = z
   .object({
@@ -17,11 +24,25 @@ export const createRedemptionRequestSchema = z
     /** Optional override for the Redmine issue description. When absent the backend
      *  rebuilds it from allocations via {@link buildRedemptionDescription}. */
     description: z.string().optional(),
+    /** Optional per-day breakdown of redemption hours. When present the backend
+     *  uses it to spread time entries across calendar dates instead of dumping
+     *  everything on `startDate`. Sum of `hours` must equal `totalHours`. */
+    daySchedule: z.array(wizardDayScheduleEntrySchema).min(1).optional(),
   })
   .refine((v) => v.endDate >= v.startDate, { message: "endDate must be >= startDate", path: ["endDate"] })
   .refine(
     (v) => Math.abs(v.totalHours - v.allocations.reduce((s, a) => s + a.hours, 0)) < 1e-6,
     { message: "sum(allocations) must equal totalHours", path: ["allocations"] },
+  )
+  .refine(
+    (v) =>
+      !v.daySchedule ||
+      Math.abs(v.totalHours - v.daySchedule.reduce((s, d) => s + d.hours, 0)) < 1e-6,
+    { message: "sum(daySchedule.hours) must equal totalHours", path: ["daySchedule"] },
+  )
+  .refine(
+    (v) => !v.daySchedule || v.daySchedule.every((d) => d.date >= v.startDate && d.date <= v.endDate),
+    { message: "daySchedule dates must fall inside [startDate, endDate]", path: ["daySchedule"] },
   );
 export type CreateRedemptionRequest = z.infer<typeof createRedemptionRequestSchema>;
 
@@ -97,27 +118,79 @@ export function buildRedemptionDescription(
   return buildRedemptionLines(allocations, earningsById).join("\n");
 }
 
-/** Derive initials from a user's firstname+lastname. Returns empty string if none usable. */
+/**
+ * Derive initials from a user's firstname+lastname.
+ *
+ * Real-world wrinkle: some Redmine instances store an organisation prefix
+ * directly in `firstname` (e.g. `"BAKK:Oskar"`). When that prefix shows up we
+ * strip everything up to and including the final separator before grabbing the
+ * first letter so the result is the user's actual initial, not the org's.
+ *
+ * Returns empty string when neither field has anything usable.
+ */
 export function deriveInitials(user: { firstname?: string; lastname?: string }): string {
-  const f = (user.firstname ?? "").trim();
-  const l = (user.lastname ?? "").trim();
+  const f = stripOrgPrefix(user.firstname ?? "");
+  const l = stripOrgPrefix(user.lastname ?? "");
   if (!f && !l) return "";
   const fi = f ? f.charAt(0).toUpperCase() : "";
   const li = l ? l.charAt(0).toUpperCase() : "";
   return fi + li;
 }
 
+function stripOrgPrefix(s: string): string {
+  // Treat ":" (BAKK:Oskar) and "/" (ACME/Jane) as org-prefix separators; take
+  // the segment after the last one, then trim whitespace and stray punctuation.
+  const trimmed = s.trim();
+  if (!trimmed) return "";
+  const sepMatch = trimmed.match(/[:/]/);
+  if (!sepMatch) return trimmed;
+  const lastSep = Math.max(trimmed.lastIndexOf(":"), trimmed.lastIndexOf("/"));
+  return trimmed.slice(lastSep + 1).trim();
+}
+
 /** Count business days (Mon-Fri) between two ISO dates, inclusive on both ends. */
 export function businessDaysBetween(startDate: string, endDate: string): number {
+  return enumerateBusinessDays(startDate, endDate).length;
+}
+
+/** Enumerate business days (Mon-Fri) between two ISO dates, inclusive on both ends. */
+export function enumerateBusinessDays(startDate: string, endDate: string): string[] {
   const s = new Date(`${startDate}T00:00:00Z`);
   const e = new Date(`${endDate}T00:00:00Z`);
-  if (e < s) return 0;
-  let count = 0;
+  if (e < s) return [];
+  const out: string[] = [];
   for (let d = new Date(s); d <= e; d.setUTCDate(d.getUTCDate() + 1)) {
     const day = d.getUTCDay();
-    if (day !== 0 && day !== 6) count += 1;
+    if (day !== 0 && day !== 6) out.push(d.toISOString().slice(0, 10));
   }
-  return count;
+  return out;
+}
+
+/**
+ * Default per-day schedule: split `totalHours` evenly across business days.
+ * When the total doesn't divide evenly the remainder lands on the last day so
+ * the sum still matches exactly (e.g. 25h over 3 business days → 8, 8, 9).
+ *
+ * Falls back to `[{ date: startDate, hours: totalHours }]` when the range has
+ * no business days (weekend-only redemption).
+ */
+export function defaultDaySchedule(
+  startDate: string,
+  endDate: string,
+  totalHours: number,
+): WizardDayScheduleEntry[] {
+  const days = enumerateBusinessDays(startDate, endDate);
+  if (days.length === 0) return [{ date: startDate, hours: totalHours }];
+  const base = Math.floor((totalHours / days.length) * 100) / 100;
+  const remainder = round2(totalHours - base * (days.length - 1));
+  return days.map((date, i) => ({
+    date,
+    hours: i === days.length - 1 ? remainder : base,
+  }));
+}
+
+function round2(n: number) {
+  return Math.round(n * 100) / 100;
 }
 
 function formatHours(h: number): string {

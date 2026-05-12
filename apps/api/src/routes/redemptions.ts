@@ -112,27 +112,37 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
       dueDate: body.endDate,
     });
 
+    // Build the concrete list of (spentOn, allocation, hours) tuples to log.
+    // When a daySchedule is supplied we spread each allocation proportionally
+    // across days; otherwise everything lands on startDate (legacy single-day
+    // shortcut, kept for backwards compatibility with callers that don't ship
+    // a schedule).
+    type TePlan = { spentOn: string; earningId: number; hours: number };
+    const tePlans: TePlan[] = body.daySchedule
+      ? planTimeEntries(body.daySchedule, body.allocations, body.totalHours)
+      : body.allocations.map((a) => ({ spentOn: body.startDate, earningId: a.earningId, hours: a.hours }));
+
     // Best-effort downstream: time entries + relations. On partial failure we
     // mirror whatever Redmine accepted and return the issue with a warning so
     // the user can finish in the Redmine UI.
     const warnings: string[] = [];
     const createdTimeEntries: Array<{
-      teId: number; alloc: { earningId: number; hours: number }; activityName: string;
+      teId: number; plan: TePlan; activityName: string; comments: string;
     }> = [];
-    for (const alloc of body.allocations) {
-      const lineComment = `Odbiór ${formatHours(alloc.hours)}h z #${alloc.earningId} (${earningsById.get(alloc.earningId)?.subject ?? "brak danych"})`;
+    for (const plan of tePlans) {
+      const lineComment = `Odbiór ${formatHours(plan.hours)}h z #${plan.earningId} (${earningsById.get(plan.earningId)?.subject ?? "brak danych"})`;
       try {
         const te = await endpoints.createTimeEntry({
           issueId: createdIssue.id,
-          hours: alloc.hours,
+          hours: plan.hours,
           activityId: deps.env.redemptionActivityId,
-          spentOn: body.startDate,
+          spentOn: plan.spentOn,
           comments: lineComment,
         });
-        createdTimeEntries.push({ teId: te.id, alloc, activityName: te.activity.name });
+        createdTimeEntries.push({ teId: te.id, plan, activityName: te.activity.name, comments: lineComment });
       } catch (e) {
-        warnings.push(`time entry for earning ${alloc.earningId} failed: ${(e as Error).message}`);
-        logger.error({ err: e, allocation: alloc, issueId: createdIssue.id }, "create-redemption time-entry failed");
+        warnings.push(`time entry for earning ${plan.earningId} on ${plan.spentOn} failed: ${(e as Error).message}`);
+        logger.error({ err: e, plan, issueId: createdIssue.id }, "create-redemption time-entry failed");
       }
     }
     const createdRelations: Array<{ relId: number; alloc: { earningId: number; hours: number } }> = [];
@@ -181,17 +191,17 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
         })
         .run();
 
-      for (const { teId, alloc, activityName } of createdTimeEntries) {
+      for (const { teId, plan, activityName, comments } of createdTimeEntries) {
         tx.insert(timeEntries)
           .values({
             id: teId,
             issueId: createdIssue.id,
             userId: user.id,
-            hours: alloc.hours,
+            hours: plan.hours,
             activityId: deps.env.redemptionActivityId!,
             activityName,
-            spentOn: body.startDate,
-            comments: `Odbiór ${formatHours(alloc.hours)}h z #${alloc.earningId} (${earningsById.get(alloc.earningId)?.subject ?? "brak danych"})`,
+            spentOn: plan.spentOn,
+            comments,
             createdOn: nowISO,
             updatedOn: nowISO,
           })
@@ -227,4 +237,33 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
 
 function formatHours(h: number): string {
   return Number.isInteger(h) ? String(h) : String(h);
+}
+
+/**
+ * Spread the allocations across days proportionally to each allocation's share
+ * of total hours. Per day, the last allocation absorbs any rounding drift so
+ * the sum equals the day's hours exactly. Per allocation, summing across days
+ * lands within 0.01h of the requested hours — same tolerance Redmine uses for
+ * its own decimal-hour displays.
+ */
+function planTimeEntries(
+  daySchedule: Array<{ date: string; hours: number }>,
+  allocations: Array<{ earningId: number; hours: number }>,
+  totalHours: number,
+): Array<{ spentOn: string; earningId: number; hours: number }> {
+  const plans: Array<{ spentOn: string; earningId: number; hours: number }> = [];
+  for (const day of daySchedule) {
+    if (day.hours <= 0) continue;
+    let dayRemaining = day.hours;
+    for (let i = 0; i < allocations.length; i += 1) {
+      const a = allocations[i]!;
+      const isLast = i === allocations.length - 1;
+      const raw = isLast ? dayRemaining : (a.hours / totalHours) * day.hours;
+      const rounded = Math.round(raw * 100) / 100;
+      if (rounded <= 0) continue;
+      plans.push({ spentOn: day.date, earningId: a.earningId, hours: rounded });
+      dayRemaining = Math.round((dayRemaining - rounded) * 100) / 100;
+    }
+  }
+  return plans;
 }

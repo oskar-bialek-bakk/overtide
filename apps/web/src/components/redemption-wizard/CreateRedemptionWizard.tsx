@@ -4,8 +4,10 @@ import {
   buildRedemptionDescription,
   buildRedemptionSubject,
   businessDaysBetween,
+  defaultDaySchedule,
   deriveInitials,
   type EarningForDescription,
+  type WizardDayScheduleEntry,
 } from "@overtide/shared";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,8 +31,10 @@ type Props = {
   fallbackInitials?: string;
 };
 
-type Step = "dates" | "earnings" | "preview";
-const STEPS: Step[] = ["dates", "earnings", "preview"];
+type Step = "dates" | "earnings" | "days" | "preview";
+const STEPS: Step[] = ["dates", "earnings", "days", "preview"];
+
+type DayRow = { date: string; hoursInput: string };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
@@ -53,6 +57,11 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
   // textarea we stop overwriting their edits.
   const [description, setDescription] = useState("");
   const [descriptionDirty, setDescriptionDirty] = useState(false);
+  // Per-day schedule rows (controls the spentOn date on the time entries).
+  // Auto-syncs with the date range until the user touches them; then we trust
+  // their edits and stop overwriting.
+  const [dayRows, setDayRows] = useState<DayRow[]>([]);
+  const [dayRowsDirty, setDayRowsDirty] = useState(false);
 
   // Reset state every time the dialog opens; avoids stale picks from a
   // previous run leaking into a fresh wizard.
@@ -66,6 +75,8 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
     setPicks(new Map());
     setDescription("");
     setDescriptionDirty(false);
+    setDayRows([]);
+    setDayRowsDirty(false);
   }, [open]);
 
   // Sync default total hours whenever the date range changes — but only if the
@@ -113,6 +124,41 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
     if (descriptionDirty) return;
     setDescription(descriptionPreview);
   }, [descriptionPreview, descriptionDirty]);
+
+  // Refresh the default day rows whenever the range or total changes — unless
+  // the user has already edited them, in which case we leave them alone.
+  useEffect(() => {
+    if (dayRowsDirty) return;
+    if (!datesValid) return;
+    const defaults = defaultDaySchedule(startDate, endDate, totalHours);
+    setDayRows(defaults.map((d) => ({ date: d.date, hoursInput: String(d.hours) })));
+  }, [startDate, endDate, totalHours, datesValid, dayRowsDirty]);
+
+  const dayTotal = useMemo(() => {
+    let sum = 0;
+    for (const r of dayRows) sum += parseHours(r.hoursInput) ?? 0;
+    return sum;
+  }, [dayRows]);
+  const daysExact = Math.abs(dayTotal - totalHours) < 1e-6;
+  const daySchedule: WizardDayScheduleEntry[] = useMemo(
+    () =>
+      dayRows
+        .map((r) => ({ date: r.date, hours: parseHours(r.hoursInput) ?? 0 }))
+        .filter((r) => r.hours > 0),
+    [dayRows],
+  );
+
+  const setDayHours = (idx: number, value: string) => {
+    setDayRowsDirty(true);
+    setDayRows((prev) => prev.map((r, i) => (i === idx ? { ...r, hoursInput: value } : r)));
+  };
+
+  const resetDays = () => {
+    setDayRowsDirty(false);
+    if (!datesValid) return;
+    const defaults = defaultDaySchedule(startDate, endDate, totalHours);
+    setDayRows(defaults.map((d) => ({ date: d.date, hoursInput: String(d.hours) })));
+  };
 
   const setHours = (id: number, value: string) => {
     const next = new Map(picks);
@@ -162,6 +208,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
         totalHours,
         allocations,
         ...(description.trim().length > 0 ? { description } : {}),
+        ...(daySchedule.length > 0 ? { daySchedule } : {}),
       });
       onOpenChange(false);
     } catch {
@@ -319,6 +366,61 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
           </div>
         )}
 
+        {step === "days" && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-xs text-muted-foreground">
+                Required:{" "}
+                <strong className="tabular-nums text-foreground">{hours(totalHours)}</strong>
+                {" · Assigned: "}
+                <strong
+                  className={cn(
+                    "tabular-nums",
+                    daysExact ? "text-emerald-500" : "text-amber-500",
+                  )}
+                >
+                  {hours(dayTotal)}
+                </strong>
+              </div>
+              {dayRowsDirty && (
+                <button
+                  type="button"
+                  onClick={resetDays}
+                  className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                >
+                  Reset to even split
+                </button>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              {dayRows.map((r, idx) => (
+                <div
+                  key={r.date}
+                  className="flex items-center gap-3 rounded-lg border border-border px-3 py-1.5"
+                >
+                  <div className="flex-1 text-sm">{dayLabel(r.date)}</div>
+                  <div className="flex items-center gap-1.5">
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      value={r.hoursInput}
+                      onChange={(e) => setDayHours(idx, e.target.value)}
+                      placeholder="0"
+                      className="h-8 w-20 text-right tabular-nums"
+                      aria-label={`Hours for ${r.date}`}
+                    />
+                    <span className="text-xs text-muted-foreground">h</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Weekends are skipped by default. Set a day to 0 to omit it (e.g. a public holiday).
+              Hours from each day are split across selected earnings proportionally.
+            </div>
+          </div>
+        )}
+
         {step === "preview" && (
           <div className="space-y-3">
             <div>
@@ -368,6 +470,16 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
               </div>
             </div>
             <div>
+              <div className="text-xs text-muted-foreground">Time entries by day</div>
+              <ul className="mt-1 text-sm">
+                {daySchedule.map((d) => (
+                  <li key={d.date} className="tabular-nums">
+                    {dayLabel(d.date)} — {hours(d.hours)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
               <div className="text-xs text-muted-foreground">Relations to create</div>
               <ul className="mt-1 text-sm">
                 {allocations.map((a) => (
@@ -393,7 +505,8 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
                 onClick={goNext}
                 disabled={
                   (step === "dates" && !datesValid) ||
-                  (step === "earnings" && (!assignedExact || picks.size === 0 || overCap))
+                  (step === "earnings" && (!assignedExact || picks.size === 0 || overCap)) ||
+                  (step === "days" && (!daysExact || daySchedule.length === 0))
                 }
               >
                 Next <ChevronRight size={14} className="ml-1" />
@@ -414,7 +527,15 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
 function labelFor(s: Step) {
   if (s === "dates") return "dates + total hours";
   if (s === "earnings") return "pick earnings";
+  if (s === "days") return "distribute across days";
   return "preview + confirm";
+}
+
+function dayLabel(iso: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  const wd = d.toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" });
+  const md = d.toLocaleDateString(undefined, { day: "2-digit", month: "2-digit", timeZone: "UTC" });
+  return `${wd} ${md}`;
 }
 
 export function defaultInitials(user: { firstname?: string; lastname?: string } | null | undefined) {
