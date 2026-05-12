@@ -8,6 +8,13 @@
       "when": 1778531761355,
       "tag": "0000_purple_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1778582857175,
+      "tag": "0002_dazzling_namora",
+      "breakpoints": true
     }
   ]
 }

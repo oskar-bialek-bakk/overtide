@@ -37,6 +37,6 @@ describe("db/queries", () => {
     expect(redemptions[0]?.requested).toBe(4);
 
     const relations = await fetchRelations(db);
-    expect(relations).toEqual([{ earningId: 1, redemptionId: 2 }]);
+    expect(relations).toEqual([{ earningId: 1, redemptionId: 2, allocatedHours: null }]);
   });
 });

@@ -55,6 +55,10 @@ export const issueRelations = sqliteTable(
     relationType: text("relation_type").notNull(),
     createdLocally: integer("created_locally", { mode: "boolean" }).notNull().default(false),
     mirroredAt: text("mirrored_at").notNull(),
+    // Manual hour override for FIFO. NULL → algorithm allocates greedily as
+    // before. Set → that exact amount is locked in for this (earning,
+    // redemption) pair, FIFO fills only what's left.
+    allocatedHours: real("allocated_hours"),
   },
   (t) => ({
     fromIdx: index("idx_rel_from").on(t.issueFromId),

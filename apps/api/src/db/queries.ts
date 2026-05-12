@@ -44,7 +44,9 @@ export async function fetchRedemptions(db: Db): Promise<RedemptionRow[]> {
   return (result as any[]).map((r) => ({ ...r, isClosed: Boolean(r.isClosed) }));
 }
 
-export async function fetchRelations(db: Db): Promise<Array<{ earningId: number; redemptionId: number }>> {
+export async function fetchRelations(db: Db): Promise<
+  Array<{ earningId: number; redemptionId: number; allocatedHours: number | null }>
+> {
   // Filter relation_type at the SQL boundary so we don't pull other types into memory.
   const rows = await db
     .select()
@@ -65,14 +67,14 @@ export async function fetchRelations(db: Db): Promise<Array<{ earningId: number;
     .where(inArray(issues.id, [...idSet]));
   const roleById = new Map(issueRows.map((i) => [i.id, i.role]));
 
-  const out: Array<{ earningId: number; redemptionId: number }> = [];
+  const out: Array<{ earningId: number; redemptionId: number; allocatedHours: number | null }> = [];
   for (const r of rows) {
     const fromRole = roleById.get(r.issueFromId);
     const toRole = roleById.get(r.issueToId);
     if (fromRole === "earning" && toRole === "redemption") {
-      out.push({ earningId: r.issueFromId, redemptionId: r.issueToId });
+      out.push({ earningId: r.issueFromId, redemptionId: r.issueToId, allocatedHours: r.allocatedHours });
     } else if (fromRole === "redemption" && toRole === "earning") {
-      out.push({ earningId: r.issueToId, redemptionId: r.issueFromId });
+      out.push({ earningId: r.issueToId, redemptionId: r.issueFromId, allocatedHours: r.allocatedHours });
     }
   }
   return out;

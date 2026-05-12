@@ -95,6 +95,69 @@ const cases: Case[] = [
     input: { earnings: [], redemptions: [], relations: [] },
     expect: { totalsEarned: 0, totalsRedeemed: 0, totalsAvailable: 0, totalsUnlinked: 0 },
   },
+  {
+    name: "explicit override honored verbatim, even when older OT exists",
+    // Without override, FIFO would drain OT #1 first. The override forces
+    // OT #2 to take 5h, leaving #1 untouched.
+    input: {
+      earnings: [
+        { id: 1, earned: 8, anchorDate: "2026-01-01" },
+        { id: 2, earned: 8, anchorDate: "2026-02-01" },
+      ],
+      redemptions: [{ id: 10, requested: 5, anchorDate: "2026-03-01" }],
+      relations: [
+        { earningId: 1, redemptionId: 10 },
+        { earningId: 2, redemptionId: 10, allocatedHours: 5 },
+      ],
+    },
+    expect: {
+      totalsEarned: 16, totalsRedeemed: 5, totalsAvailable: 11, totalsUnlinked: 0,
+      perEarning: { 1: { consumed: 0, remaining: 8 }, 2: { consumed: 5, remaining: 3 } },
+      perRedemption: { 10: { covered: 5, unlinked: 0 } },
+    },
+  },
+  {
+    name: "override + greedy fill the same redemption",
+    // 2h pinned to OT #2; remaining 4h flows greedily to oldest available (#1).
+    input: {
+      earnings: [
+        { id: 1, earned: 10, anchorDate: "2026-01-01" },
+        { id: 2, earned: 10, anchorDate: "2026-02-01" },
+      ],
+      redemptions: [{ id: 10, requested: 6, anchorDate: "2026-03-01" }],
+      relations: [
+        { earningId: 1, redemptionId: 10 },
+        { earningId: 2, redemptionId: 10, allocatedHours: 2 },
+      ],
+    },
+    expect: {
+      totalsEarned: 20, totalsRedeemed: 6, totalsAvailable: 14, totalsUnlinked: 0,
+      perEarning: { 1: { consumed: 4, remaining: 6 }, 2: { consumed: 2, remaining: 8 } },
+      perRedemption: { 10: { covered: 6, unlinked: 0 } },
+    },
+  },
+  {
+    name: "overrides on past redemption don't starve future greedy redemption",
+    // R #10 takes 5h via override from #1 (the only candidate). R #11 then
+    // greedily takes the remaining 5h from #1. Without override-first
+    // ordering, mixing passes could double-count #1.
+    input: {
+      earnings: [{ id: 1, earned: 10, anchorDate: "2026-01-01" }],
+      redemptions: [
+        { id: 10, requested: 5, anchorDate: "2026-02-01" },
+        { id: 11, requested: 5, anchorDate: "2026-03-01" },
+      ],
+      relations: [
+        { earningId: 1, redemptionId: 10, allocatedHours: 5 },
+        { earningId: 1, redemptionId: 11 },
+      ],
+    },
+    expect: {
+      totalsEarned: 10, totalsRedeemed: 10, totalsAvailable: 0, totalsUnlinked: 0,
+      perEarning: { 1: { consumed: 10, remaining: 0 } },
+      perRedemption: { 10: { covered: 5, unlinked: 0 }, 11: { covered: 5, unlinked: 0 } },
+    },
+  },
 ];
 
 describe("computeFIFO", () => {
