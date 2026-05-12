@@ -7,6 +7,10 @@ const rawSchema = z.object({
   REDMINE_API_KEY: z.string().min(1).optional(),
   REDMINE_TRACKER_REDEMPTION_ID: z.coerce.number().int().positive(),
   REDMINE_ACTIVITY_OVERTIME_ID: z.coerce.number().int().positive(),
+  REDMINE_SYNC_FROM: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "REDMINE_SYNC_FROM must be YYYY-MM-DD")
+    .optional(),
   PORT: z.coerce.number().int().positive().default(8787),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
 });
@@ -16,6 +20,8 @@ export type Env = {
   auth: { kind: "apiKey"; apiKey: string } | { kind: "basic"; username: string; password: string };
   redemptionTrackerId: number;
   overtimeActivityId: number;
+  /** Floor date (YYYY-MM-DD) for time-entry sync; older entries are skipped. */
+  syncFrom?: string;
   port: number;
   logLevel: string;
 };
@@ -37,6 +43,7 @@ export function loadEnv(source: NodeJS.ProcessEnv | Record<string, string | unde
     auth,
     redemptionTrackerId: parsed.REDMINE_TRACKER_REDEMPTION_ID,
     overtimeActivityId: parsed.REDMINE_ACTIVITY_OVERTIME_ID,
+    ...(parsed.REDMINE_SYNC_FROM ? { syncFrom: parsed.REDMINE_SYNC_FROM } : {}),
     port: parsed.PORT,
     logLevel: parsed.LOG_LEVEL,
   };

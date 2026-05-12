@@ -21,7 +21,10 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
     const userId = await endpoints.currentUserId();
 
     const lastSync = await readConfig(db, "last_sync_at");
-    const from = lastSync ? minusDaysIso(lastSync, OVERLAP_BUFFER_DAYS) : undefined;
+    const incrementalFrom = lastSync ? minusDaysIso(lastSync, OVERLAP_BUFFER_DAYS) : undefined;
+    // syncFrom acts as a floor — entries older than it are skipped on every
+    // sync. Without it, the first sync pulls everything ever logged.
+    const from = clampFloor(incrementalFrom, env.syncFrom);
 
     const fetchedTE: RedmineTimeEntry[] = [];
     for await (const te of endpoints.iterAllTimeEntries({ userId, from })) fetchedTE.push(te);
@@ -129,4 +132,10 @@ function minusDaysIso(iso: string, days: number): string {
   const d = new Date(iso);
   d.setUTCDate(d.getUTCDate() - days);
   return d.toISOString().slice(0, 10);
+}
+
+function clampFloor(candidate: string | undefined, floor: string | undefined): string | undefined {
+  if (!floor) return candidate;
+  if (!candidate) return floor;
+  return candidate < floor ? floor : candidate;
 }
