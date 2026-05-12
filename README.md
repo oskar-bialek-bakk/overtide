@@ -43,6 +43,16 @@ bun --filter @overtide/web dev
 
 The Vite dev server proxies `/api/*` → `http://127.0.0.1:8787` (the Bun API).
 
+### Windows convenience launcher
+
+`dev.cmd` (repo root) kills any stale node/bun child processes — Windows is sticky about port 5173 after a vite crash — and spawns api + web in two new `cmd` windows.
+
+```cmd
+dev.cmd              :: reset + start both
+dev.cmd --no-reset   :: just start (skip the kill step)
+dev.cmd --kill       :: only kill, useful before re-running
+```
+
 ### Tests (full stack)
 
 ```bash
