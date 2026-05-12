@@ -1,6 +1,6 @@
 import { CircleAlert, CircleCheck } from "lucide-react";
 import { useBalance } from "@/api/queries";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 import { AnimatedNumber } from "@/components/balance/AnimatedNumber";
 
 export function BalancePill() {

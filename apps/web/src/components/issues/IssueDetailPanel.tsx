@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -104,9 +105,13 @@ export function IssueDetailPanel({ id }: { id: number }) {
               return (
                 <div key={r.id} className="text-sm flex items-center gap-2">
                   <span className="text-muted-foreground">{r.relationType}</span>
-                  <a href="#" className="hover:underline">
+                  <Link
+                    to="/issue/$id"
+                    params={{ id: String(otherId) }}
+                    className="hover:underline"
+                  >
                     #{otherId}
-                  </a>
+                  </Link>
                   {r.createdLocally && (
                     <Badge variant="outline" className="text-xs">
                       added by Overtide

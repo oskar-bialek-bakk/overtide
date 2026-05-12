@@ -43,7 +43,10 @@ export type CreateRelationResult = {
   status: "CREATED" | "ALREADY_LINKED";
 };
 
-export function useCreateRelation() {
+// Pass `skipInvalidate: true` when calling from a bulk caller (e.g. linking
+// many earnings to one redemption in a loop) and run `invalidateRelationQueries`
+// once after the loop to avoid N rounds of refetch.
+export function useCreateRelation(opts: { skipInvalidate?: boolean } = {}) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (vars: CreateRelationVars) =>
@@ -52,14 +55,19 @@ export function useCreateRelation() {
         body: vars,
       }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.unlinked });
-      qc.invalidateQueries({ queryKey: qk.balance });
-      qc.invalidateQueries({ queryKey: qk.earning });
-      qc.invalidateQueries({ queryKey: qk.redemption });
+      if (opts.skipInvalidate) return;
+      invalidateRelationQueries(qc);
     },
     onError: (e) =>
       toast.error(
         e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e),
       ),
   });
+}
+
+export function invalidateRelationQueries(qc: ReturnType<typeof useQueryClient>) {
+  qc.invalidateQueries({ queryKey: qk.unlinked });
+  qc.invalidateQueries({ queryKey: qk.balance });
+  qc.invalidateQueries({ queryKey: qk.earning });
+  qc.invalidateQueries({ queryKey: qk.redemption });
 }

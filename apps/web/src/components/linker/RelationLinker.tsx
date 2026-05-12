@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,8 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useEarning } from "@/api/queries";
-import { useCreateRelation } from "@/api/mutations";
-import { cn } from "@/lib/cn";
+import { invalidateRelationQueries, useCreateRelation } from "@/api/mutations";
+import { cn } from "@/lib/utils";
 import { dateShort, hours } from "@/lib/format";
 
 type Props = {
@@ -28,7 +29,9 @@ export function RelationLinker({
   unlinkedHours,
 }: Props) {
   const earningQuery = useEarning();
-  const mutation = useCreateRelation();
+  const qc = useQueryClient();
+  // Bulk path — we manage invalidation manually after the loop.
+  const mutation = useCreateRelation({ skipInvalidate: true });
   const candidates = useMemo(
     () =>
       (earningQuery.data ?? [])
@@ -58,6 +61,7 @@ export function RelationLinker({
         to_redemption_id: redemptionId,
       });
     }
+    invalidateRelationQueries(qc);
     onOpenChange(false);
     setSelected(new Set());
   };

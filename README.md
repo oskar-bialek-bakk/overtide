@@ -2,7 +2,7 @@
 
 Personal Redmine overtime tracker — earn hours under a Redmine **Nadgodziny** time-entry activity, redeem them via **Odbiór nadgodzin** tracker issues linked with `relates`, monitor FIFO balance.
 
-> Status: **Backend v1 — DONE.** Frontend v1 (`apps/web`) — DONE on `feat/overtide-v2-web-bootstrap`.
+> Status: **Backend v1 — DONE. Frontend v1 (`apps/web`) — DONE.**
 > Spec: [`docs/superpowers/specs/2026-05-11-overtide-design.md`](docs/superpowers/specs/2026-05-11-overtide-design.md)
 > Plan A (backend): [`docs/superpowers/plans/2026-05-11-overtide-backend.md`](docs/superpowers/plans/2026-05-11-overtide-backend.md)
 > Plan B (frontend): [`docs/superpowers/plans/2026-05-11-overtide-frontend.md`](docs/superpowers/plans/2026-05-11-overtide-frontend.md)

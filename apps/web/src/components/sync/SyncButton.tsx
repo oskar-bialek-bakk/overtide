@@ -1,7 +1,7 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRunSync } from "@/api/mutations";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 
 export function SyncButton() {
   const m = useRunSync();
