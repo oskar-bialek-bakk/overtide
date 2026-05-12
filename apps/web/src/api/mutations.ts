@@ -36,6 +36,8 @@ export function useRunSync() {
 export type CreateRelationVars = {
   from_earning_id: number;
   to_redemption_id: number;
+  /** Optional hour override; omit for greedy FIFO. */
+  allocated_hours?: number | null;
 };
 
 export type CreateRelationResult = {

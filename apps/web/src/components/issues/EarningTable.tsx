@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -46,7 +47,13 @@ export function EarningTable() {
               {hours(e.consumed)}
             </TableCell>
             <TableCell className="text-right tabular-nums font-medium">
-              {hours(e.remaining)}
+              {e.remaining > 0.001 ? (
+                <Badge className="bg-primary/15 text-primary hover:bg-primary/20">
+                  {hours(e.remaining)}
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">{hours(e.remaining)}</span>
+              )}
             </TableCell>
             <TableCell>
               <a

@@ -25,7 +25,12 @@ export type HealthData = {
   errors: { code: string; message: string }[];
 };
 
-export type TimelinePoint = { month: string; earned: number; redeemed: number };
+export type TimelinePoint = {
+  date: string;
+  earned: number;
+  redeemed: number;
+  cumulative: number;
+};
 
 export type IssueDetail = {
   issue: unknown;

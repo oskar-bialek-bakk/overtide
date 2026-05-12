@@ -12,6 +12,9 @@ import { RedmineEndpoints } from "../redmine/endpoints";
 const createSchema = z.object({
   from_earning_id: z.number().int().positive(),
   to_redemption_id: z.number().int().positive(),
+  // Manual override hours for FIFO. Omit (or pass null) → greedy FIFO.
+  // Pass a positive number → that exact amount is locked in for this pair.
+  allocated_hours: z.number().positive().nullable().optional(),
 });
 
 export function relationsRoutes(deps: { db: Db; env: Env }) {
@@ -30,10 +33,21 @@ export function relationsRoutes(deps: { db: Db; env: Env }) {
     if (!to) throw new AppError("ISSUE_NOT_MIRRORED", 404, `issue ${body.to_redemption_id} not mirrored`);
     if (to.role !== "redemption") throw new AppError("ISSUE_NOT_REDEMPTION", 400, `${body.to_redemption_id} is not a redemption`);
 
+    const allocatedHours = body.allocated_hours ?? null;
+
     const existing = await deps.db.select().from(issueRelations).where(
       and(eq(issueRelations.issueFromId, from.id), eq(issueRelations.issueToId, to.id)),
     ).limit(1);
-    if (existing.length > 0) return ok(c, { id: existing[0]!.id, status: "ALREADY_LINKED" });
+    if (existing.length > 0) {
+      // Pair already linked in Redmine; only update the local hours override
+      // when one was supplied so callers can repurpose POST as "set override".
+      if (body.allocated_hours !== undefined) {
+        await deps.db.update(issueRelations)
+          .set({ allocatedHours })
+          .where(eq(issueRelations.id, existing[0]!.id));
+      }
+      return ok(c, { id: existing[0]!.id, status: "ALREADY_LINKED" });
+    }
 
     const endpoints = new RedmineEndpoints(new RedmineClient(deps.env));
     const created = await endpoints.createRelation(from.id, to.id);
@@ -44,6 +58,7 @@ export function relationsRoutes(deps: { db: Db; env: Env }) {
       relationType: "relates",
       createdLocally: true,
       mirroredAt: new Date().toISOString(),
+      allocatedHours,
     });
     return ok(c, { id: created.id, status: "CREATED" });
   });

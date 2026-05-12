@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { Link, useRouter } from "@tanstack/react-router";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useIssue } from "@/api/queries";
@@ -34,9 +35,11 @@ type RelationShape = {
 };
 
 export function IssueDetailPanel({ id }: { id: number }) {
+  const router = useRouter();
   const q = useIssue(id);
   if (!q.data) return <div className="h-40 rounded-2xl bg-card animate-pulse" />;
   const issue = q.data.issue as IssueShape;
+  const fallbackTo = issue.role === "earning" ? "/earning" : "/redemptions";
   const timeEntries = q.data.timeEntries as TimeEntryShape[];
   const relations = q.data.relations as RelationShape[];
   return (
@@ -55,14 +58,30 @@ export function IssueDetailPanel({ id }: { id: number }) {
             #{issue.id} {issue.subject}
           </h1>
         </div>
-        <a
-          href={issue.url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-        >
-          Open in Redmine <ExternalLink size={14} />
-        </a>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              // History pop is friendlier when the user came from a list page.
+              // If there's nothing to pop (deep link), fall back to the
+              // role-appropriate list.
+              if (window.history.length > 1) router.history.back();
+              else router.navigate({ to: fallbackTo });
+            }}
+            className="gap-1"
+          >
+            <ArrowLeft size={14} /> Back
+          </Button>
+          <a
+            href={issue.url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
+          >
+            Open in Redmine <ExternalLink size={14} />
+          </a>
+        </div>
       </div>
 
       <Card>

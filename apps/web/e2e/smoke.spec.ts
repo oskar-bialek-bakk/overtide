@@ -5,7 +5,7 @@ test("app boots, dashboard renders balance card", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Overtide" })).toBeVisible();
   // BalanceCard renders "Available" only after useBalance resolves; allow extra
   // time on cold dev-server boot when React Query is doing its first fetch.
-  await expect(page.getByText("Available")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("Available").first()).toBeVisible({ timeout: 15_000 });
 });
 
 test("command palette opens with Ctrl+K", async ({ page }) => {
