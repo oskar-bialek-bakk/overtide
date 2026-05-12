@@ -1,15 +1,20 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Link } from "@tanstack/react-router";
 import { useBalance, useEarning, useUnlinked } from "@/api/queries";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { hours } from "@/lib/format";
 
 type Slice = { name: string; value: number; fill: string };
+type View = "remaining" | "all";
 
 export function BalanceBreakdown() {
   const balance = useBalance();
   const earning = useEarning();
   const unlinked = useUnlinked();
+  const [view, setView] = useState<View>("remaining");
 
   if (!balance.data || !earning.data || !unlinked.data) {
     return <Card className="h-72 animate-pulse" />;
@@ -20,9 +25,13 @@ export function BalanceBreakdown() {
   const totalAvailable = balance.data.available;
   const unlinkedHours = unlinked.data.reduce((s, r) => s + r.unlinked, 0);
 
-  const earningsWithRemaining = earning.data
-    .filter((e) => e.remaining > 0.001)
-    .sort((a, b) => b.remaining - a.remaining);
+  // Sort: "remaining" view shows biggest leftover first; "all" view shows
+  // biggest earner first (so the heavyweights are at the top regardless of
+  // whether they still have hours to give).
+  const visibleEarnings =
+    view === "remaining"
+      ? earning.data.filter((e) => e.remaining > 0.001).sort((a, b) => b.remaining - a.remaining)
+      : [...earning.data].sort((a, b) => b.earned - a.earned);
 
   const breakdown: Slice[] = [];
   if (totalRedeemed > 0)
@@ -86,45 +95,71 @@ export function BalanceBreakdown() {
           </div>
 
           <div>
-            <div className="text-sm uppercase tracking-wider text-muted-foreground mb-2">
-              Top earnings with remaining
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-sm uppercase tracking-wider text-muted-foreground">
+                Earnings
+              </div>
+              <div
+                role="tablist"
+                aria-label="Earnings view"
+                className="inline-flex h-7 rounded-full bg-secondary p-0.5 text-xs"
+              >
+                <ViewTab active={view === "remaining"} onClick={() => setView("remaining")}>
+                  Remaining
+                </ViewTab>
+                <ViewTab active={view === "all"} onClick={() => setView("all")}>
+                  All
+                </ViewTab>
+              </div>
             </div>
-            {earningsWithRemaining.length === 0 ? (
+
+            {visibleEarnings.length === 0 ? (
               <div className="text-sm text-muted-foreground py-8 text-center">
-                Everything is fully redeemed.
+                {view === "remaining" ? "Everything is fully redeemed." : "No earnings yet."}
               </div>
             ) : (
-              <div className="space-y-2">
-                {earningsWithRemaining.slice(0, 5).map((e) => {
-                  const pct = e.earned > 0 ? Math.round((e.remaining / e.earned) * 100) : 0;
+              <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
+                {visibleEarnings.map((e) => {
+                  const consumedPct =
+                    e.earned > 0 ? Math.min(100, Math.round((e.consumed / e.earned) * 100)) : 0;
+                  const remainingPct = 100 - consumedPct;
                   return (
-                    <div key={e.id}>
+                    <Link
+                      key={e.id}
+                      to="/issue/$id"
+                      params={{ id: String(e.id) }}
+                      className="block group"
+                    >
                       <div className="flex items-center justify-between text-sm">
-                        <span className="truncate">
+                        <span className="truncate group-hover:underline">
                           #{e.id} {e.subject}
                         </span>
                         <span className="tabular-nums text-muted-foreground shrink-0 ml-2">
-                          {hours(e.remaining)} / {hours(e.earned)}
+                          {hours(e.consumed)} / {hours(e.earned)}
+                          {e.remaining > 0.001 && (
+                            <span className="ml-1.5 text-primary">+{hours(e.remaining)}</span>
+                          )}
                         </span>
                       </div>
-                      <div className="mt-1 h-1.5 rounded-full bg-secondary overflow-hidden">
+                      <div className="mt-1 flex h-1.5 rounded-full overflow-hidden bg-secondary">
                         <div
-                          className="h-full bg-primary"
-                          style={{ width: `${pct}%` }}
+                          className="bg-muted-foreground/70"
+                          style={{ width: `${consumedPct}%` }}
+                          aria-label={`${consumedPct}% redeemed`}
+                        />
+                        <div
+                          className="bg-primary"
+                          style={{ width: `${remainingPct}%` }}
+                          aria-label={`${remainingPct}% remaining`}
                         />
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
-                {earningsWithRemaining.length > 5 && (
-                  <div className="text-xs text-muted-foreground pt-1">
-                    +{earningsWithRemaining.length - 5} more on the Earning page
-                  </div>
-                )}
               </div>
             )}
             {unlinkedHours > 0 && (
-              <div className="mt-4 text-xs text-amber-400">
+              <div className="mt-3 text-xs text-amber-400">
                 {hours(unlinkedHours)} of redemption demand still unlinked.
               </div>
             )}
@@ -135,5 +170,32 @@ export function BalanceBreakdown() {
         </CardContent>
       </Card>
     </motion.div>
+  );
+}
+
+function ViewTab({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={cn(
+        "px-2.5 rounded-full transition-colors",
+        active
+          ? "bg-background text-foreground shadow-sm"
+          : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {children}
+    </button>
   );
 }
