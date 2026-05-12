@@ -87,8 +87,21 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         const fresh = (issue.relations ?? [])
           .filter((r) => r.relation_type === "relates")
           .filter((r) => keptIds.has(r.issue_id) && keptIds.has(r.issue_to_id));
+        const freshIds = new Set(fresh.map((r) => r.id));
 
-        await tx.delete(issueRelations).where(eq(issueRelations.issueFromId, issue.id));
+        // Only drop relations Redmine no longer reports for this issue —
+        // wholesale delete would wipe local-only state (allocated_hours,
+        // createdLocally) on links the wizard or the manual linker set up.
+        const existingFrom = await tx
+          .select({ id: issueRelations.id })
+          .from(issueRelations)
+          .where(eq(issueRelations.issueFromId, issue.id));
+        for (const ex of existingFrom) {
+          if (!freshIds.has(ex.id)) {
+            await tx.delete(issueRelations).where(eq(issueRelations.id, ex.id));
+          }
+        }
+
         for (const r of fresh) {
           await tx.insert(issueRelations).values({
             id: r.id, issueFromId: r.issue_id, issueToId: r.issue_to_id,
@@ -96,6 +109,8 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
             mirroredAt: new Date().toISOString(),
           }).onConflictDoUpdate({
             target: issueRelations.id,
+            // Intentionally NOT in the set clause: allocatedHours, createdLocally,
+            // mirroredAt. Those are local-only state we don't want sync to clobber.
             set: { issueFromId: r.issue_id, issueToId: r.issue_to_id, relationType: r.relation_type },
           });
           relUpserted += 1;
