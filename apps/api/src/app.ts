@@ -8,6 +8,7 @@ import { errorHandler } from "./middleware/errors";
 import { balanceRoutes } from "./routes/balance";
 import { healthRoutes } from "./routes/health";
 import { issuesRoutes } from "./routes/issues";
+import { redemptionsRoutes } from "./routes/redemptions";
 import { relationsRoutes } from "./routes/relations";
 import { syncRoutes } from "./routes/sync";
 import { unlinkedRoutes } from "./routes/unlinked";
@@ -39,5 +40,6 @@ export function createApp(opts?: { dbPath?: string }) {
   app.route("/api/issues", issuesRoutes({ db, env }));
   app.route("/api/unlinked", unlinkedRoutes({ db, env }));
   app.route("/api/relations", relationsRoutes({ db, env }));
+  app.route("/api/redemptions", redemptionsRoutes({ db, env }));
   return { app, env, db };
 }

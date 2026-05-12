@@ -7,6 +7,9 @@ const rawSchema = z.object({
   REDMINE_API_KEY: z.string().min(1).optional(),
   REDMINE_TRACKER_REDEMPTION_ID: z.coerce.number().int().positive(),
   REDMINE_ACTIVITY_OVERTIME_ID: z.coerce.number().int().positive(),
+  REDMINE_VACATIONS_PROJECT_ID: z.coerce.number().int().positive().optional(),
+  REDMINE_REDEMPTION_ACTIVITY_ID: z.coerce.number().int().positive().optional(),
+  USER_INITIALS: z.string().min(1).max(6).optional(),
   REDMINE_SYNC_FROM: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "REDMINE_SYNC_FROM must be YYYY-MM-DD")
@@ -20,6 +23,12 @@ export type Env = {
   auth: { kind: "apiKey"; apiKey: string } | { kind: "basic"; username: string; password: string };
   redemptionTrackerId: number;
   overtimeActivityId: number;
+  /** Project id for the "Urlopy" project; required to create redemptions. */
+  vacationsProjectId?: number;
+  /** Activity id used for time entries logged on redemption issues. */
+  redemptionActivityId?: number;
+  /** Override for the initials baked into redemption subjects. Auto-derived from Redmine user if omitted. */
+  userInitials?: string;
   /** Floor date (YYYY-MM-DD) for time-entry sync; older entries are skipped. */
   syncFrom?: string;
   port: number;
@@ -43,6 +52,9 @@ export function loadEnv(source: NodeJS.ProcessEnv | Record<string, string | unde
     auth,
     redemptionTrackerId: parsed.REDMINE_TRACKER_REDEMPTION_ID,
     overtimeActivityId: parsed.REDMINE_ACTIVITY_OVERTIME_ID,
+    ...(parsed.REDMINE_VACATIONS_PROJECT_ID ? { vacationsProjectId: parsed.REDMINE_VACATIONS_PROJECT_ID } : {}),
+    ...(parsed.REDMINE_REDEMPTION_ACTIVITY_ID ? { redemptionActivityId: parsed.REDMINE_REDEMPTION_ACTIVITY_ID } : {}),
+    ...(parsed.USER_INITIALS ? { userInitials: parsed.USER_INITIALS } : {}),
     ...(parsed.REDMINE_SYNC_FROM ? { syncFrom: parsed.REDMINE_SYNC_FROM } : {}),
     port: parsed.PORT,
     logLevel: parsed.LOG_LEVEL,

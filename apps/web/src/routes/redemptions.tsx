@@ -1,11 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { RedemptionTable } from "@/components/issues/RedemptionTable";
+import { CreateRedemptionWizard } from "@/components/redemption-wizard/CreateRedemptionWizard";
+
+function RedemptionsPage() {
+  const [wizardOpen, setWizardOpen] = useState(false);
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Redemption issues</h1>
+        <Button onClick={() => setWizardOpen(true)} data-testid="new-redemption-btn">
+          <Plus size={14} className="mr-1" /> New redemption
+        </Button>
+      </div>
+      <RedemptionTable />
+      <CreateRedemptionWizard open={wizardOpen} onOpenChange={setWizardOpen} />
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/redemptions")({
-  component: () => (
-    <div className="space-y-4">
-      <h1 className="text-xl font-semibold">Redemption issues</h1>
-      <RedemptionTable />
-    </div>
-  ),
+  component: RedemptionsPage,
 });

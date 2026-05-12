@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-export const redmineUserSchema = z.object({ id: z.number(), login: z.string().optional() });
+export const redmineUserSchema = z.object({
+  id: z.number(),
+  login: z.string().optional(),
+  firstname: z.string().optional(),
+  lastname: z.string().optional(),
+  mail: z.string().optional(),
+});
 export const usersCurrentResponseSchema = z.object({ user: redmineUserSchema });
 
 export const redmineTimeEntrySchema = z.object({
@@ -36,6 +42,7 @@ export const redmineIssueSchema = z.object({
   author: z.object({ id: z.number() }).optional(),
   assigned_to: z.object({ id: z.number() }).optional(),
   subject: z.string(),
+  description: z.string().nullable().optional(),
   created_on: z.string(),
   updated_on: z.string(),
   start_date: z.string().nullable().optional(),
@@ -46,6 +53,8 @@ export const issuesResponseSchema = z.object({
   issues: z.array(redmineIssueSchema),
   total_count: z.number(),
 });
+export const issueResponseSchema = z.object({ issue: redmineIssueSchema });
+export const timeEntryResponseSchema = z.object({ time_entry: redmineTimeEntrySchema });
 
 export const trackerSchema = z.object({ id: z.number(), name: z.string() });
 export const trackersResponseSchema = z.object({ trackers: z.array(trackerSchema) });

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { CreateRedemptionRequest, CreateRedemptionResponse } from "@overtide/shared";
 import { ApiClientError, apiFetch } from "./client";
 import { qk } from "./queries";
 
@@ -72,4 +73,24 @@ export function invalidateRelationQueries(qc: ReturnType<typeof useQueryClient>)
   qc.invalidateQueries({ queryKey: qk.balance });
   qc.invalidateQueries({ queryKey: qk.earning });
   qc.invalidateQueries({ queryKey: qk.redemption });
+}
+
+export function useCreateRedemption() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: CreateRedemptionRequest) =>
+      apiFetch<CreateRedemptionResponse>("/api/redemptions/create", { method: "POST", body: vars }),
+    onSuccess: (r) => {
+      if (r.warning) {
+        toast.warning(`Created #${r.issueId} with warnings — ${r.warning}`);
+      } else {
+        toast.success(`Created #${r.issueId} — ${r.subject}`);
+      }
+      invalidateRelationQueries(qc);
+      qc.invalidateQueries({ queryKey: qk.timeline });
+      qc.invalidateQueries({ queryKey: qk.syncHistory });
+    },
+    onError: (e) =>
+      toast.error(e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e)),
+  });
 }

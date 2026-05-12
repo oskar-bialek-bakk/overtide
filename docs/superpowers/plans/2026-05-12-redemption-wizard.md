@@ -1,8 +1,25 @@
 # Redemption Wizard
 
-> **Status:** planned, not yet implemented.
+> **Status:** Phases 1-8 + 10 done (2026-05-12). Phase 9 (manual smoke against `sys.bakk.com`) is pending — must run before merging to main.
 > **Branch:** `feat/redemption-wizard`.
 > **Author:** captured 2026-05-12 from a verbal spec; questions marked **CONFIRM** must be answered before coding starts.
+
+## Resolved answers (2026-05-12)
+
+| # | Topic | Answer |
+|---|-------|--------|
+| 1 | Project | `REDMINE_VACATIONS_PROJECT_ID=12` ("urlopy"). Single project, confirmed by `SELECT DISTINCT project_id FROM issues WHERE role='redemption'`. |
+| 2 | Initials | Auto-derive from `/users/current.json` firstname[0]+lastname[0]; `USER_INITIALS` env var overrides. |
+| 3 | Start/end dates | Standard fields `start_date` / `due_date` (confirmed via live `/issues/116224.json` — no custom fields used for these). |
+| 4 | Total hours default | `businessDays(start, end) * 8`, user-editable. |
+| 5 | Time-entry activity | `REDMINE_REDEMPTION_ACTIVITY_ID=8` ("W biurze"). Confirmed via existing TE rows. |
+| 6 | Atomicity | Create issue → time entries → relations sequentially; on partial failure surface a warning toast pointing at the new issue id and mirror whatever succeeded. |
+| 7 | FIFO insufficient | Hard-block step 2 advance with `assigned vs required` indicator. |
+| 8 | Refresh | Direct upsert from Redmine response into local SQLite; invalidate queries. No full re-sync. |
+| 9 | Description format | **Spec format with #NNN + subject** (user override of original habit): one line per allocation, `"Odbiór 4h z #114518 (R&D - support migracji)"`. Same string on issue description AND time entry comments. |
+| 10 | Cross-year range | ISO fallback: `"Odbiór nadgodzin OB 2026-12-30 — 2027-01-02"`. |
+
+`custom_fields` ("Rozliczenie" id=17, "Czas BAKK" id=54) auto-populate from time entries / status — NOT set on POST.
 
 ## Goal
 
