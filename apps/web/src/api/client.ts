@@ -22,12 +22,13 @@ type Envelope<T> = {
 };
 
 export async function apiFetch<T>(path: string, opts: ApiFetchOptions = {}): Promise<T> {
-  const res = await fetch(path, {
+  const init: RequestInit = {
     method: opts.method ?? "GET",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: opts.body === undefined ? undefined : JSON.stringify(opts.body),
-    signal: opts.signal,
-  });
+  };
+  if (opts.body !== undefined) init.body = JSON.stringify(opts.body);
+  if (opts.signal) init.signal = opts.signal;
+  const res = await fetch(path, init);
 
   const json = (await res.json().catch(() => null)) as Envelope<T> | null;
 
