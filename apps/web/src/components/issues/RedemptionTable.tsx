@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge, badgeVariants } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRedemption } from "@/api/queries";
+import { cn } from "@/lib/utils";
 import { dateShort, hours } from "@/lib/format";
 
 export function RedemptionTable() {
@@ -52,10 +53,27 @@ export function RedemptionTable() {
                 <span className="text-muted-foreground">0</span>
               )}
             </TableCell>
-            <TableCell className="text-muted-foreground text-sm">
-              {r.linkedEarningIds.length === 0
-                ? "—"
-                : r.linkedEarningIds.map((id) => `#${id}`).join(", ")}
+            <TableCell>
+              {r.linkedEarningIds.length === 0 ? (
+                <span className="text-muted-foreground">—</span>
+              ) : (
+                <div className="flex flex-wrap gap-1">
+                  {r.linkedEarningIds.map((id) => (
+                    <Link
+                      key={id}
+                      to="/issue/$id"
+                      params={{ id: String(id) }}
+                      title={`Open earning #${id}`}
+                      className={cn(
+                        badgeVariants({ variant: "outline" }),
+                        "tabular-nums border-primary/30 text-primary/90 hover:bg-primary/15 hover:border-primary/60 hover:text-primary transition-colors",
+                      )}
+                    >
+                      #{id}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </TableCell>
             <TableCell>
               <a
