@@ -77,6 +77,10 @@ cp .env.example apps/api/.env
 #   (or REDMINE_API_KEY=... — wins over username/password)
 #   REDMINE_TRACKER_REDEMPTION_ID=<id of your "Odbiór nadgodzin" tracker>
 #   REDMINE_ACTIVITY_OVERTIME_ID=<id of your "Nadgodziny" time-entry activity>
+#   (optional, only for the in-app "New redemption" wizard)
+#   REDMINE_VACATIONS_PROJECT_ID=<id of the "Urlopy" project>
+#   REDMINE_REDEMPTION_ACTIVITY_ID=<id of the time-entry activity used on redemption issues>
+#   USER_INITIALS=OB   # override; auto-derived from Redmine user otherwise
 
 # Initialize DB
 bun --filter @overtide/api db:migrate
@@ -113,13 +117,14 @@ All responses use a typed envelope: `{ data: T }` on success, `{ error: { code, 
 | `/api/unlinked` | GET | Redemptions with `unlinked > 0` (need manual linking) |
 | `/api/relations` | POST | Body `{ from_earning_id, to_redemption_id }` — creates 'relates' in Redmine + mirror |
 | `/api/relations/:id` | DELETE | Only locally-created relations |
+| `/api/redemptions/create` | POST | Body `{ startDate, endDate, totalHours, allocations[] }` — creates the redemption issue, its time entries, and the per-earning `relates` links with `allocated_hours` overrides; mirrors all of them into local SQLite. Backs the in-app **New redemption** wizard on `/redemptions`. |
 
 ## Tests
 
 ```bash
 # Backend
-bun --filter @overtide/api test           # 38 tests
-cd packages/shared && bun test            # 3 tests
+bun --filter @overtide/api test           # 57 tests
+cd packages/shared && bun test            # 19 tests
 ```
 
 Total **41 unit + integration tests**, all green.

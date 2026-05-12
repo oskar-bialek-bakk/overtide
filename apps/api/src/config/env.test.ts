@@ -57,4 +57,31 @@ describe("loadEnv", () => {
     const e = loadEnv({ ...minimal, REDMINE_USERNAME: "u", REDMINE_PASSWORD: "p" });
     expect(e.syncFrom).toBeUndefined();
   });
+
+  it("parses redemption-wizard env vars", () => {
+    const e = loadEnv({
+      ...minimal,
+      REDMINE_USERNAME: "u",
+      REDMINE_PASSWORD: "p",
+      REDMINE_VACATIONS_PROJECT_ID: "12",
+      REDMINE_REDEMPTION_ACTIVITY_ID: "8",
+      USER_INITIALS: "OB",
+    });
+    expect(e.vacationsProjectId).toBe(12);
+    expect(e.redemptionActivityId).toBe(8);
+    expect(e.userInitials).toBe("OB");
+  });
+
+  it("omits optional wizard fields when unset", () => {
+    const e = loadEnv({ ...minimal, REDMINE_USERNAME: "u", REDMINE_PASSWORD: "p" });
+    expect(e.vacationsProjectId).toBeUndefined();
+    expect(e.redemptionActivityId).toBeUndefined();
+    expect(e.userInitials).toBeUndefined();
+  });
+
+  it("rejects too-long USER_INITIALS", () => {
+    expect(() =>
+      loadEnv({ ...minimal, REDMINE_USERNAME: "u", REDMINE_PASSWORD: "p", USER_INITIALS: "ABCDEFG" }),
+    ).toThrow();
+  });
 });
