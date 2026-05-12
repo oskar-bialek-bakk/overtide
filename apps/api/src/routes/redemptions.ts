@@ -94,7 +94,12 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     const earningsById = new Map<number, EarningForDescription>(
       earningRows.map((e) => [e.id, { id: e.id, subject: e.subject }]),
     );
-    const description = buildRedemptionDescription(body.allocations, earningsById);
+    // Honour a client-supplied description verbatim so the user can edit the
+    // preview before submitting; fall back to the auto-built one otherwise.
+    const description =
+      body.description !== undefined && body.description.trim().length > 0
+        ? body.description
+        : buildRedemptionDescription(body.allocations, earningsById);
 
     // 4. Create the Redmine issue.
     const createdIssue = await endpoints.createIssue({

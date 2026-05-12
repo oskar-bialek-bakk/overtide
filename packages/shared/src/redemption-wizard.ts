@@ -14,6 +14,9 @@ export const createRedemptionRequestSchema = z
     endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     totalHours: z.number().positive(),
     allocations: z.array(wizardAllocationSchema).min(1),
+    /** Optional override for the Redmine issue description. When absent the backend
+     *  rebuilds it from allocations via {@link buildRedemptionDescription}. */
+    description: z.string().optional(),
   })
   .refine((v) => v.endDate >= v.startDate, { message: "endDate must be >= startDate", path: ["endDate"] })
   .refine(

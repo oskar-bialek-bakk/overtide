@@ -69,9 +69,11 @@ test("happy path: dates → earnings → preview → create (mocked API)", async
   await page.getByRole("button", { name: /Suggest FIFO/i }).click();
   await page.getByRole("button", { name: "Next" }).click();
 
-  // Step 3 — preview, then create
+  // Step 3 — preview, edit description, then create
   await expect(page.getByText("Odbiór nadgodzin OB 04.05").first()).toBeVisible();
-  await expect(page.getByText(/Odbiór 8h z #114518/).first()).toBeVisible();
+  const description = page.getByTestId("wizard-description");
+  await expect(description).toHaveValue(/Odbiór 8h z #114518/);
+  await description.fill("Edited description for smoke test.");
   await page.getByRole("button", { name: "Create redemption" }).click();
 
   // Dialog closes after success
@@ -81,5 +83,6 @@ test("happy path: dates → earnings → preview → create (mocked API)", async
     endDate: "2026-05-04",
     totalHours: 8,
     allocations: [{ earningId: 114518, hours: 8 }],
+    description: "Edited description for smoke test.",
   });
 });

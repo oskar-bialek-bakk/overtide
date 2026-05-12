@@ -110,4 +110,15 @@ describe("createRedemptionRequestSchema", () => {
       allocations: [],
     })).toThrow();
   });
+
+  it("accepts an optional description override", () => {
+    const r = createRedemptionRequestSchema.parse({
+      startDate: "2026-05-04",
+      endDate: "2026-05-04",
+      totalHours: 8,
+      allocations: [{ earningId: 1, hours: 8 }],
+      description: "edited copy with comments",
+    });
+    expect(r.description).toBe("edited copy with comments");
+  });
 });

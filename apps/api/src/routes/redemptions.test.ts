@@ -131,6 +131,50 @@ describe("POST /api/redemptions/create", () => {
     expect(rels[0]?.allocatedHours).toBe(4);
   });
 
+  it("forwards a client-supplied description verbatim", async () => {
+    let issueBody: { issue: { description: string } } | null = null;
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: { id: 1039, firstname: "Oskar", lastname: "Białek" } })),
+      http.post("https://r.test/issues.json", async ({ request }) => {
+        issueBody = (await request.json()) as { issue: { description: string } };
+        return HttpResponse.json({
+          issue: {
+            id: 999, project: { id: 12, name: "urlopy" }, tracker: { id: 19, name: "T" },
+            status: { id: 1, name: "Nowe", is_closed: false },
+            subject: "Odbiór nadgodzin OB 04.05",
+            start_date: "2026-05-04", due_date: "2026-05-04",
+            created_on: "2026-05-04T10:00:00Z", updated_on: "2026-05-04T10:00:00Z",
+          },
+        }, { status: 201 });
+      }),
+      http.post("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entry: {
+            id: 500, user: { id: 1039 }, issue: { id: 999 },
+            hours: 4, activity: { id: 8, name: "W biurze" }, spent_on: "2026-05-04",
+            comments: "", created_on: "2026-05-04T10:00:00Z", updated_on: "2026-05-04T10:00:00Z",
+          },
+        }, { status: 201 })),
+      http.post("https://r.test/issues/:id/relations.json", ({ params }) =>
+        HttpResponse.json({ relation: { id: 1, issue_id: Number(params.id), issue_to_id: 999, relation_type: "relates" } })),
+    );
+
+    const { db } = seedDb();
+    const app = makeApp(db);
+    const res = await app.request("/api/redemptions/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startDate: "2026-05-04", endDate: "2026-05-04", totalHours: 4,
+        allocations: [{ earningId: 114518, hours: 4 }],
+        description: "Custom description, not the auto-built one.",
+      }),
+    });
+    expect(res.status).toBe(201);
+    expect(issueBody?.issue.description).toBe("Custom description, not the auto-built one.");
+  });
+
   it("rejects when sum(allocations) != totalHours", async () => {
     const { db } = seedDb();
     const app = makeApp(db);

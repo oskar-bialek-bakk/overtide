@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useEarning } from "@/api/queries";
 import { useCreateRedemption } from "@/api/mutations";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,11 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
   const [endDate, setEndDate] = useState(todayISO());
   const [totalHoursInput, setTotalHoursInput] = useState("8");
   const [picks, setPicks] = useState<Map<number, string>>(new Map());
+  // User-editable description override. Stays in sync with the auto-built
+  // string while `descriptionDirty` is false; once the user types into the
+  // textarea we stop overwriting their edits.
+  const [description, setDescription] = useState("");
+  const [descriptionDirty, setDescriptionDirty] = useState(false);
 
   // Reset state every time the dialog opens; avoids stale picks from a
   // previous run leaking into a fresh wizard.
@@ -58,6 +64,8 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
     setEndDate(t);
     setTotalHoursInput("8");
     setPicks(new Map());
+    setDescription("");
+    setDescriptionDirty(false);
   }, [open]);
 
   // Sync default total hours whenever the date range changes — but only if the
@@ -98,6 +106,13 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
   );
   const subjectPreview = buildRedemptionSubject({ startDate, endDate, initials: fallbackInitials });
   const descriptionPreview = buildRedemptionDescription(allocations, earningsById);
+
+  // Keep the textarea in sync with the auto-built preview as long as the user
+  // hasn't typed into it; once they have, treat their value as authoritative.
+  useEffect(() => {
+    if (descriptionDirty) return;
+    setDescription(descriptionPreview);
+  }, [descriptionPreview, descriptionDirty]);
 
   const setHours = (id: number, value: string) => {
     const next = new Map(picks);
@@ -146,6 +161,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
         endDate,
         totalHours,
         allocations,
+        ...(description.trim().length > 0 ? { description } : {}),
       });
       onOpenChange(false);
     } catch {
@@ -317,10 +333,39 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
               </div>
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">Description / time-entry comments</div>
-              <pre className="mt-1 whitespace-pre-wrap rounded-lg border border-border bg-secondary/20 p-3 text-xs text-foreground">
-                {descriptionPreview}
-              </pre>
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-muted-foreground">
+                  Description{descriptionDirty && (
+                    <span className="ml-1 text-amber-500">· edited</span>
+                  )}
+                </div>
+                {descriptionDirty && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDescriptionDirty(false);
+                      setDescription(descriptionPreview);
+                    }}
+                    className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                  >
+                    Reset to auto
+                  </button>
+                )}
+              </div>
+              <Textarea
+                value={description}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  setDescriptionDirty(true);
+                }}
+                rows={Math.max(4, allocations.length + 1)}
+                aria-label="Redemption description"
+                data-testid="wizard-description"
+                className="mt-1 text-xs"
+              />
+              <div className="mt-1 text-xs text-muted-foreground">
+                Time-entry comments are auto-generated per allocation and aren't affected by edits here.
+              </div>
             </div>
             <div>
               <div className="text-xs text-muted-foreground">Relations to create</div>
