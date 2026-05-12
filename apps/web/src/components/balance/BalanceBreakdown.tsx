@@ -4,6 +4,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { Link } from "@tanstack/react-router";
 import { useBalance, useEarning, useUnlinked } from "@/api/queries";
 import { Card, CardContent } from "@/components/ui/card";
+import { chartTooltipProps } from "@/components/charts/tooltip";
 import { cn } from "@/lib/utils";
 import { hours } from "@/lib/format";
 
@@ -73,11 +74,7 @@ export function BalanceBreakdown() {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: 12,
-                      }}
+                      {...chartTooltipProps}
                       formatter={(value: number) => `${value.toFixed(1)}h`}
                     />
                   </PieChart>

@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { useTimeline } from "@/api/queries";
+import { chartTooltipProps } from "@/components/charts/tooltip";
 
 const dayShort = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, {
@@ -68,11 +69,7 @@ export function TimelineChart() {
               width={36}
             />
             <Tooltip
-              contentStyle={{
-                background: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: 12,
-              }}
+              {...chartTooltipProps}
               labelFormatter={(d) => dayShort(d as string)}
               formatter={(v: number, k) => [`${v.toFixed(1)}h`, k]}
             />
