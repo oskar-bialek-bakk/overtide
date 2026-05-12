@@ -2,7 +2,7 @@
 
 Personal Redmine overtime tracker — earn hours under a Redmine **Nadgodziny** time-entry activity, redeem them via **Odbiór nadgodzin** tracker issues linked with `relates`, monitor FIFO balance.
 
-> Status: **Backend v1 — DONE.** Frontend (`apps/web`) coming in Plan B.
+> Status: **Backend v1 — DONE.** Frontend v1 (`apps/web`) — DONE on `feat/overtide-v2-web-bootstrap`.
 > Spec: [`docs/superpowers/specs/2026-05-11-overtide-design.md`](docs/superpowers/specs/2026-05-11-overtide-design.md)
 > Plan A (backend): [`docs/superpowers/plans/2026-05-11-overtide-backend.md`](docs/superpowers/plans/2026-05-11-overtide-backend.md)
 > Plan B (frontend): [`docs/superpowers/plans/2026-05-11-overtide-frontend.md`](docs/superpowers/plans/2026-05-11-overtide-frontend.md)
@@ -23,8 +23,32 @@ Personal Redmine overtime tracker — earn hours under a Redmine **Nadgodziny** 
         │  REST + zod envelope
         │
    ┌────┴──────────┐
-   │   web (TBD)   │  (Plan B)
+   │   web (Vite)  │  React 18 + TanStack Router/Query +
+   │               │  shadcn/ui + Tailwind + Framer + Recharts + cmdk
    └───────────────┘
+```
+
+## Quick start (full stack)
+
+```bash
+bun install
+cp .env.example apps/api/.env
+# edit apps/api/.env (see "Quick start (backend only)" below for the variable list)
+
+bun --filter @overtide/api db:migrate
+bun --filter @overtide/api dev &
+bun --filter @overtide/web dev
+# open http://127.0.0.1:5173
+```
+
+The Vite dev server proxies `/api/*` → `http://127.0.0.1:8787` (the Bun API).
+
+### Tests (full stack)
+
+```bash
+bun --filter @overtide/api test    # 38 tests (Bun + MSW)
+bun --filter @overtide/web test    # vitest unit + component
+bun --filter @overtide/web e2e     # Playwright smoke (boots both servers)
 ```
 
 ## Quick start (backend only)
