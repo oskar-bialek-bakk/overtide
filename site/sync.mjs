@@ -1,13 +1,13 @@
 // Sync the repo README + screenshots into the VitePress site source.
 //
 // Run before `vitepress dev` / `vitepress build`.
-//   - Copies ../README.md to ./index.md (overwrites)
-//   - Mirrors ../docs/screenshots/ to ./public/docs/screenshots/
-//
-// README image paths look like `docs/screenshots/01-dashboard.png` (relative
-// to the repo root). Putting copies under `public/docs/screenshots/` makes
-// VitePress serve them at `/docs/screenshots/...`, so the same paths resolve
-// on both GitHub and the published site without rewriting them.
+//   - Copies ../README.md to ./index.md (overwrites). Image paths get a
+//     leading slash added: `docs/screenshots/…` → `/docs/screenshots/…`.
+//     GitHub renders root-relative paths fine; VitePress needs the leading
+//     slash so Vite serves the images from `public/` instead of trying to
+//     bundle them as relative assets next to `index.md`.
+//   - Mirrors ../docs/screenshots/ to ./public/docs/screenshots/, which is
+//     where the rewritten paths above resolve to.
 
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -33,10 +33,6 @@ outline: false
 
 `;
 
-// On GitHub the README uses paths relative to the repo root
-// (`docs/screenshots/01-dashboard.png`). For VitePress we need them to be
-// site-absolute (`/docs/screenshots/...`) so Vite serves them from `public/`
-// instead of trying to bundle them as relative assets next to `index.md`.
 const readme = readFileSync(README_SRC, "utf8").replace(
   /\]\((docs\/screenshots\/)/g,
   "](/$1",
