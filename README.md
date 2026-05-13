@@ -247,7 +247,7 @@ Wszystkie odpowiedzi w typowanym envelope: `{ data: T }` przy sukcesie, `{ error
 - **Runtime:** Bun 1.3
 - **Backend:** Hono 4 (HTTP), Drizzle ORM 0.36 + `bun:sqlite`, zod 3, pino (z redakcją sekretów)
 - **Frontend:** React 18, Vite, TanStack Router + Query, shadcn/ui, Tailwind, Framer Motion, Recharts, cmdk, lucide-react
-- **Testy:** `bun test` (vitest 2.x nie potrafi rezolwować `bun:sqlite` na Windowsie), MSW do mockowania HTTP, `@sinonjs/fake-timers` do testów retry, Playwright do smoke E2E
+- **Testy:** `bun test` w `apps/api` i `packages/shared` (vitest 2.x nie potrafi rezolwować `bun:sqlite` na Windowsie); Vitest w `apps/web` (unit + komponenty); MSW do mockowania HTTP, `@sinonjs/fake-timers` do testów retry, Playwright do smoke E2E
 - **TypeScript:** strict, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`
 - **Auth do Redmine:** HTTP Basic domyślnie; API key jako override
 - **Binding:** wyłącznie `127.0.0.1`

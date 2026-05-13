@@ -3,14 +3,23 @@
 // Usage (from repo root, both api + web already running):
 //   bun --filter @overtide/web screenshots
 //
-// Output: docs/screenshots/*.png (paths the README links to).
+// Runtime: the npm script runs this under Node, not Bun — Playwright's
+// chromium.launch() handshake times out under Bun on Windows. The script
+// itself is runtime-agnostic (no Bun-specific globals or APIs).
+//
+// Output: docs/screenshots/01-…10-….png — the automated set.
+// One image used in the README is captured manually and skipped here:
+//   10b-redemption-wizard-confirm.png  (success toast after wizard submit;
+//   the wizard mutates real Redmine on submit, so it stays manual on purpose).
 
-import { chromium } from "@playwright/test";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { mkdirSync } from "node:fs";
+import { chromium } from "@playwright/test";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // scripts/screenshots.mjs → apps/web/scripts → up 3 = repo root
-const REPO_ROOT = path.resolve(import.meta.dirname, "..", "..", "..");
+const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
 const OUT = path.join(REPO_ROOT, "docs/screenshots");
 mkdirSync(OUT, { recursive: true });
 
@@ -74,7 +83,7 @@ console.log("-> 09-command-palette");
 await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
 await page.waitForSelector("main");
 await page.waitForTimeout(500);
-await page.keyboard.press("Control+K");
+await page.keyboard.press("ControlOrMeta+K");
 await page.waitForTimeout(600);
 await page.screenshot({
   path: path.join(OUT, "09-command-palette.png"),
