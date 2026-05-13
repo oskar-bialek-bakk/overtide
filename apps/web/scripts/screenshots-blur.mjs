@@ -10,6 +10,9 @@
 //   02-earning.png         — blur subject after `#id` in Issue col + whole Project col
 //   08-issue-detail.png    — blur subject after `#id` in H1, blur "tracker · project"
 //                            subtitle, blur the comment after "— " in each time entry
+//   09-command-palette.png — same Earnings-list blur as 01 (the palette opens over
+//                            the dashboard so subjects peek out from behind it),
+//                            then summon the palette with Ctrl/Cmd+K
 
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -133,6 +136,25 @@ await withBluredScreenshot(
   });
 `,
 );
+
+// 09-command-palette.png — command palette opens over the dashboard, so the
+// earnings list peeks out from behind the modal. Blur subjects there first,
+// then summon the palette and shoot the viewport.
+console.log("-> 09-command-palette: /");
+await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+await page.waitForSelector("main", { timeout: 10_000 });
+await page.addStyleTag({ content: BLUR_STYLE });
+await page.evaluate(`(() => { ${INSTALL_HELPERS};
+  document
+    .querySelectorAll("main a[href^='/issue/'] span.truncate")
+    .forEach((el) => splitIssueLabel(el));
+})()`);
+await page.waitForTimeout(300);
+await page.keyboard.press("ControlOrMeta+K");
+await page.waitForTimeout(600);
+const palettePath = path.join(OUT, "09-command-palette.png");
+await page.screenshot({ path: palettePath, fullPage: false });
+console.log(`   saved ${palettePath}`);
 
 await browser.close();
 console.log("done");
