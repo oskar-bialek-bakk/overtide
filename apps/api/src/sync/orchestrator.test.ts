@@ -74,6 +74,43 @@ describe("runSync", () => {
     expect(rels[0]?.createdLocally).toBe(true);
   });
 
+  it("keeps a manual relation when the other side isn't in this sync's keptIds", async () => {
+    // First sync: full fixture. Second sync: only earning issue 1 has new
+    // entries — redemption 2 is outside this incremental window, so it
+    // never lands in `keptIds`. Redmine still reports the relation on
+    // issue 1, so the manual link must survive.
+    let issuesCalls = 0;
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () => HttpResponse.json({ user: fixtureSync.user })),
+      http.get("https://r.test/time_entries.json", () => {
+        if (issuesCalls === 0) {
+          return HttpResponse.json({ time_entries: fixtureSync.timeEntries, total_count: 3, offset: 0, limit: 100 });
+        }
+        const earningOnly = fixtureSync.timeEntries.filter((t) => t.issue.id === 1);
+        return HttpResponse.json({ time_entries: earningOnly, total_count: earningOnly.length, offset: 0, limit: 100 });
+      }),
+      http.get("https://r.test/issues.json", () => {
+        issuesCalls += 1;
+        if (issuesCalls === 1) return HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 });
+        const earningOnly = fixtureSync.issues.filter((i) => i.id === 1);
+        return HttpResponse.json({ issues: earningOnly, total_count: 1 });
+      }),
+    );
+    const db = memDb();
+    const endpoints = new RedmineEndpoints(new RedmineClient(env));
+
+    await runSync({ db, endpoints, env });
+    // Mark it as manually created so the regression mirrors the real "ręczne linkowanie" path.
+    await db.update(schema.issueRelations).set({ createdLocally: true }).where(eqId(500));
+    expect((await db.select().from(schema.issueRelations)).length).toBe(1);
+
+    await runSync({ db, endpoints, env });
+    const after = await db.select().from(schema.issueRelations);
+    expect(after).toHaveLength(1);
+    expect(after[0]?.id).toBe(500);
+    expect(after[0]?.createdLocally).toBe(true);
+  });
+
   it("drops a relation that Redmine no longer reports", async () => {
     // First sync brings relation 500 in; second sync returns issues without it.
     let callCount = 0;

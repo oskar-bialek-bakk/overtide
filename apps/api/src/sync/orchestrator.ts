@@ -84,25 +84,41 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
       }
 
       for (const { issue } of classified) {
-        const fresh = (issue.relations ?? [])
-          .filter((r) => r.relation_type === "relates")
-          .filter((r) => keptIds.has(r.issue_id) && keptIds.has(r.issue_to_id));
-        const freshIds = new Set(fresh.map((r) => r.id));
+        // Full set Redmine still reports for this issue — used for deletion
+        // reconciliation regardless of whether the other side is in this
+        // incremental window. Filtering deletion by `keptIds` here was a
+        // bug: when only the earning had new TE, manual links to a
+        // redemption outside the window got wiped.
+        const allFresh = (issue.relations ?? []).filter((r) => r.relation_type === "relates");
+        const allFreshIds = new Set(allFresh.map((r) => r.id));
 
-        // Only drop relations Redmine no longer reports for this issue —
-        // wholesale delete would wipe local-only state (allocated_hours,
-        // createdLocally) on links the wizard or the manual linker set up.
         const existingFrom = await tx
           .select({ id: issueRelations.id })
           .from(issueRelations)
           .where(eq(issueRelations.issueFromId, issue.id));
         for (const ex of existingFrom) {
-          if (!freshIds.has(ex.id)) {
+          if (!allFreshIds.has(ex.id)) {
             await tx.delete(issueRelations).where(eq(issueRelations.id, ex.id));
           }
         }
 
-        for (const r of fresh) {
+        // For insert/upsert we still need both sides to exist in `issues`
+        // (FK). The other side may live in `keptIds` (this sync) or already
+        // be in DB from a prior one.
+        const otherIds = Array.from(
+          new Set(allFresh.flatMap((r) => [r.issue_id, r.issue_to_id])),
+        ).filter((id) => !keptIds.has(id));
+        const knownInDb = otherIds.length === 0
+          ? new Set<number>()
+          : new Set(
+              (await tx.select({ id: issues.id }).from(issues).where(inArray(issues.id, otherIds))).map(
+                (x) => x.id,
+              ),
+            );
+        const isKnown = (id: number) => keptIds.has(id) || knownInDb.has(id);
+
+        for (const r of allFresh) {
+          if (!isKnown(r.issue_id) || !isKnown(r.issue_to_id)) continue;
           await tx.insert(issueRelations).values({
             id: r.id, issueFromId: r.issue_id, issueToId: r.issue_to_id,
             relationType: r.relation_type, createdLocally: false,
