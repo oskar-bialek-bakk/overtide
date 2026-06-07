@@ -1,9 +1,9 @@
+import { useBalance } from "@/api/queries";
+import { AnimatedNumber } from "@/components/balance/AnimatedNumber";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Hourglass, TrendingDown, TrendingUp } from "lucide-react";
-import { useBalance } from "@/api/queries";
-import { Card, CardContent } from "@/components/ui/card";
-import { AnimatedNumber } from "@/components/balance/AnimatedNumber";
-import { cn } from "@/lib/utils";
 
 type Tone = "primary" | "muted" | "available";
 
@@ -68,12 +68,7 @@ export function BalanceCard() {
             icon={<Hourglass size={14} />}
           />
           <Stat label="Earned" value={earned} tone="primary" icon={<TrendingUp size={14} />} />
-          <Stat
-            label="Redeemed"
-            value={redeemed}
-            tone="muted"
-            icon={<TrendingDown size={14} />}
-          />
+          <Stat label="Redeemed" value={redeemed} tone="muted" icon={<TrendingDown size={14} />} />
         </CardContent>
       </Card>
     </motion.div>

@@ -1,12 +1,12 @@
+import { useBalance, useEarning, useUnlinked } from "@/api/queries";
+import { chartTooltipProps } from "@/components/charts/tooltip";
+import { Card, CardContent } from "@/components/ui/card";
+import { hours } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { Link } from "@tanstack/react-router";
-import { useBalance, useEarning, useUnlinked } from "@/api/queries";
-import { Card, CardContent } from "@/components/ui/card";
-import { chartTooltipProps } from "@/components/charts/tooltip";
-import { cn } from "@/lib/utils";
-import { hours } from "@/lib/format";
 
 type Slice = { name: string; value: number; fill: string };
 type View = "remaining" | "all";
@@ -36,7 +36,11 @@ export function BalanceBreakdown() {
 
   const breakdown: Slice[] = [];
   if (totalRedeemed > 0)
-    breakdown.push({ name: "Redeemed", value: totalRedeemed, fill: "hsl(var(--muted-foreground))" });
+    breakdown.push({
+      name: "Redeemed",
+      value: totalRedeemed,
+      fill: "hsl(var(--muted-foreground))",
+    });
   if (totalAvailable > 0)
     breakdown.push({ name: "Available", value: totalAvailable, fill: "hsl(var(--primary))" });
 
@@ -93,9 +97,7 @@ export function BalanceBreakdown() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm uppercase tracking-wider text-muted-foreground">
-                Earnings
-              </div>
+              <div className="text-sm uppercase tracking-wider text-muted-foreground">Earnings</div>
               <div
                 role="tablist"
                 aria-label="Earnings view"
@@ -161,7 +163,8 @@ export function BalanceBreakdown() {
               </div>
             )}
             <div className="mt-3 text-[11px] text-muted-foreground">
-              Earned {hours(totalEarned)} · Redeemed {hours(totalRedeemed)} · Available {hours(totalAvailable)}
+              Earned {hours(totalEarned)} · Redeemed {hours(totalRedeemed)} · Available{" "}
+              {hours(totalAvailable)}
             </div>
           </div>
         </CardContent>

@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { EarningTable } from "@/components/issues/EarningTable";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/earning")({
   component: () => (

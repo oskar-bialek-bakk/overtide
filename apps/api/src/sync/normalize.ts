@@ -1,10 +1,14 @@
-import type { RedmineIssue, RedmineTimeEntry } from "../redmine/types";
 import type { issues as IssuesTable, timeEntries as TETable } from "../db/schema";
+import type { RedmineIssue, RedmineTimeEntry } from "../redmine/types";
 
 type IssueRow = typeof IssuesTable.$inferInsert;
 type TimeEntryRow = typeof TETable.$inferInsert;
 
-export function normalizeIssue(i: RedmineIssue, role: "earning" | "redemption", redmineBaseUrl: string): IssueRow {
+export function normalizeIssue(
+  i: RedmineIssue,
+  role: "earning" | "redemption",
+  redmineBaseUrl: string,
+): IssueRow {
   return {
     id: i.id,
     role,

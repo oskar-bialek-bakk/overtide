@@ -39,6 +39,7 @@ Thumbs.db
 *.log
 
 # Misc
+.claude/
 *.tmp
 *.bak
 scratch/

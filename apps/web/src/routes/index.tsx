@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { BalanceCard } from "@/components/balance/BalanceCard";
 import { BalanceBreakdown } from "@/components/balance/BalanceBreakdown";
-import { UnlinkedBanner } from "@/components/warnings/UnlinkedBanner";
+import { BalanceCard } from "@/components/balance/BalanceCard";
 import { DeficitBanner } from "@/components/warnings/DeficitBanner";
+import { UnlinkedBanner } from "@/components/warnings/UnlinkedBanner";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: () => (

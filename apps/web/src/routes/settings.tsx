@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useHealth } from "@/api/queries";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { createFileRoute } from "@tanstack/react-router";
 
 function SettingsPage() {
   const q = useHealth();

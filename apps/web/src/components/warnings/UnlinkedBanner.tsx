@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
-import { TriangleAlert } from "lucide-react";
 import { useUnlinked } from "@/api/queries";
 import { hours } from "@/lib/format";
+import { Link } from "@tanstack/react-router";
+import { TriangleAlert } from "lucide-react";
 
 export function UnlinkedBanner() {
   const q = useUnlinked();

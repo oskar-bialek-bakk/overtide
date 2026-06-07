@@ -2,7 +2,12 @@ import type { Env } from "../config/env";
 import { buildAuthHeaders } from "./auth";
 
 export class RedmineError extends Error {
-  constructor(public code: string, public status: number, public path: string, message: string) {
+  constructor(
+    public code: string,
+    public status: number,
+    public path: string,
+    message: string,
+  ) {
     super(message);
   }
 }
@@ -13,9 +18,13 @@ const MAX_ATTEMPTS = 3;
 export class RedmineClient {
   constructor(private env: Env) {}
 
-  async get(path: string, params: Record<string, string | number | undefined> = {}): Promise<unknown> {
+  async get(
+    path: string,
+    params: Record<string, string | number | undefined> = {},
+  ): Promise<unknown> {
     const url = new URL(this.env.redmineUrl + path);
-    for (const [k, v] of Object.entries(params)) if (v !== undefined) url.searchParams.set(k, String(v));
+    for (const [k, v] of Object.entries(params))
+      if (v !== undefined) url.searchParams.set(k, String(v));
     return this.request("GET", url.toString());
   }
 
@@ -31,16 +40,17 @@ export class RedmineClient {
     let lastErr: unknown;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       try {
-        const res = await fetch(url, {
+        const init: RequestInit = {
           method,
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
             ...buildAuthHeaders(this.env),
           },
-          body: body ? JSON.stringify(body) : undefined,
           signal: AbortSignal.timeout(TIMEOUT_MS),
-        });
+        };
+        if (body !== undefined) init.body = JSON.stringify(body);
+        const res = await fetch(url, init);
         if (res.status === 401 || res.status === 403) {
           throw new RedmineError("REDMINE_AUTH_FAILED", res.status, url, "auth failed");
         }
@@ -51,7 +61,9 @@ export class RedmineClient {
           }
           throw new RedmineError(
             res.status === 429 ? "REDMINE_RATE_LIMITED" : `REDMINE_HTTP_${res.status}`,
-            res.status, url, `failed after ${MAX_ATTEMPTS} attempts`,
+            res.status,
+            url,
+            `failed after ${MAX_ATTEMPTS} attempts`,
           );
         }
         if (!res.ok) {

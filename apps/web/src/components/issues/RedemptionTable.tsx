@@ -1,5 +1,4 @@
-import { Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { useRedemption } from "@/api/queries";
 import { Badge, badgeVariants } from "@/components/ui/badge";
 import {
   Table,
@@ -9,9 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useRedemption } from "@/api/queries";
-import { cn } from "@/lib/utils";
 import { dateShort, hours } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
+import { ExternalLink } from "lucide-react";
 
 export function RedemptionTable() {
   const q = useRedemption();
@@ -27,18 +27,14 @@ export function RedemptionTable() {
           <TableHead className="text-right">Covered</TableHead>
           <TableHead className="text-right">Unlinked</TableHead>
           <TableHead>Linked OT</TableHead>
-          <TableHead></TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>
         {q.data.map((r) => (
           <TableRow key={r.id} className="hover:bg-secondary/40">
             <TableCell>
-              <Link
-                to="/issue/$id"
-                params={{ id: String(r.id) }}
-                className="hover:underline"
-              >
+              <Link to="/issue/$id" params={{ id: String(r.id) }} className="hover:underline">
                 #{r.id} {r.subject}
               </Link>
             </TableCell>

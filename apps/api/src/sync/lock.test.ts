@@ -1,9 +1,9 @@
 import { Database } from "bun:sqlite";
+import { describe, expect, it } from "bun:test";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
-import { describe, expect, it } from "bun:test";
 import * as schema from "../db/schema";
-import { acquireSyncRun, finishSyncRun, SyncInProgressError } from "./lock";
+import { SyncInProgressError, acquireSyncRun, finishSyncRun } from "./lock";
 
 function memDb() {
   const sqlite = new Database(":memory:");
@@ -28,7 +28,12 @@ describe("sync lock", () => {
   it("allows new acquire after finish", async () => {
     const db = memDb();
     const first = await acquireSyncRun(db);
-    await finishSyncRun(db, first.id, { status: "success", issuesUpserted: 1, timeEntriesUpserted: 2, relationsUpserted: 3 });
+    await finishSyncRun(db, first.id, {
+      status: "success",
+      issuesUpserted: 1,
+      timeEntriesUpserted: 2,
+      relationsUpserted: 3,
+    });
     const second = await acquireSyncRun(db);
     expect(second.id).not.toBe(first.id);
   });

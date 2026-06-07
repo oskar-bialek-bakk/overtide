@@ -1,7 +1,7 @@
 import type { ErrorHandler } from "hono";
 import { ZodError } from "zod";
-import { logger } from "../lib/logger";
 import { AppError, fail } from "../lib/envelope";
+import { logger } from "../lib/logger";
 
 export const errorHandler: ErrorHandler = (err, c) => {
   if (err instanceof AppError) return fail(c, err);
@@ -16,9 +16,7 @@ export const errorHandler: ErrorHandler = (err, c) => {
   const message =
     err instanceof Error
       ? err.message
-      : isObj &&
-          "message" in err &&
-          typeof (err as { message: unknown }).message === "string"
+      : isObj && "message" in err && typeof (err as { message: unknown }).message === "string"
         ? (err as { message: string }).message
         : String(err);
   logger.error({ err }, "unhandled error");

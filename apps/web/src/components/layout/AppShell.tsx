@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { CommandPalette } from "@/components/command/CommandPalette";
+import type { ReactNode } from "react";
 import { TopBar } from "./TopBar";
 
 export function AppShell({ children }: { children: ReactNode }) {

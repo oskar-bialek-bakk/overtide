@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite";
-import { drizzle } from "drizzle-orm/bun-sqlite";
-import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
+import { drizzle } from "drizzle-orm/bun-sqlite";
+import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 
 const dbPath = process.env.DB_PATH ?? "./data/overtide.db";
 

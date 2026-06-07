@@ -1,5 +1,5 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { invalidateRelationQueries, useCreateRelation } from "@/api/mutations";
+import { useEarning } from "@/api/queries";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,10 +9,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useEarning } from "@/api/queries";
-import { invalidateRelationQueries, useCreateRelation } from "@/api/mutations";
-import { cn } from "@/lib/utils";
 import { dateShort, hours } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 
 type Props = {
   open: boolean;
@@ -48,9 +48,7 @@ export function RelationLinker({
     () =>
       (earningQuery.data ?? [])
         .filter((e) => e.remaining > 0)
-        .sort(
-          (a, b) => a.anchorDate.localeCompare(b.anchorDate) || a.id - b.id,
-        ),
+        .sort((a, b) => a.anchorDate.localeCompare(b.anchorDate) || a.id - b.id),
     [earningQuery.data],
   );
 
@@ -111,8 +109,8 @@ export function RelationLinker({
         <DialogHeader>
           <DialogTitle>Link earnings to #{redemptionId}</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            {redemptionSubject} — needs {hours(unlinkedHours)}. Leave hours blank
-            to let FIFO decide; enter a number to lock that exact amount in.
+            {redemptionSubject} — needs {hours(unlinkedHours)}. Leave hours blank to let FIFO
+            decide; enter a number to lock that exact amount in.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -125,8 +123,7 @@ export function RelationLinker({
             const pick = picks.get(c.id);
             const isOn = pick !== undefined;
             const overrideHours = pick ? parseHours(pick.hoursInput) : null;
-            const overrideTooHigh =
-              overrideHours != null && overrideHours > c.remaining + 0.001;
+            const overrideTooHigh = overrideHours != null && overrideHours > c.remaining + 0.001;
             return (
               <div
                 key={c.id}
@@ -179,7 +176,12 @@ export function RelationLinker({
         </div>
         <div className="text-xs text-muted-foreground pt-1">
           Explicit total: <strong className="tabular-nums">{hours(explicitTotal)}</strong>
-          {greedyCount > 0 && <> · {greedyCount} link{greedyCount > 1 ? "s" : ""} on FIFO auto</>}
+          {greedyCount > 0 && (
+            <>
+              {" "}
+              · {greedyCount} link{greedyCount > 1 ? "s" : ""} on FIFO auto
+            </>
+          )}
           {explicitOver && (
             <span className="text-destructive ml-2">
               over by {hours(explicitTotal - unlinkedHours)} — trim before linking
@@ -187,11 +189,7 @@ export function RelationLinker({
           )}
         </div>
         <div className="flex items-center justify-between pt-2">
-          <Button
-            variant="ghost"
-            onClick={suggestFifo}
-            disabled={candidates.length === 0}
-          >
+          <Button variant="ghost" onClick={suggestFifo} disabled={candidates.length === 0}>
             Suggest FIFO
           </Button>
           <div className="flex gap-2">
@@ -202,9 +200,7 @@ export function RelationLinker({
               onClick={linkAll}
               disabled={picks.size === 0 || mutation.isPending || explicitOver}
             >
-              {mutation.isPending
-                ? "Linking…"
-                : `Link selected (${picks.size})`}
+              {mutation.isPending ? "Linking…" : `Link selected (${picks.size})`}
             </Button>
           </div>
         </div>

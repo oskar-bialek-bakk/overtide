@@ -1,6 +1,6 @@
+import type { CreateRedemptionRequest, CreateRedemptionResponse } from "@overtide/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { CreateRedemptionRequest, CreateRedemptionResponse } from "@overtide/shared";
 import { ApiClientError, apiFetch } from "./client";
 import { qk } from "./queries";
 
@@ -17,9 +17,7 @@ export function useRunSync() {
   return useMutation({
     mutationFn: () => apiFetch<SyncResult>("/api/sync", { method: "POST" }),
     onSuccess: (r) => {
-      toast.success(
-        `Synced — ${r.issuesUpserted} issues, ${r.timeEntriesUpserted} entries`,
-      );
+      toast.success(`Synced — ${r.issuesUpserted} issues, ${r.timeEntriesUpserted} entries`);
       qc.invalidateQueries();
     },
     onError: (e) => {
@@ -27,9 +25,7 @@ export function useRunSync() {
         toast.warning("A sync is already running");
         return;
       }
-      toast.error(
-        e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e),
-      );
+      toast.error(e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e));
     },
   });
 }
@@ -62,9 +58,7 @@ export function useCreateRelation(opts: { skipInvalidate?: boolean } = {}) {
       invalidateRelationQueries(qc);
     },
     onError: (e) =>
-      toast.error(
-        e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e),
-      ),
+      toast.error(e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e)),
   });
 }
 

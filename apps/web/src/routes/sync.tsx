@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useSyncHistory } from "@/api/queries";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSyncHistory } from "@/api/queries";
+import { createFileRoute } from "@tanstack/react-router";
 
 function SyncPage() {
   const q = useSyncHistory();
@@ -46,15 +46,9 @@ function SyncPage() {
                   {r.status}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {r.issuesUpserted}
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {r.timeEntriesUpserted}
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {r.relationsUpserted}
-              </TableCell>
+              <TableCell className="text-right tabular-nums">{r.issuesUpserted}</TableCell>
+              <TableCell className="text-right tabular-nums">{r.timeEntriesUpserted}</TableCell>
+              <TableCell className="text-right tabular-nums">{r.relationsUpserted}</TableCell>
               <TableCell className="text-sm text-muted-foreground max-w-md truncate">
                 {r.errorMessage ?? "—"}
               </TableCell>

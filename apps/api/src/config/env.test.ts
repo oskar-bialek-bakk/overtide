@@ -9,7 +9,12 @@ const minimal = {
 
 describe("loadEnv", () => {
   it("prefers API key when both auth methods set", () => {
-    const e = loadEnv({ ...minimal, REDMINE_API_KEY: "abc", REDMINE_USERNAME: "u", REDMINE_PASSWORD: "p" });
+    const e = loadEnv({
+      ...minimal,
+      REDMINE_API_KEY: "abc",
+      REDMINE_USERNAME: "u",
+      REDMINE_PASSWORD: "p",
+    });
     expect(e.auth.kind).toBe("apiKey");
   });
 
@@ -29,7 +34,14 @@ describe("loadEnv", () => {
   });
 
   it("rejects invalid URL", () => {
-    expect(() => loadEnv({ ...minimal, REDMINE_URL: "not-a-url", REDMINE_USERNAME: "u", REDMINE_PASSWORD: "p" })).toThrow();
+    expect(() =>
+      loadEnv({
+        ...minimal,
+        REDMINE_URL: "not-a-url",
+        REDMINE_USERNAME: "u",
+        REDMINE_PASSWORD: "p",
+      }),
+    ).toThrow();
   });
 
   it("accepts a valid REDMINE_SYNC_FROM date", () => {
@@ -81,7 +93,12 @@ describe("loadEnv", () => {
 
   it("rejects too-long USER_INITIALS", () => {
     expect(() =>
-      loadEnv({ ...minimal, REDMINE_USERNAME: "u", REDMINE_PASSWORD: "p", USER_INITIALS: "ABCDEFG" }),
+      loadEnv({
+        ...minimal,
+        REDMINE_USERNAME: "u",
+        REDMINE_PASSWORD: "p",
+        USER_INITIALS: "ABCDEFG",
+      }),
     ).toThrow();
   });
 });

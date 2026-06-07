@@ -1,9 +1,9 @@
-import { Hono } from "hono";
 import { eq } from "drizzle-orm";
-import type { Db } from "../db/client";
+import { Hono } from "hono";
 import type { Env } from "../config/env";
-import { issues, issueRelations, timeEntries } from "../db/schema";
+import type { Db } from "../db/client";
 import { fetchEarnings, fetchRedemptions, fetchRelations } from "../db/queries";
+import { issueRelations, issues, timeEntries } from "../db/schema";
 import { AppError, ok } from "../lib/envelope";
 import { computeFIFO } from "../matching/fifo";
 
@@ -38,8 +38,17 @@ export function issuesRoutes(deps: { db: Db; env: Env }) {
       linkedByR.set(rel.redemptionId, arr);
     }
     const data = redemptions.map((rd) => {
-      const m = fifo.perRedemption.get(rd.id) ?? { requested: rd.requested, covered: 0, unlinked: rd.requested };
-      return { ...rd, ...m, role: "redemption" as const, linkedEarningIds: linkedByR.get(rd.id) ?? [] };
+      const m = fifo.perRedemption.get(rd.id) ?? {
+        requested: rd.requested,
+        covered: 0,
+        unlinked: rd.requested,
+      };
+      return {
+        ...rd,
+        ...m,
+        role: "redemption" as const,
+        linkedEarningIds: linkedByR.get(rd.id) ?? [],
+      };
     });
     return ok(c, data);
   });
@@ -50,9 +59,14 @@ export function issuesRoutes(deps: { db: Db; env: Env }) {
     const [issue] = await deps.db.select().from(issues).where(eq(issues.id, id)).limit(1);
     if (!issue) throw new AppError("NOT_FOUND", 404, `issue ${id} not found`);
     const tEntries = await deps.db.select().from(timeEntries).where(eq(timeEntries.issueId, id));
-    const rels = await deps.db.select().from(issueRelations).where(
-      issue.role === "earning" ? eq(issueRelations.issueFromId, id) : eq(issueRelations.issueToId, id),
-    );
+    const rels = await deps.db
+      .select()
+      .from(issueRelations)
+      .where(
+        issue.role === "earning"
+          ? eq(issueRelations.issueFromId, id)
+          : eq(issueRelations.issueToId, id),
+      );
     return ok(c, { issue, timeEntries: tEntries, relations: rels });
   });
 

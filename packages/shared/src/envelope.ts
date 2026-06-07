@@ -7,10 +7,12 @@ export const apiErrorSchema = z.object({
 });
 export type ApiError = z.infer<typeof apiErrorSchema>;
 
-export const apiMetaSchema = z.object({
-  total: z.number().optional(),
-  lastSync: z.string().optional(),
-}).optional();
+export const apiMetaSchema = z
+  .object({
+    total: z.number().optional(),
+    lastSync: z.string().optional(),
+  })
+  .optional();
 export type ApiMeta = z.infer<typeof apiMetaSchema>;
 
 export const apiResponseSchema = <T extends z.ZodTypeAny>(data: T) =>

@@ -1,20 +1,20 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { eq, inArray } from "drizzle-orm";
 import {
+  type EarningForDescription,
   buildRedemptionDescription,
   buildRedemptionSubject,
   createRedemptionRequestSchema,
   deriveInitials,
-  type EarningForDescription,
 } from "@overtide/shared";
-import type { Db } from "../db/client";
+import { eq, inArray } from "drizzle-orm";
+import { Hono } from "hono";
 import type { Env } from "../config/env";
-import { issues, issueRelations, timeEntries } from "../db/schema";
+import type { Db } from "../db/client";
 import { fetchEarnings, fetchRedemptions, fetchRelations } from "../db/queries";
+import { issueRelations, issues, timeEntries } from "../db/schema";
 import { AppError, ok } from "../lib/envelope";
-import { computeFIFO } from "../matching/fifo";
 import { logger } from "../lib/logger";
+import { computeFIFO } from "../matching/fifo";
 import { RedmineClient } from "../redmine/client";
 import { RedmineEndpoints } from "../redmine/endpoints";
 
@@ -37,7 +37,11 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     const earningIds = body.allocations.map((a) => a.earningId);
     const uniqueIds = new Set(earningIds);
     if (uniqueIds.size !== earningIds.length) {
-      throw new AppError("DUPLICATE_EARNING", 400, "each earning may appear only once in allocations");
+      throw new AppError(
+        "DUPLICATE_EARNING",
+        400,
+        "each earning may appear only once in allocations",
+      );
     }
     const earningRows = await deps.db
       .select()
@@ -63,7 +67,11 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     for (const alloc of body.allocations) {
       const cap = fifo.perEarning.get(alloc.earningId);
       if (!cap) {
-        throw new AppError("EARNING_NOT_TRACKED", 400, `earning ${alloc.earningId} has no FIFO entry`);
+        throw new AppError(
+          "EARNING_NOT_TRACKED",
+          400,
+          `earning ${alloc.earningId} has no FIFO entry`,
+        );
       }
       if (alloc.hours > cap.remaining + EPSILON) {
         throw new AppError(
@@ -77,12 +85,13 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     // 2. Resolve the user + initials.
     const endpoints = new RedmineEndpoints(new RedmineClient(deps.env));
     const user = await endpoints.currentUser();
-    const initials =
-      deps.env.userInitials?.trim() ||
-      deriveInitials(user) ||
-      undefined;
+    const initials = deps.env.userInitials?.trim() || deriveInitials(user) || undefined;
     if (!initials) {
-      throw new AppError("INITIALS_UNRESOLVED", 500, "could not derive initials from Redmine user; set USER_INITIALS");
+      throw new AppError(
+        "INITIALS_UNRESOLVED",
+        500,
+        "could not derive initials from Redmine user; set USER_INITIALS",
+      );
     }
 
     // 3. Build subject + description.
@@ -120,14 +129,21 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     type TePlan = { spentOn: string; earningId: number; hours: number };
     const tePlans: TePlan[] = body.daySchedule
       ? planTimeEntries(body.daySchedule, body.allocations, body.totalHours)
-      : body.allocations.map((a) => ({ spentOn: body.startDate, earningId: a.earningId, hours: a.hours }));
+      : body.allocations.map((a) => ({
+          spentOn: body.startDate,
+          earningId: a.earningId,
+          hours: a.hours,
+        }));
 
     // Best-effort downstream: time entries + relations. On partial failure we
     // mirror whatever Redmine accepted and return the issue with a warning so
     // the user can finish in the Redmine UI.
     const warnings: string[] = [];
     const createdTimeEntries: Array<{
-      teId: number; plan: TePlan; activityName: string; comments: string;
+      teId: number;
+      plan: TePlan;
+      activityName: string;
+      comments: string;
     }> = [];
     for (const plan of tePlans) {
       const lineComment = `Odbiór ${formatHours(plan.hours)}h z #${plan.earningId} (${earningsById.get(plan.earningId)?.subject ?? "brak danych"})`;
@@ -139,20 +155,34 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
           spentOn: plan.spentOn,
           comments: lineComment,
         });
-        createdTimeEntries.push({ teId: te.id, plan, activityName: te.activity.name, comments: lineComment });
+        createdTimeEntries.push({
+          teId: te.id,
+          plan,
+          activityName: te.activity.name,
+          comments: lineComment,
+        });
       } catch (e) {
-        warnings.push(`time entry for earning ${plan.earningId} on ${plan.spentOn} failed: ${(e as Error).message}`);
-        logger.error({ err: e, plan, issueId: createdIssue.id }, "create-redemption time-entry failed");
+        warnings.push(
+          `time entry for earning ${plan.earningId} on ${plan.spentOn} failed: ${(e as Error).message}`,
+        );
+        logger.error(
+          { err: e, plan, issueId: createdIssue.id },
+          "create-redemption time-entry failed",
+        );
       }
     }
-    const createdRelations: Array<{ relId: number; alloc: { earningId: number; hours: number } }> = [];
+    const createdRelations: Array<{ relId: number; alloc: { earningId: number; hours: number } }> =
+      [];
     for (const alloc of body.allocations) {
       try {
         const rel = await endpoints.createRelation(alloc.earningId, createdIssue.id);
         createdRelations.push({ relId: rel.id, alloc });
       } catch (e) {
         warnings.push(`relation for earning ${alloc.earningId} failed: ${(e as Error).message}`);
-        logger.error({ err: e, allocation: alloc, issueId: createdIssue.id }, "create-redemption relation failed");
+        logger.error(
+          { err: e, allocation: alloc, issueId: createdIssue.id },
+          "create-redemption relation failed",
+        );
       }
     }
 
@@ -227,7 +257,14 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
 
     const warning = warnings.length > 0 ? warnings.join("; ") : null;
     return c.json(
-      { data: { issueId: createdIssue.id, url, subject: createdIssue.subject, ...(warning ? { warning } : {}) } },
+      {
+        data: {
+          issueId: createdIssue.id,
+          url,
+          subject: createdIssue.subject,
+          ...(warning ? { warning } : {}),
+        },
+      },
       201,
     );
   });

@@ -35,7 +35,9 @@ export type Env = {
   logLevel: string;
 };
 
-export function loadEnv(source: NodeJS.ProcessEnv | Record<string, string | undefined> = process.env): Env {
+export function loadEnv(
+  source: NodeJS.ProcessEnv | Record<string, string | undefined> = process.env,
+): Env {
   const parsed = rawSchema.parse(source);
 
   let auth: Env["auth"];
@@ -44,7 +46,9 @@ export function loadEnv(source: NodeJS.ProcessEnv | Record<string, string | unde
   } else if (parsed.REDMINE_USERNAME && parsed.REDMINE_PASSWORD) {
     auth = { kind: "basic", username: parsed.REDMINE_USERNAME, password: parsed.REDMINE_PASSWORD };
   } else {
-    throw new Error("AUTH_NOT_CONFIGURED: set REDMINE_API_KEY or REDMINE_USERNAME+REDMINE_PASSWORD");
+    throw new Error(
+      "AUTH_NOT_CONFIGURED: set REDMINE_API_KEY or REDMINE_USERNAME+REDMINE_PASSWORD",
+    );
   }
 
   return {
@@ -52,8 +56,12 @@ export function loadEnv(source: NodeJS.ProcessEnv | Record<string, string | unde
     auth,
     redemptionTrackerId: parsed.REDMINE_TRACKER_REDEMPTION_ID,
     overtimeActivityId: parsed.REDMINE_ACTIVITY_OVERTIME_ID,
-    ...(parsed.REDMINE_VACATIONS_PROJECT_ID ? { vacationsProjectId: parsed.REDMINE_VACATIONS_PROJECT_ID } : {}),
-    ...(parsed.REDMINE_REDEMPTION_ACTIVITY_ID ? { redemptionActivityId: parsed.REDMINE_REDEMPTION_ACTIVITY_ID } : {}),
+    ...(parsed.REDMINE_VACATIONS_PROJECT_ID
+      ? { vacationsProjectId: parsed.REDMINE_VACATIONS_PROJECT_ID }
+      : {}),
+    ...(parsed.REDMINE_REDEMPTION_ACTIVITY_ID
+      ? { redemptionActivityId: parsed.REDMINE_REDEMPTION_ACTIVITY_ID }
+      : {}),
     ...(parsed.USER_INITIALS ? { userInitials: parsed.USER_INITIALS } : {}),
     ...(parsed.REDMINE_SYNC_FROM ? { syncFrom: parsed.REDMINE_SYNC_FROM } : {}),
     port: parsed.PORT,

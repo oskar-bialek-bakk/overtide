@@ -1,11 +1,7 @@
-import type { QueryClient } from "@tanstack/react-query";
-import {
-  Outlet,
-  createRootRouteWithContext,
-  useRouterState,
-} from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
 import { AppShell } from "@/components/layout/AppShell";
+import type { QueryClient } from "@tanstack/react-query";
+import { Outlet, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
 
 function RootLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });

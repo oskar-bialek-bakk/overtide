@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import type { Db } from "../db/client";
 import type { Env } from "../config/env";
+import type { Db } from "../db/client";
 import { fetchEarnings, fetchRedemptions, fetchRelations } from "../db/queries";
 import { ok } from "../lib/envelope";
 import { computeFIFO } from "../matching/fifo";
@@ -23,7 +23,11 @@ export function unlinkedRoutes(deps: { db: Db; env: Env }) {
     const data = redemptions
       .map((rd) => ({ rd, m: fifo.perRedemption.get(rd.id) }))
       .filter(({ m }) => (m?.unlinked ?? 0) > 0)
-      .map(({ rd, m }) => ({ ...rd, ...(m ?? { requested: rd.requested, covered: 0, unlinked: rd.requested }), linkedEarningIds: linkedByR.get(rd.id) ?? [] }));
+      .map(({ rd, m }) => ({
+        ...rd,
+        ...(m ?? { requested: rd.requested, covered: 0, unlinked: rd.requested }),
+        linkedEarningIds: linkedByR.get(rd.id) ?? [],
+      }));
     return ok(c, data);
   });
   return r;

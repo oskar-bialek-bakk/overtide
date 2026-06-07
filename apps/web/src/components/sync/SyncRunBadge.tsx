@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
 import { useHealth } from "@/api/queries";
+import { Link } from "@tanstack/react-router";
 
 function relativeTime(iso: string | null): string {
   if (!iso) return "never";

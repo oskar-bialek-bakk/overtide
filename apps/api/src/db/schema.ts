@@ -1,5 +1,13 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  check,
+  index,
+  integer,
+  real,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 
 export const issues = sqliteTable(
   "issues",
@@ -29,7 +37,9 @@ export const timeEntries = sqliteTable(
   "time_entries",
   {
     id: integer("id").primaryKey(),
-    issueId: integer("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
+    issueId: integer("issue_id")
+      .notNull()
+      .references(() => issues.id, { onDelete: "cascade" }),
     userId: integer("user_id").notNull(),
     hours: real("hours").notNull(),
     activityId: integer("activity_id").notNull(),
@@ -50,8 +60,12 @@ export const issueRelations = sqliteTable(
   "issue_relations",
   {
     id: integer("id").primaryKey(),
-    issueFromId: integer("issue_from_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-    issueToId: integer("issue_to_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
+    issueFromId: integer("issue_from_id")
+      .notNull()
+      .references(() => issues.id, { onDelete: "cascade" }),
+    issueToId: integer("issue_to_id")
+      .notNull()
+      .references(() => issues.id, { onDelete: "cascade" }),
     relationType: text("relation_type").notNull(),
     createdLocally: integer("created_locally", { mode: "boolean" }).notNull().default(false),
     mirroredAt: text("mirrored_at").notNull(),

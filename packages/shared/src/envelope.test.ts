@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { apiResponseSchema, type ApiResponse } from "./envelope";
 import { z } from "zod";
+import { type ApiResponse, apiResponseSchema } from "./envelope";
 
 describe("apiResponseSchema", () => {
   const wrap = apiResponseSchema(z.object({ value: z.number() }));

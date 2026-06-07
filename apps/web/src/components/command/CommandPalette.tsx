@@ -1,7 +1,7 @@
+import { useRunSync } from "@/api/mutations";
 import { useNavigate } from "@tanstack/react-router";
 import { Command } from "cmdk";
 import { useEffect, useState } from "react";
-import { useRunSync } from "@/api/mutations";
 
 const PAGES: ReadonlyArray<readonly [string, string]> = [
   ["/", "Dashboard"],
