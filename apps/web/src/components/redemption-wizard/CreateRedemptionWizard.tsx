@@ -1,4 +1,4 @@
-import { useCreateRedemption } from "@/api/mutations";
+import { useCreateRedemption, useRetryRedemptionOperation } from "@/api/mutations";
 import { useEarning } from "@/api/queries";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +35,11 @@ type Step = "dates" | "earnings" | "days" | "preview";
 const STEPS: Step[] = ["dates", "earnings", "days", "preview"];
 
 type DayRow = { date: string; hoursInput: string };
+type PartialRedemptionResult = {
+  issueId: number;
+  warning: string;
+  retryableOperationId: number;
+};
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
@@ -47,6 +52,7 @@ function parseHours(s: string): number | null {
 export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = "OB" }: Props) {
   const earningQuery = useEarning();
   const mutation = useCreateRedemption();
+  const retryMutation = useRetryRedemptionOperation();
   const [step, setStep] = useState<Step>("dates");
   const [startDate, setStartDate] = useState(todayISO());
   const [endDate, setEndDate] = useState(todayISO());
@@ -62,6 +68,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
   // their edits and stop overwriting.
   const [dayRows, setDayRows] = useState<DayRow[]>([]);
   const [dayRowsDirty, setDayRowsDirty] = useState(false);
+  const [partialResult, setPartialResult] = useState<PartialRedemptionResult | null>(null);
 
   // Reset state every time the dialog opens; avoids stale picks from a
   // previous run leaking into a fresh wizard.
@@ -77,6 +84,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
     setDescriptionDirty(false);
     setDayRows([]);
     setDayRowsDirty(false);
+    setPartialResult(null);
   }, [open]);
 
   // Sync default total hours whenever the date range changes — but only if the
@@ -201,7 +209,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
 
   const submit = async () => {
     try {
-      await mutation.mutateAsync({
+      const result = await mutation.mutateAsync({
         startDate,
         endDate,
         totalHours,
@@ -209,9 +217,34 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
         ...(description.trim().length > 0 ? { description } : {}),
         ...(daySchedule.length > 0 ? { daySchedule } : {}),
       });
+      if (result.warning && result.retryableOperationId) {
+        setPartialResult({
+          issueId: result.issueId,
+          warning: result.warning,
+          retryableOperationId: result.retryableOperationId,
+        });
+        return;
+      }
       onOpenChange(false);
     } catch {
       /* useCreateRedemption shows the toast; keep the wizard open so the user can retry */
+    }
+  };
+
+  const retryPartial = async () => {
+    if (!partialResult) return;
+    try {
+      const result = await retryMutation.mutateAsync(partialResult.retryableOperationId);
+      if (result.status === "success") {
+        setPartialResult(null);
+        onOpenChange(false);
+        return;
+      }
+      setPartialResult((prev) =>
+        prev ? { ...prev, warning: result.warning ?? "Retry still has warnings" } : prev,
+      );
+    } catch {
+      /* useRetryRedemptionOperation shows the toast; keep the partial panel open */
     }
   };
 
@@ -420,6 +453,22 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
 
         {step === "preview" && (
           <div className="space-y-3">
+            {partialResult && (
+              <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                <div className="font-medium text-amber-700 dark:text-amber-300">
+                  Created #{partialResult.issueId} with warnings
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">{partialResult.warning}</div>
+                <Button
+                  className="mt-3"
+                  size="sm"
+                  onClick={retryPartial}
+                  disabled={retryMutation.isPending}
+                >
+                  {retryMutation.isPending ? "Retrying..." : "Retry missing items"}
+                </Button>
+              </div>
+            )}
             <div>
               <div className="text-xs text-muted-foreground">Subject</div>
               <div className="font-medium">{subjectPreview}</div>
@@ -510,7 +559,15 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
               </Button>
             )}
             {step === "preview" && (
-              <Button onClick={submit} disabled={mutation.isPending || allocations.length === 0}>
+              <Button
+                onClick={submit}
+                disabled={
+                  mutation.isPending ||
+                  retryMutation.isPending ||
+                  partialResult !== null ||
+                  allocations.length === 0
+                }
+              >
                 {mutation.isPending ? "Creating…" : "Create redemption"}
               </Button>
             )}

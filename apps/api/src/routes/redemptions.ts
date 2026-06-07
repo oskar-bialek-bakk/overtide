@@ -1,5 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import {
+  type CreateRedemptionRequest,
   type EarningForDescription,
   buildRedemptionDescription,
   buildRedemptionSubject,
@@ -19,6 +20,7 @@ import { RedmineClient } from "../redmine/client";
 import { RedmineEndpoints } from "../redmine/endpoints";
 
 const EPSILON = 1e-6;
+type TePlan = { spentOn: string; earningId: number; hours: number };
 
 export function redemptionsRoutes(deps: { db: Db; env: Env }) {
   const r = new Hono();
@@ -126,7 +128,6 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     // across days; otherwise everything lands on startDate (legacy single-day
     // shortcut, kept for backwards compatibility with callers that don't ship
     // a schedule).
-    type TePlan = { spentOn: string; earningId: number; hours: number };
     const tePlans: TePlan[] = body.daySchedule
       ? planTimeEntries(body.daySchedule, body.allocations, body.totalHours)
       : body.allocations.map((a) => ({
@@ -146,7 +147,7 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
       comments: string;
     }> = [];
     for (const plan of tePlans) {
-      const lineComment = `Odbiór ${formatHours(plan.hours)}h z #${plan.earningId} (${earningsById.get(plan.earningId)?.subject ?? "brak danych"})`;
+      const lineComment = buildTimeEntryComment(plan, earningsById);
       try {
         const te = await endpoints.createTimeEntry({
           issueId: createdIssue.id,
@@ -290,11 +291,227 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     );
   });
 
+  r.post("/operations/:id/retry", async (c) => {
+    const id = Number(c.req.param("id"));
+    if (!Number.isInteger(id) || id <= 0) throw new AppError("BAD_ID", 400, "id must be a number");
+    if (deps.env.redemptionActivityId === undefined) {
+      throw new AppError("CONFIG_MISSING", 500, "REDMINE_REDEMPTION_ACTIVITY_ID not configured");
+    }
+
+    const [operation] = await deps.db
+      .select()
+      .from(redemptionOperations)
+      .where(eq(redemptionOperations.id, id))
+      .limit(1);
+    if (!operation) throw new AppError("NOT_FOUND", 404, `operation ${id} not found`);
+    if (operation.status === "success") {
+      return ok(c, { id, status: "success", retriedTimeEntries: 0, retriedRelations: 0 });
+    }
+
+    const request = parseStoredRedemptionRequest(operation.requestJson);
+    const [redemption] = await deps.db
+      .select()
+      .from(issues)
+      .where(eq(issues.id, operation.redemptionIssueId))
+      .limit(1);
+    if (!redemption || redemption.role !== "redemption") {
+      throw new AppError(
+        "REDEMPTION_NOT_MIRRORED",
+        404,
+        `redemption ${operation.redemptionIssueId} not mirrored`,
+      );
+    }
+
+    const earningRows = await deps.db
+      .select()
+      .from(issues)
+      .where(inArray(issues.id, [...new Set(request.allocations.map((a) => a.earningId))]));
+    const earningsById = new Map<number, EarningForDescription>(
+      earningRows.map((e) => [e.id, { id: e.id, subject: e.subject }]),
+    );
+    const tePlans = request.daySchedule
+      ? planTimeEntries(request.daySchedule, request.allocations, request.totalHours)
+      : request.allocations.map((a) => ({
+          spentOn: request.startDate,
+          earningId: a.earningId,
+          hours: a.hours,
+        }));
+
+    const existingTimeEntries = await deps.db
+      .select()
+      .from(timeEntries)
+      .where(eq(timeEntries.issueId, operation.redemptionIssueId));
+    const existingRelations = await deps.db
+      .select()
+      .from(issueRelations)
+      .where(eq(issueRelations.issueToId, operation.redemptionIssueId));
+
+    const endpoints = new RedmineEndpoints(new RedmineClient(deps.env));
+    const user = await endpoints.currentUser();
+    const nowISO = new Date().toISOString();
+    const warnings: string[] = [];
+    const createdTimeEntries: Array<{
+      teId: number;
+      plan: TePlan;
+      activityName: string;
+      comments: string;
+    }> = [];
+    let stillMissingTimeEntries = 0;
+    for (const plan of tePlans) {
+      const comments = buildTimeEntryComment(plan, earningsById);
+      if (
+        hasMatchingTimeEntry(existingTimeEntries, plan, deps.env.redemptionActivityId, comments)
+      ) {
+        continue;
+      }
+      try {
+        const te = await endpoints.createTimeEntry({
+          issueId: operation.redemptionIssueId,
+          hours: plan.hours,
+          activityId: deps.env.redemptionActivityId,
+          spentOn: plan.spentOn,
+          comments,
+        });
+        createdTimeEntries.push({
+          teId: te.id,
+          plan,
+          activityName: te.activity.name,
+          comments,
+        });
+      } catch (e) {
+        stillMissingTimeEntries += 1;
+        warnings.push(
+          `time entry for earning ${plan.earningId} on ${plan.spentOn} failed: ${(e as Error).message}`,
+        );
+        logger.error(
+          { err: e, plan, issueId: operation.redemptionIssueId, operationId: operation.id },
+          "retry-redemption time-entry failed",
+        );
+      }
+    }
+
+    const createdRelations: Array<{ relId: number; alloc: { earningId: number; hours: number } }> =
+      [];
+    let stillMissingRelations = 0;
+    for (const alloc of request.allocations) {
+      if (existingRelations.some((r) => r.issueFromId === alloc.earningId)) continue;
+      try {
+        const rel = await endpoints.createRelation(alloc.earningId, operation.redemptionIssueId);
+        createdRelations.push({ relId: rel.id, alloc });
+      } catch (e) {
+        stillMissingRelations += 1;
+        warnings.push(`relation for earning ${alloc.earningId} failed: ${(e as Error).message}`);
+        logger.error(
+          {
+            err: e,
+            allocation: alloc,
+            issueId: operation.redemptionIssueId,
+            operationId: operation.id,
+          },
+          "retry-redemption relation failed",
+        );
+      }
+    }
+
+    const warning = warnings.length > 0 ? warnings.join("; ") : null;
+    const status = warning ? "partial" : "success";
+    deps.db.transaction((tx) => {
+      for (const { teId, plan, activityName, comments } of createdTimeEntries) {
+        tx.insert(timeEntries)
+          .values({
+            id: teId,
+            issueId: operation.redemptionIssueId,
+            userId: user.id,
+            hours: plan.hours,
+            activityId: deps.env.redemptionActivityId!,
+            activityName,
+            spentOn: plan.spentOn,
+            comments,
+            createdOn: nowISO,
+            updatedOn: nowISO,
+          })
+          .onConflictDoNothing()
+          .run();
+      }
+      for (const { relId, alloc } of createdRelations) {
+        tx.insert(issueRelations)
+          .values({
+            id: relId,
+            issueFromId: alloc.earningId,
+            issueToId: operation.redemptionIssueId,
+            relationType: "relates",
+            createdLocally: true,
+            mirroredAt: nowISO,
+            allocatedHours: alloc.hours,
+          })
+          .onConflictDoNothing()
+          .run();
+      }
+      tx.update(redemptionOperations)
+        .set({
+          status,
+          warning,
+          missingTimeEntries: stillMissingTimeEntries,
+          missingRelations: stillMissingRelations,
+          updatedAt: nowISO,
+        })
+        .where(eq(redemptionOperations.id, operation.id))
+        .run();
+    });
+
+    return ok(c, {
+      id,
+      status,
+      retriedTimeEntries: createdTimeEntries.length,
+      retriedRelations: createdRelations.length,
+      ...(warning ? { warning } : {}),
+    });
+  });
+
   return r;
+}
+
+function parseStoredRedemptionRequest(raw: string): CreateRedemptionRequest {
+  try {
+    return createRedemptionRequestSchema.parse(JSON.parse(raw));
+  } catch (e) {
+    throw new AppError(
+      "OPERATION_REQUEST_INVALID",
+      500,
+      `stored redemption request is invalid: ${(e as Error).message}`,
+    );
+  }
 }
 
 function formatHours(h: number): string {
   return Number.isInteger(h) ? String(h) : String(h);
+}
+
+function buildTimeEntryComment(
+  plan: TePlan,
+  earningsById: Map<number, EarningForDescription>,
+): string {
+  return `Odbiór ${formatHours(plan.hours)}h z #${plan.earningId} (${earningsById.get(plan.earningId)?.subject ?? "brak danych"})`;
+}
+
+function hasMatchingTimeEntry(
+  existing: Array<{
+    hours: number;
+    activityId: number;
+    spentOn: string;
+    comments: string | null;
+  }>,
+  plan: TePlan,
+  activityId: number,
+  comments: string,
+): boolean {
+  return existing.some(
+    (te) =>
+      te.activityId === activityId &&
+      te.spentOn === plan.spentOn &&
+      te.comments === comments &&
+      Math.abs(te.hours - plan.hours) < EPSILON,
+  );
 }
 
 /**
