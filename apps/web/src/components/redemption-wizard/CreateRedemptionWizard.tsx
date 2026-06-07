@@ -233,15 +233,19 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
 
   const retryPartial = async () => {
     if (!partialResult) return;
-    const result = await retryMutation.mutateAsync(partialResult.retryableOperationId);
-    if (result.status === "success") {
-      setPartialResult(null);
-      onOpenChange(false);
-      return;
+    try {
+      const result = await retryMutation.mutateAsync(partialResult.retryableOperationId);
+      if (result.status === "success") {
+        setPartialResult(null);
+        onOpenChange(false);
+        return;
+      }
+      setPartialResult((prev) =>
+        prev ? { ...prev, warning: result.warning ?? "Retry still has warnings" } : prev,
+      );
+    } catch {
+      /* useRetryRedemptionOperation shows the toast; keep the partial panel open */
     }
-    setPartialResult((prev) =>
-      prev ? { ...prev, warning: result.warning ?? "Retry still has warnings" } : prev,
-    );
   };
 
   return (
@@ -557,7 +561,12 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
             {step === "preview" && (
               <Button
                 onClick={submit}
-                disabled={mutation.isPending || retryMutation.isPending || allocations.length === 0}
+                disabled={
+                  mutation.isPending ||
+                  retryMutation.isPending ||
+                  partialResult !== null ||
+                  allocations.length === 0
+                }
               >
                 {mutation.isPending ? "Creating…" : "Create redemption"}
               </Button>
