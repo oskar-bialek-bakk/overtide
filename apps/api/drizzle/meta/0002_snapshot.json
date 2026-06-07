@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "bb769222-6cf5-49ef-a585-a359d9f22b88",
-  "prevId": "ab500b0f-1c75-42c2-93ea-1a302944f125",
+  "id": "9b3ba18f-22b2-4233-8bf4-5bd7fb5d66ab",
+  "prevId": "bb769222-6cf5-49ef-a585-a359d9f22b88",
   "tables": {
     "app_config": {
       "name": "app_config",
@@ -271,6 +271,110 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "redemption_operations": {
+      "name": "redemption_operations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "redemption_issue_id": {
+          "name": "redemption_issue_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "warning": {
+          "name": "warning",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "missing_time_entries": {
+          "name": "missing_time_entries",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "missing_relations": {
+          "name": "missing_relations",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "request_json": {
+          "name": "request_json",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "idx_redemption_operations_issue": {
+          "name": "idx_redemption_operations_issue",
+          "columns": [
+            "redemption_issue_id"
+          ],
+          "isUnique": false
+        },
+        "idx_redemption_operations_status": {
+          "name": "idx_redemption_operations_status",
+          "columns": [
+            "status"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "redemption_operations_redemption_issue_id_issues_id_fk": {
+          "name": "redemption_operations_redemption_issue_id_issues_id_fk",
+          "tableFrom": "redemption_operations",
+          "tableTo": "issues",
+          "columnsFrom": [
+            "redemption_issue_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

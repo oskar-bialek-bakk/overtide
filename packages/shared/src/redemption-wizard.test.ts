@@ -4,6 +4,7 @@ import {
   buildRedemptionSubject,
   businessDaysBetween,
   createRedemptionRequestSchema,
+  createRedemptionResponseSchema,
   defaultDaySchedule,
   deriveInitials,
   enumerateBusinessDays,
@@ -219,6 +220,20 @@ describe("createRedemptionRequestSchema", () => {
         daySchedule: [{ date: "2026-02-30", hours: 8 }],
       }),
     ).toThrow();
+  });
+});
+
+describe("createRedemptionResponseSchema", () => {
+  it("accepts a warning response with a retryable operation id", () => {
+    const parsed = createRedemptionResponseSchema.parse({
+      issueId: 999,
+      url: "https://r.test/issues/999",
+      subject: "Odbiór nadgodzin OB 04.05",
+      warning: "time entry failed",
+      retryableOperationId: 12,
+    });
+
+    expect(parsed.retryableOperationId).toBe(12);
   });
 });
 

@@ -62,6 +62,7 @@ export const createRedemptionResponseSchema = z.object({
   url: z.string().url(),
   subject: z.string(),
   warning: z.string().nullable().optional(),
+  retryableOperationId: z.number().int().positive().optional(),
 });
 export type CreateRedemptionResponse = z.infer<typeof createRedemptionResponseSchema>;
 

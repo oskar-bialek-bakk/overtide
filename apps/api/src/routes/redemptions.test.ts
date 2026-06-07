@@ -408,6 +408,74 @@ describe("POST /api/redemptions/create", () => {
     expect(json.data.warning).toContain("time entry for earning 114518 on 2026-05-04 failed");
   });
 
+  it("persists a retryable operation when time entry creation partially fails", async () => {
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: { id: 1039, firstname: "Oskar", lastname: "Białek" } }),
+      ),
+      http.post("https://r.test/issues.json", () =>
+        HttpResponse.json(
+          {
+            issue: {
+              id: 999,
+              project: { id: 12, name: "urlopy" },
+              tracker: { id: 19, name: "T" },
+              status: { id: 1, name: "Nowe", is_closed: false },
+              subject: "Odbiór nadgodzin OB 04.05",
+              start_date: "2026-05-04",
+              due_date: "2026-05-04",
+              created_on: "2026-05-04T10:00:00Z",
+              updated_on: "2026-05-04T10:00:00Z",
+            },
+          },
+          { status: 201 },
+        ),
+      ),
+      http.post("https://r.test/time_entries.json", () =>
+        HttpResponse.json({ error: "boom" }, { status: 500 }),
+      ),
+      http.post("https://r.test/issues/:id/relations.json", ({ params }) =>
+        HttpResponse.json({
+          relation: {
+            id: 5000,
+            issue_id: Number(params.id),
+            issue_to_id: 999,
+            relation_type: "relates",
+          },
+        }),
+      ),
+    );
+
+    const { db } = seedDb();
+    const app = makeApp(db);
+    const res = await app.request("/api/redemptions/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startDate: "2026-05-04",
+        endDate: "2026-05-04",
+        totalHours: 4,
+        allocations: [{ earningId: 114518, hours: 4 }],
+      }),
+    });
+
+    expect(res.status).toBe(201);
+    const json = (await res.json()) as {
+      data: { issueId: number; warning: string; retryableOperationId?: number };
+    };
+    expect(json.data.issueId).toBe(999);
+    expect(json.data.retryableOperationId).toBeNumber();
+
+    const operations = await db.select().from(schema.redemptionOperations);
+    expect(operations).toHaveLength(1);
+    expect(operations[0]).toMatchObject({
+      redemptionIssueId: 999,
+      status: "partial",
+      missingTimeEntries: 1,
+      missingRelations: 0,
+    });
+  });
+
   it("spreads time entries across a daySchedule when provided", async () => {
     const teCalls: Array<{ hours: number; spent_on: string }> = [];
     server = startMsw(
