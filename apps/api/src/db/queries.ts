@@ -14,8 +14,11 @@ export type RedemptionRow = {
   requested: number; anchorDate: string;
 };
 
+type EarningSqlRow = Omit<EarningRow, "isClosed"> & { isClosed: number | boolean };
+type RedemptionSqlRow = Omit<RedemptionRow, "isClosed"> & { isClosed: number | boolean };
+
 export async function fetchEarnings(db: Db, overtimeActivityId: number): Promise<EarningRow[]> {
-  const result = db.all<any>(sql`
+  const result = db.all<EarningSqlRow>(sql`
     SELECT i.id, i.subject, i.project_name AS projectName, i.tracker_name AS trackerName,
            i.status_name AS statusName, i.is_closed AS isClosed, i.created_on AS createdOn,
            i.updated_on AS updatedOn, i.url,
@@ -26,11 +29,11 @@ export async function fetchEarnings(db: Db, overtimeActivityId: number): Promise
     WHERE i.role = 'earning'
     GROUP BY i.id
   `);
-  return (result as any[]).map((r) => ({ ...r, isClosed: Boolean(r.isClosed) }));
+  return result.map((r) => ({ ...r, isClosed: Boolean(r.isClosed) }));
 }
 
 export async function fetchRedemptions(db: Db): Promise<RedemptionRow[]> {
-  const result = db.all<any>(sql`
+  const result = db.all<RedemptionSqlRow>(sql`
     SELECT i.id, i.subject, i.project_name AS projectName, i.tracker_name AS trackerName,
            i.status_name AS statusName, i.is_closed AS isClosed, i.created_on AS createdOn,
            i.updated_on AS updatedOn, i.url,
@@ -41,7 +44,7 @@ export async function fetchRedemptions(db: Db): Promise<RedemptionRow[]> {
     WHERE i.role = 'redemption'
     GROUP BY i.id
   `);
-  return (result as any[]).map((r) => ({ ...r, isClosed: Boolean(r.isClosed) }));
+  return result.map((r) => ({ ...r, isClosed: Boolean(r.isClosed) }));
 }
 
 export async function fetchRelations(db: Db): Promise<

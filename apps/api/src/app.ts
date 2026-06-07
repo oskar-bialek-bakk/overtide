@@ -19,7 +19,12 @@ export function createApp(opts?: { dbPath?: string }) {
 
   // Crash recovery: any sync_run left in 'running' state is from a crashed
   // previous process. Mark it failed so the unique-running guard frees up.
-  const stuckCount = db
+  const stuckRows = db
+    .select({ id: syncRuns.id })
+    .from(syncRuns)
+    .where(eq(syncRuns.status, "running"))
+    .all();
+  db
     .update(syncRuns)
     .set({
       status: "failed",
@@ -27,7 +32,8 @@ export function createApp(opts?: { dbPath?: string }) {
       errorMessage: "process exited before sync completed",
     })
     .where(eq(syncRuns.status, "running"))
-    .run().changes;
+    .run();
+  const stuckCount = stuckRows.length;
   if (stuckCount > 0) {
     logger.warn({ stuckCount }, "marked stuck running sync_runs as failed");
   }

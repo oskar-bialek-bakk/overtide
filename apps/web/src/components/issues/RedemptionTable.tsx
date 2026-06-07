@@ -27,7 +27,7 @@ export function RedemptionTable() {
           <TableHead className="text-right">Covered</TableHead>
           <TableHead className="text-right">Unlinked</TableHead>
           <TableHead>Linked OT</TableHead>
-          <TableHead></TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>

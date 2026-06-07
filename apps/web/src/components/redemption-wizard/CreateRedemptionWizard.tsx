@@ -229,9 +229,10 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
         {step === "dates" && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
-              <label className="block">
+              <label className="block" htmlFor="redemption-start-date">
                 <span className="text-xs text-muted-foreground">Start</span>
                 <Input
+                  id="redemption-start-date"
                   type="date"
                   value={startDate}
                   onChange={(e) => {
@@ -241,9 +242,10 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
                   }}
                 />
               </label>
-              <label className="block">
+              <label className="block" htmlFor="redemption-end-date">
                 <span className="text-xs text-muted-foreground">End</span>
                 <Input
+                  id="redemption-end-date"
                   type="date"
                   value={endDate}
                   min={startDate}
@@ -251,11 +253,12 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
                 />
               </label>
             </div>
-            <label className="block">
+            <label className="block" htmlFor="redemption-total-hours">
               <span className="text-xs text-muted-foreground">
                 Total hours · default = business-days × 8h
               </span>
               <Input
+                id="redemption-total-hours"
                 type="text"
                 inputMode="decimal"
                 value={totalHoursInput}
@@ -538,7 +541,9 @@ function dayLabel(iso: string): string {
   return `${wd} ${md}`;
 }
 
-export function defaultInitials(user: { firstname?: string; lastname?: string } | null | undefined) {
+export function defaultInitials(
+  user: { firstname?: string | undefined; lastname?: string | undefined } | null | undefined,
+) {
   if (!user) return "OB";
   return deriveInitials(user) || "OB";
 }

@@ -25,7 +25,7 @@ export function EarningTable() {
           <TableHead className="text-right">Earned</TableHead>
           <TableHead className="text-right">Consumed</TableHead>
           <TableHead className="text-right">Remaining</TableHead>
-          <TableHead></TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>

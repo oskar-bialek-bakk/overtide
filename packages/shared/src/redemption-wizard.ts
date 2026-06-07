@@ -128,7 +128,10 @@ export function buildRedemptionDescription(
  *
  * Returns empty string when neither field has anything usable.
  */
-export function deriveInitials(user: { firstname?: string; lastname?: string }): string {
+export function deriveInitials(user: {
+  firstname?: string | undefined;
+  lastname?: string | undefined;
+}): string {
   const f = stripOrgPrefix(user.firstname ?? "");
   const l = stripOrgPrefix(user.lastname ?? "");
   if (!f && !l) return "";

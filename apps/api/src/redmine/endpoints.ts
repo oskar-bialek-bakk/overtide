@@ -1,4 +1,4 @@
-import { RedmineClient } from "./client";
+import type { RedmineClient } from "./client";
 import {
   activitiesResponseSchema, issueResponseSchema, issuesResponseSchema,
   timeEntriesResponseSchema, timeEntryResponseSchema, trackersResponseSchema,
@@ -25,10 +25,10 @@ export type CreateTimeEntryInput = {
 
 export type CurrentUser = {
   id: number;
-  login?: string;
-  firstname?: string;
-  lastname?: string;
-  mail?: string;
+  login?: string | undefined;
+  firstname?: string | undefined;
+  lastname?: string | undefined;
+  mail?: string | undefined;
 };
 
 export class RedmineEndpoints {

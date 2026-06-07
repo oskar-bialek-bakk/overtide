@@ -27,7 +27,8 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
     const from = clampFloor(incrementalFrom, env.syncFrom);
 
     const fetchedTE: RedmineTimeEntry[] = [];
-    for await (const te of endpoints.iterAllTimeEntries({ userId, from })) fetchedTE.push(te);
+    const timeEntryOpts = from ? { userId, from } : { userId };
+    for await (const te of endpoints.iterAllTimeEntries(timeEntryOpts)) fetchedTE.push(te);
 
     const issueIds = Array.from(new Set(fetchedTE.map((t) => t.issue.id)));
     const fetchedIssues = await endpoints.issuesByIds(issueIds);

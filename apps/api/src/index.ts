@@ -1,6 +1,8 @@
 import { createApp } from "./app";
 
-const { app, env } = createApp({ dbPath: process.env.DB_PATH });
+const { app, env } = createApp(
+  process.env.DB_PATH ? { dbPath: process.env.DB_PATH } : undefined,
+);
 
 Bun.serve({
   hostname: "127.0.0.1",

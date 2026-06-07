@@ -4,6 +4,8 @@ import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { http, HttpResponse } from "msw";
 import { afterEach, describe, expect, it } from "bun:test";
 import { Hono } from "hono";
+import type { Db } from "../db/client";
+import type { Env } from "../config/env";
 import * as schema from "../db/schema";
 import { startMsw } from "../../test/helpers/msw";
 import { redemptionsRoutes } from "./redemptions";
@@ -38,10 +40,10 @@ function seedDb(opts: { capacityHoursPerEarning?: number } = {}) {
   return { db, sqlite };
 }
 
-function makeApp(db: schema.Db | ReturnType<typeof drizzle>, env = baseEnv) {
+function makeApp(db: Db, env: Env = baseEnv) {
   const app = new Hono();
   app.onError(errorHandler);
-  app.route("/api/redemptions", redemptionsRoutes({ db: db as never, env }));
+  app.route("/api/redemptions", redemptionsRoutes({ db, env }));
   return app;
 }
 
@@ -173,7 +175,9 @@ describe("POST /api/redemptions/create", () => {
       }),
     });
     expect(res.status).toBe(201);
-    expect(issueBody?.issue.description).toBe("Custom description, not the auto-built one.");
+    expect(issueBody).not.toBeNull();
+    const capturedIssue = issueBody as unknown as { issue: { description: string } };
+    expect(capturedIssue.issue.description).toBe("Custom description, not the auto-built one.");
   });
 
   it("rejects when sum(allocations) != totalHours", async () => {
@@ -323,7 +327,8 @@ describe("POST /api/redemptions/create", () => {
 
   it("returns 500 if vacationsProjectId env var is missing", async () => {
     const { db } = seedDb();
-    const app = makeApp(db, { ...baseEnv, vacationsProjectId: undefined });
+    const { vacationsProjectId: _vacationsProjectId, ...envWithoutVacationsProject } = baseEnv;
+    const app = makeApp(db, envWithoutVacationsProject);
     const res = await app.request("/api/redemptions/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

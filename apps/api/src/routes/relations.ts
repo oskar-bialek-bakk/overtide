@@ -4,10 +4,14 @@ import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 import type { Db } from "../db/client";
 import type { Env } from "../config/env";
+import { fetchEarnings, fetchRedemptions, fetchRelations } from "../db/queries";
 import { issues, issueRelations } from "../db/schema";
 import { AppError, ok } from "../lib/envelope";
+import { computeFIFO } from "../matching/fifo";
 import { RedmineClient } from "../redmine/client";
 import { RedmineEndpoints } from "../redmine/endpoints";
+
+const EPSILON = 1e-6;
 
 const createSchema = z.object({
   from_earning_id: z.number().int().positive(),
@@ -38,6 +42,15 @@ export function relationsRoutes(deps: { db: Db; env: Env }) {
     const existing = await deps.db.select().from(issueRelations).where(
       and(eq(issueRelations.issueFromId, from.id), eq(issueRelations.issueToId, to.id)),
     ).limit(1);
+    if (allocatedHours != null) {
+      await validateAllocatedHours({
+        db: deps.db,
+        env: deps.env,
+        earningId: from.id,
+        redemptionId: to.id,
+        allocatedHours,
+      });
+    }
     if (existing.length > 0) {
       // Pair already linked in Redmine; only update the local hours override
       // when one was supplied so callers can repurpose POST as "set override".
@@ -77,4 +90,46 @@ export function relationsRoutes(deps: { db: Db; env: Env }) {
   });
 
   return r;
+}
+
+async function validateAllocatedHours(args: {
+  db: Db;
+  env: Env;
+  earningId: number;
+  redemptionId: number;
+  allocatedHours: number;
+}) {
+  const [earnings, redemptions, relations] = await Promise.all([
+    fetchEarnings(args.db, args.env.overtimeActivityId),
+    fetchRedemptions(args.db),
+    fetchRelations(args.db),
+  ]);
+  const fifo = computeFIFO({ earnings, redemptions, relations });
+  const redemption = redemptions.find((r) => r.id === args.redemptionId);
+  if (!redemption) {
+    throw new AppError("REDEMPTION_NOT_TRACKED", 400, `redemption ${args.redemptionId} has no FIFO entry`);
+  }
+  if (args.allocatedHours > redemption.requested + EPSILON) {
+    throw new AppError(
+      "ALLOCATION_EXCEEDS_REDEMPTION",
+      400,
+      `redemption ${args.redemptionId} requested ${redemption.requested}h, ${args.allocatedHours}h allocated`,
+    );
+  }
+
+  const earning = fifo.perEarning.get(args.earningId);
+  if (!earning) {
+    throw new AppError("EARNING_NOT_TRACKED", 400, `earning ${args.earningId} has no FIFO entry`);
+  }
+  const currentPairConsumption = fifo.allocations
+    .filter((a) => a.earningId === args.earningId && a.redemptionId === args.redemptionId)
+    .reduce((sum, a) => sum + a.hours, 0);
+  const availableForPair = earning.remaining + currentPairConsumption;
+  if (args.allocatedHours > availableForPair + EPSILON) {
+    throw new AppError(
+      "INSUFFICIENT_REMAINING",
+      400,
+      `earning ${args.earningId} has ${availableForPair}h available for this relation, ${args.allocatedHours}h requested`,
+    );
+  }
 }

@@ -33,7 +33,7 @@ describe("GET /api/unlinked", () => {
     app.onError(errorHandler);
     app.route("/api/unlinked", unlinkedRoutes({ db, env }));
     const res = await app.request("/api/unlinked");
-    const body = await res.json() as any;
+    const body = await res.json() as { data: Array<{ id: number; unlinked: number; covered: number }> };
     expect(body.data).toHaveLength(1);
     expect(body.data[0]).toMatchObject({ id: 2, unlinked: 5, covered: 0 });
   });

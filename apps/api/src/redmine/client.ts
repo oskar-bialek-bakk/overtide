@@ -31,16 +31,17 @@ export class RedmineClient {
     let lastErr: unknown;
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       try {
-        const res = await fetch(url, {
+        const init: RequestInit = {
           method,
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
             ...buildAuthHeaders(this.env),
           },
-          body: body ? JSON.stringify(body) : undefined,
           signal: AbortSignal.timeout(TIMEOUT_MS),
-        });
+        };
+        if (body !== undefined) init.body = JSON.stringify(body);
+        const res = await fetch(url, init);
         if (res.status === 401 || res.status === 403) {
           throw new RedmineError("REDMINE_AUTH_FAILED", res.status, url, "auth failed");
         }
