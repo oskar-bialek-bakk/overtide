@@ -1,23 +1,29 @@
-import type { CreateRedemptionRequest, CreateRedemptionResponse } from "@overtide/shared";
+import { type CreateRedemptionRequest, createRedemptionResponseSchema } from "@overtide/shared";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ApiClientError, apiFetch } from "./client";
+import { z } from "zod";
+import { ApiClientError, apiFetchSchema } from "./client";
 import { qk } from "./queries";
 
-export type SyncResult = {
-  id: number;
-  status: string;
-  issuesUpserted: number;
-  timeEntriesUpserted: number;
-  relationsUpserted: number;
-};
+const syncResultSchema = z.object({
+  id: z.number().int().positive(),
+  status: z.literal("success"),
+  issuesUpserted: z.number(),
+  timeEntriesUpserted: z.number(),
+  relationsUpserted: z.number(),
+  relationsSkippedUnknownIssue: z.number(),
+  relationsSkippedSameRole: z.number(),
+  overtimeOnRedemptionIgnored: z.number(),
+});
+
+export type SyncResult = z.infer<typeof syncResultSchema>;
 
 export function useRunSync() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => apiFetch<SyncResult>("/api/sync", { method: "POST" }),
+    mutationFn: () => apiFetchSchema("/api/sync", syncResultSchema, { method: "POST" }),
     onSuccess: (r) => {
-      toast.success(`Synced — ${r.issuesUpserted} issues, ${r.timeEntriesUpserted} entries`);
+      toast.success(`Synced - ${r.issuesUpserted} issues, ${r.timeEntriesUpserted} entries`);
       qc.invalidateQueries();
     },
     onError: (e) => {
@@ -37,10 +43,12 @@ export type CreateRelationVars = {
   allocated_hours?: number | null;
 };
 
-export type CreateRelationResult = {
-  id: number;
-  status: "CREATED" | "ALREADY_LINKED";
-};
+const createRelationResultSchema = z.object({
+  id: z.number().int().positive(),
+  status: z.enum(["CREATED", "ALREADY_LINKED"]),
+});
+
+export type CreateRelationResult = z.infer<typeof createRelationResultSchema>;
 
 // Pass `skipInvalidate: true` when calling from a bulk caller (e.g. linking
 // many earnings to one redemption in a loop) and run `invalidateRelationQueries`
@@ -49,7 +57,7 @@ export function useCreateRelation(opts: { skipInvalidate?: boolean } = {}) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (vars: CreateRelationVars) =>
-      apiFetch<CreateRelationResult>("/api/relations", {
+      apiFetchSchema("/api/relations", createRelationResultSchema, {
         method: "POST",
         body: vars,
       }),
@@ -73,12 +81,15 @@ export function useCreateRedemption() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (vars: CreateRedemptionRequest) =>
-      apiFetch<CreateRedemptionResponse>("/api/redemptions/create", { method: "POST", body: vars }),
+      apiFetchSchema("/api/redemptions/create", createRedemptionResponseSchema, {
+        method: "POST",
+        body: vars,
+      }),
     onSuccess: (r) => {
       if (r.warning) {
-        toast.warning(`Created #${r.issueId} with warnings — ${r.warning}`);
+        toast.warning(`Created #${r.issueId} with warnings - ${r.warning}`);
       } else {
-        toast.success(`Created #${r.issueId} — ${r.subject}`);
+        toast.success(`Created #${r.issueId} - ${r.subject}`);
       }
       invalidateRelationQueries(qc);
       qc.invalidateQueries({ queryKey: qk.timeline });
@@ -89,28 +100,34 @@ export function useCreateRedemption() {
   });
 }
 
-export type RetryRedemptionOperationResult = {
-  id: number;
-  status: "success" | "partial";
-  retriedTimeEntries: number;
-  retriedRelations: number;
-  warning?: string;
-};
+const retryRedemptionOperationResultSchema = z.object({
+  id: z.number().int().positive(),
+  status: z.enum(["success", "partial"]),
+  retriedTimeEntries: z.number(),
+  retriedRelations: z.number(),
+  warning: z.string().optional(),
+});
+
+export type RetryRedemptionOperationResult = z.infer<typeof retryRedemptionOperationResultSchema>;
 
 export function useRetryRedemptionOperation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) =>
-      apiFetch<RetryRedemptionOperationResult>(`/api/redemptions/operations/${id}/retry`, {
-        method: "POST",
-      }),
+      apiFetchSchema(
+        `/api/redemptions/operations/${id}/retry`,
+        retryRedemptionOperationResultSchema,
+        {
+          method: "POST",
+        },
+      ),
     onSuccess: (r) => {
       if (r.status === "success") {
         toast.success(
-          `Retry completed — ${r.retriedTimeEntries} entries, ${r.retriedRelations} relations`,
+          `Retry completed - ${r.retriedTimeEntries} entries, ${r.retriedRelations} relations`,
         );
       } else {
-        toast.warning(`Retry still has warnings — ${r.warning ?? "check Redmine"}`);
+        toast.warning(`Retry still has warnings - ${r.warning ?? "check Redmine"}`);
       }
       invalidateRelationQueries(qc);
       qc.invalidateQueries({ queryKey: qk.timeline });
