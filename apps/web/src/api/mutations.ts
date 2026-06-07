@@ -88,3 +88,35 @@ export function useCreateRedemption() {
       toast.error(e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e)),
   });
 }
+
+export type RetryRedemptionOperationResult = {
+  id: number;
+  status: "success" | "partial";
+  retriedTimeEntries: number;
+  retriedRelations: number;
+  warning?: string;
+};
+
+export function useRetryRedemptionOperation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) =>
+      apiFetch<RetryRedemptionOperationResult>(`/api/redemptions/operations/${id}/retry`, {
+        method: "POST",
+      }),
+    onSuccess: (r) => {
+      if (r.status === "success") {
+        toast.success(
+          `Retry completed — ${r.retriedTimeEntries} entries, ${r.retriedRelations} relations`,
+        );
+      } else {
+        toast.warning(`Retry still has warnings — ${r.warning ?? "check Redmine"}`);
+      }
+      invalidateRelationQueries(qc);
+      qc.invalidateQueries({ queryKey: qk.timeline });
+      qc.invalidateQueries({ queryKey: qk.syncHistory });
+    },
+    onError: (e) =>
+      toast.error(e instanceof ApiClientError ? `${e.code}: ${e.message}` : String(e)),
+  });
+}

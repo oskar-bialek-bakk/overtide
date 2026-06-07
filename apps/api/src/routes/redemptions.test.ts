@@ -476,6 +476,115 @@ describe("POST /api/redemptions/create", () => {
     });
   });
 
+  it("retries missing time entries for a partial redemption operation", async () => {
+    let failTimeEntry = true;
+    const seenTimeEntries: unknown[] = [];
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: { id: 1039, firstname: "Oskar", lastname: "Białek" } }),
+      ),
+      http.post("https://r.test/issues.json", () =>
+        HttpResponse.json(
+          {
+            issue: {
+              id: 999,
+              project: { id: 12, name: "urlopy" },
+              tracker: { id: 19, name: "T" },
+              status: { id: 1, name: "Nowe", is_closed: false },
+              subject: "Odbiór nadgodzin OB 04.05",
+              start_date: "2026-05-04",
+              due_date: "2026-05-04",
+              created_on: "2026-05-04T10:00:00Z",
+              updated_on: "2026-05-04T10:00:00Z",
+            },
+          },
+          { status: 201 },
+        ),
+      ),
+      http.post("https://r.test/time_entries.json", async ({ request }) => {
+        if (failTimeEntry) return HttpResponse.json({ error: "boom" }, { status: 500 });
+        const body = await request.json();
+        seenTimeEntries.push(body);
+        return HttpResponse.json(
+          {
+            time_entry: {
+              id: 700 + seenTimeEntries.length,
+              user: { id: 1039 },
+              issue: { id: 999 },
+              hours: 4,
+              activity: { id: 8, name: "W biurze" },
+              spent_on: "2026-05-04",
+              comments: "",
+              created_on: "2026-05-04T10:00:00Z",
+              updated_on: "2026-05-04T10:00:00Z",
+            },
+          },
+          { status: 201 },
+        );
+      }),
+      http.post("https://r.test/issues/:id/relations.json", ({ params }) =>
+        HttpResponse.json({
+          relation: {
+            id: 5000,
+            issue_id: Number(params.id),
+            issue_to_id: 999,
+            relation_type: "relates",
+          },
+        }),
+      ),
+    );
+
+    const { db } = seedDb();
+    const app = makeApp(db);
+    const createRes = await app.request("/api/redemptions/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startDate: "2026-05-04",
+        endDate: "2026-05-04",
+        totalHours: 4,
+        allocations: [{ earningId: 114518, hours: 4 }],
+      }),
+    });
+    expect(createRes.status).toBe(201);
+    const createJson = (await createRes.json()) as {
+      data: { retryableOperationId: number };
+    };
+    expect(createJson.data.retryableOperationId).toBeNumber();
+    expect(
+      (await db.select().from(schema.timeEntries)).filter((t) => t.issueId === 999),
+    ).toHaveLength(0);
+
+    failTimeEntry = false;
+    const retryRes = await app.request(
+      `/api/redemptions/operations/${createJson.data.retryableOperationId}/retry`,
+      { method: "POST" },
+    );
+
+    expect(retryRes.status).toBe(200);
+    const retryJson = (await retryRes.json()) as {
+      data: {
+        status: "success" | "partial";
+        retriedTimeEntries: number;
+        retriedRelations: number;
+      };
+    };
+    expect(retryJson.data.status).toBe("success");
+    expect(retryJson.data.retriedTimeEntries).toBe(1);
+    expect(retryJson.data.retriedRelations).toBe(0);
+
+    const operations = await db.select().from(schema.redemptionOperations);
+    expect(operations[0]).toMatchObject({
+      status: "success",
+      missingTimeEntries: 0,
+      missingRelations: 0,
+      warning: null,
+    });
+    expect(
+      (await db.select().from(schema.timeEntries)).filter((t) => t.issueId === 999),
+    ).toHaveLength(1);
+  });
+
   it("spreads time entries across a daySchedule when provided", async () => {
     const teCalls: Array<{ hours: number; spent_on: string }> = [];
     server = startMsw(
