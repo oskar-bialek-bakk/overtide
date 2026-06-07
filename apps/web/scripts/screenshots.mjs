@@ -12,9 +12,9 @@
 //   10b-redemption-wizard-confirm.png  (success toast after wizard submit;
 //   the wizard mutates real Redmine on submit, so it stays manual on purpose).
 
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { mkdirSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -95,7 +95,9 @@ console.log("-> 10-redemption-wizard");
 await page.goto(`${BASE}/redemptions`, { waitUntil: "networkidle" });
 await page.waitForSelector("main");
 // try a button labelled "New redemption" or similar
-const btn = await page.$('button:has-text("redemption"), button:has-text("Nowy"), button:has-text("New")');
+const btn = await page.$(
+  'button:has-text("redemption"), button:has-text("Nowy"), button:has-text("New")',
+);
 if (btn) {
   await btn.click();
   await page.waitForTimeout(800);

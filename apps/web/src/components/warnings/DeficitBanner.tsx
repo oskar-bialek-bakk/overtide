@@ -1,6 +1,6 @@
-import { Octagon } from "lucide-react";
 import { useBalance } from "@/api/queries";
 import { hours } from "@/lib/format";
+import { Octagon } from "lucide-react";
 
 export function DeficitBanner() {
   const q = useBalance();

@@ -1,10 +1,10 @@
-import { Link, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { useIssue } from "@/api/queries";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useIssue } from "@/api/queries";
 import { dateShort, hours } from "@/lib/format";
+import { Link, useRouter } from "@tanstack/react-router";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 
 type IssueShape = {
   id: number;
@@ -47,9 +47,7 @@ export function IssueDetailPanel({ id }: { id: number }) {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <Badge variant={issue.role === "earning" ? "default" : "secondary"}>
-              {issue.role}
-            </Badge>
+            <Badge variant={issue.role === "earning" ? "default" : "secondary"}>{issue.role}</Badge>
             <span className="text-sm text-muted-foreground">
               {issue.trackerName} · {issue.projectName}
             </span>
@@ -95,9 +93,7 @@ export function IssueDetailPanel({ id }: { id: number }) {
             )}
             {timeEntries.map((te) => (
               <div key={te.id} className="flex items-center justify-between text-sm">
-                <div className="text-muted-foreground tabular-nums">
-                  {dateShort(te.spentOn)}
-                </div>
+                <div className="text-muted-foreground tabular-nums">{dateShort(te.spentOn)}</div>
                 <div className="flex-1 px-3 truncate">
                   {te.activityName}
                   {te.comments ? ` — ${te.comments}` : ""}
@@ -119,8 +115,7 @@ export function IssueDetailPanel({ id }: { id: number }) {
               <div className="text-sm text-muted-foreground">No relations.</div>
             )}
             {relations.map((r) => {
-              const otherId =
-                r.issueFromId === issue.id ? r.issueToId : r.issueFromId;
+              const otherId = r.issueFromId === issue.id ? r.issueToId : r.issueFromId;
               return (
                 <div key={r.id} className="text-sm flex items-center gap-2">
                   <span className="text-muted-foreground">{r.relationType}</span>

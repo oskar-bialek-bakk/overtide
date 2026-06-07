@@ -1,14 +1,14 @@
-import { Hono } from "hono";
 import { desc, eq } from "drizzle-orm";
-import type { Db } from "../db/client";
+import { Hono } from "hono";
 import type { Env } from "../config/env";
+import type { Db } from "../db/client";
 import { syncRuns } from "../db/schema";
 import { AppError } from "../lib/envelope";
 import { ok } from "../lib/envelope";
 import { RedmineClient } from "../redmine/client";
 import { RedmineEndpoints } from "../redmine/endpoints";
-import { runSync } from "../sync/orchestrator";
 import { SyncInProgressError } from "../sync/lock";
+import { runSync } from "../sync/orchestrator";
 
 export function syncRoutes(deps: { db: Db; env: Env }) {
   const r = new Hono();
@@ -19,7 +19,8 @@ export function syncRoutes(deps: { db: Db; env: Env }) {
       const result = await runSync({ db: deps.db, endpoints, env: deps.env });
       return ok(c, result);
     } catch (e) {
-      if (e instanceof SyncInProgressError) throw new AppError("SYNC_IN_PROGRESS", 409, "A sync is already running");
+      if (e instanceof SyncInProgressError)
+        throw new AppError("SYNC_IN_PROGRESS", 409, "A sync is already running");
       throw e;
     }
   });

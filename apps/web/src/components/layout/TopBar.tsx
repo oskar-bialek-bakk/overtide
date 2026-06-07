@@ -1,8 +1,8 @@
-import { Link } from "@tanstack/react-router";
-import { Settings } from "lucide-react";
 import { BalancePill } from "@/components/balance/BalancePill";
 import { SyncButton } from "@/components/sync/SyncButton";
 import { SyncRunBadge } from "@/components/sync/SyncRunBadge";
+import { Link } from "@tanstack/react-router";
+import { Settings } from "lucide-react";
 import { NavLink } from "./NavLink";
 
 export function TopBar() {

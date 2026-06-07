@@ -9,9 +9,7 @@ describe("apiFetch", () => {
   it("unwraps the data envelope", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ data: { x: 1 } }), { status: 200 }),
-      ),
+      vi.fn().mockResolvedValue(new Response(JSON.stringify({ data: { x: 1 } }), { status: 200 })),
     );
     expect(await apiFetch("/api/x")).toEqual({ x: 1 });
   });
@@ -19,12 +17,11 @@ describe("apiFetch", () => {
   it("throws ApiClientError when the envelope contains an error", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({ error: { code: "BOOM", message: "no" } }),
-          { status: 400 },
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify({ error: { code: "BOOM", message: "no" } }), { status: 400 }),
         ),
-      ),
     );
     await expect(apiFetch("/api/x")).rejects.toMatchObject({
       code: "BOOM",
@@ -34,9 +31,9 @@ describe("apiFetch", () => {
   });
 
   it("sends a JSON body and Content-Type on POST", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ data: 1 }), { status: 200 }),
-    );
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ data: 1 }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
     await apiFetch("/api/x", { method: "POST", body: { a: 1 } });
     expect(fetchMock).toHaveBeenCalledWith(
@@ -50,10 +47,7 @@ describe("apiFetch", () => {
   });
 
   it("throws BAD_RESPONSE when the body is not JSON", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue(new Response("oops", { status: 502 })),
-    );
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("oops", { status: 502 })));
     await expect(apiFetch("/api/x")).rejects.toMatchObject({
       code: "BAD_RESPONSE",
       httpStatus: 502,

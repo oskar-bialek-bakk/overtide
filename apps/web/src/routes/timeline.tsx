@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { TimelineChart } from "@/components/timeline/TimelineChart";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/timeline")({
   component: () => (

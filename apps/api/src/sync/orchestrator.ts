@@ -1,12 +1,12 @@
 import { eq, inArray } from "drizzle-orm";
-import type { Db } from "../db/client";
-import { appConfig, issues, issueRelations, timeEntries } from "../db/schema";
 import type { Env } from "../config/env";
+import type { Db } from "../db/client";
+import { appConfig, issueRelations, issues, timeEntries } from "../db/schema";
 import { logger } from "../lib/logger";
 import type { RedmineEndpoints } from "../redmine/endpoints";
 import type { RedmineIssue, RedmineTimeEntry } from "../redmine/types";
 import { classifyIssue } from "./classify";
-import { acquireSyncRun, finishSyncRun, SyncInProgressError } from "./lock";
+import { SyncInProgressError, acquireSyncRun, finishSyncRun } from "./lock";
 import { normalizeIssue, normalizeTimeEntry } from "./normalize";
 
 const OVERLAP_BUFFER_DAYS = 7;
@@ -34,9 +34,10 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
     const fetchedIssues = await endpoints.issuesByIds(issueIds);
 
     // Build the candidate set of TEs per issue (fresh + already in DB)
-    const existingTE = issueIds.length === 0
-      ? []
-      : await db.select().from(timeEntries).where(inArray(timeEntries.issueId, issueIds));
+    const existingTE =
+      issueIds.length === 0
+        ? []
+        : await db.select().from(timeEntries).where(inArray(timeEntries.issueId, issueIds));
     const tesByIssue = new Map<number, { activity: { id: number } }[]>();
     for (const t of existingTE) {
       const arr = tesByIssue.get(t.issueId) ?? [];
@@ -76,11 +77,17 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         if (!keptIds.has(te.issue.id)) continue;
         const owningRole = roleByIssueId.get(te.issue.id);
         if (owningRole === "redemption" && te.activity.id === env.overtimeActivityId) {
-          logger.warn({ teId: te.id, issueId: te.issue.id }, "overtime activity on redemption issue — ignored");
+          logger.warn(
+            { teId: te.id, issueId: te.issue.id },
+            "overtime activity on redemption issue — ignored",
+          );
           continue;
         }
         const row = normalizeTimeEntry(te);
-        await tx.insert(timeEntries).values(row).onConflictDoUpdate({ target: timeEntries.id, set: row });
+        await tx
+          .insert(timeEntries)
+          .values(row)
+          .onConflictDoUpdate({ target: timeEntries.id, set: row });
         teUpserted += 1;
       }
 
@@ -109,27 +116,41 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         const otherIds = Array.from(
           new Set(allFresh.flatMap((r) => [r.issue_id, r.issue_to_id])),
         ).filter((id) => !keptIds.has(id));
-        const knownInDb = otherIds.length === 0
-          ? new Set<number>()
-          : new Set(
-              (await tx.select({ id: issues.id }).from(issues).where(inArray(issues.id, otherIds))).map(
-                (x) => x.id,
-              ),
-            );
+        const knownInDb =
+          otherIds.length === 0
+            ? new Set<number>()
+            : new Set(
+                (
+                  await tx
+                    .select({ id: issues.id })
+                    .from(issues)
+                    .where(inArray(issues.id, otherIds))
+                ).map((x) => x.id),
+              );
         const isKnown = (id: number) => keptIds.has(id) || knownInDb.has(id);
 
         for (const r of allFresh) {
           if (!isKnown(r.issue_id) || !isKnown(r.issue_to_id)) continue;
-          await tx.insert(issueRelations).values({
-            id: r.id, issueFromId: r.issue_id, issueToId: r.issue_to_id,
-            relationType: r.relation_type, createdLocally: false,
-            mirroredAt: new Date().toISOString(),
-          }).onConflictDoUpdate({
-            target: issueRelations.id,
-            // Intentionally NOT in the set clause: allocatedHours, createdLocally,
-            // mirroredAt. Those are local-only state we don't want sync to clobber.
-            set: { issueFromId: r.issue_id, issueToId: r.issue_to_id, relationType: r.relation_type },
-          });
+          await tx
+            .insert(issueRelations)
+            .values({
+              id: r.id,
+              issueFromId: r.issue_id,
+              issueToId: r.issue_to_id,
+              relationType: r.relation_type,
+              createdLocally: false,
+              mirroredAt: new Date().toISOString(),
+            })
+            .onConflictDoUpdate({
+              target: issueRelations.id,
+              // Intentionally NOT in the set clause: allocatedHours, createdLocally,
+              // mirroredAt. Those are local-only state we don't want sync to clobber.
+              set: {
+                issueFromId: r.issue_id,
+                issueToId: r.issue_to_id,
+                relationType: r.relation_type,
+              },
+            });
           relUpserted += 1;
         }
       }
@@ -139,10 +160,18 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
 
     await finishSyncRun(db, run.id, {
       status: "success",
-      issuesUpserted, timeEntriesUpserted: teUpserted, relationsUpserted: relUpserted,
+      issuesUpserted,
+      timeEntriesUpserted: teUpserted,
+      relationsUpserted: relUpserted,
     });
 
-    return { id: run.id, status: "success" as const, issuesUpserted, timeEntriesUpserted: teUpserted, relationsUpserted: relUpserted };
+    return {
+      id: run.id,
+      status: "success" as const,
+      issuesUpserted,
+      timeEntriesUpserted: teUpserted,
+      relationsUpserted: relUpserted,
+    };
   } catch (e) {
     const msg = e instanceof Error ? e.message.slice(0, 2048) : String(e);
     await finishSyncRun(db, run.id, { status: "failed", errorMessage: msg });
@@ -156,8 +185,13 @@ async function readConfig(db: Db, key: string): Promise<string | undefined> {
 }
 
 async function writeConfig(db: Db, key: string, value: string): Promise<void> {
-  await db.insert(appConfig).values({ key, value, updatedAt: new Date().toISOString() })
-    .onConflictDoUpdate({ target: appConfig.key, set: { value, updatedAt: new Date().toISOString() } });
+  await db
+    .insert(appConfig)
+    .values({ key, value, updatedAt: new Date().toISOString() })
+    .onConflictDoUpdate({
+      target: appConfig.key,
+      set: { value, updatedAt: new Date().toISOString() },
+    });
 }
 
 function minusDaysIso(iso: string, days: number): string {

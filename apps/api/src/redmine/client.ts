@@ -2,7 +2,12 @@ import type { Env } from "../config/env";
 import { buildAuthHeaders } from "./auth";
 
 export class RedmineError extends Error {
-  constructor(public code: string, public status: number, public path: string, message: string) {
+  constructor(
+    public code: string,
+    public status: number,
+    public path: string,
+    message: string,
+  ) {
     super(message);
   }
 }
@@ -13,9 +18,13 @@ const MAX_ATTEMPTS = 3;
 export class RedmineClient {
   constructor(private env: Env) {}
 
-  async get(path: string, params: Record<string, string | number | undefined> = {}): Promise<unknown> {
+  async get(
+    path: string,
+    params: Record<string, string | number | undefined> = {},
+  ): Promise<unknown> {
     const url = new URL(this.env.redmineUrl + path);
-    for (const [k, v] of Object.entries(params)) if (v !== undefined) url.searchParams.set(k, String(v));
+    for (const [k, v] of Object.entries(params))
+      if (v !== undefined) url.searchParams.set(k, String(v));
     return this.request("GET", url.toString());
   }
 
@@ -52,7 +61,9 @@ export class RedmineClient {
           }
           throw new RedmineError(
             res.status === 429 ? "REDMINE_RATE_LIMITED" : `REDMINE_HTTP_${res.status}`,
-            res.status, url, `failed after ${MAX_ATTEMPTS} attempts`,
+            res.status,
+            url,
+            `failed after ${MAX_ATTEMPTS} attempts`,
           );
         }
         if (!res.ok) {

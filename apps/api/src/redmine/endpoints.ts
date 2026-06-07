@@ -1,8 +1,14 @@
 import type { RedmineClient } from "./client";
 import {
-  activitiesResponseSchema, issueResponseSchema, issuesResponseSchema,
-  timeEntriesResponseSchema, timeEntryResponseSchema, trackersResponseSchema,
-  usersCurrentResponseSchema, type RedmineIssue, type RedmineTimeEntry,
+  type RedmineIssue,
+  type RedmineTimeEntry,
+  activitiesResponseSchema,
+  issueResponseSchema,
+  issuesResponseSchema,
+  timeEntriesResponseSchema,
+  timeEntryResponseSchema,
+  trackersResponseSchema,
+  usersCurrentResponseSchema,
 } from "./types";
 
 export type CreateIssueInput = {
@@ -56,12 +62,18 @@ export class RedmineEndpoints {
 
   async timeEntries(opts: { userId: number; from?: string; limit?: number; offset?: number }) {
     const raw = await this.c.get("/time_entries.json", {
-      user_id: opts.userId, limit: opts.limit ?? 100, offset: opts.offset ?? 0, from: opts.from,
+      user_id: opts.userId,
+      limit: opts.limit ?? 100,
+      offset: opts.offset ?? 0,
+      from: opts.from,
     });
     return timeEntriesResponseSchema.parse(raw);
   }
 
-  async *iterAllTimeEntries(opts: { userId: number; from?: string }): AsyncIterable<RedmineTimeEntry> {
+  async *iterAllTimeEntries(opts: {
+    userId: number;
+    from?: string;
+  }): AsyncIterable<RedmineTimeEntry> {
     let offset = 0;
     const limit = 100;
     while (true) {
@@ -78,7 +90,10 @@ export class RedmineEndpoints {
     for (let i = 0; i < ids.length; i += 50) {
       const chunk = ids.slice(i, i + 50);
       const raw = await this.c.get("/issues.json", {
-        issue_id: chunk.join(","), status_id: "*", include: "relations", limit: 100,
+        issue_id: chunk.join(","),
+        status_id: "*",
+        include: "relations",
+        limit: 100,
       });
       out.push(...issuesResponseSchema.parse(raw).issues);
     }

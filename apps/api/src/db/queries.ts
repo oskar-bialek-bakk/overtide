@@ -1,17 +1,33 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import type { Db } from "./client";
-import { issues, issueRelations, timeEntries } from "./schema";
+import { issueRelations, issues, timeEntries } from "./schema";
 
 export type EarningRow = {
-  id: number; subject: string; projectName: string; trackerName: string; statusName: string;
-  isClosed: boolean; createdOn: string; updatedOn: string; url: string;
-  earned: number; anchorDate: string;
+  id: number;
+  subject: string;
+  projectName: string;
+  trackerName: string;
+  statusName: string;
+  isClosed: boolean;
+  createdOn: string;
+  updatedOn: string;
+  url: string;
+  earned: number;
+  anchorDate: string;
 };
 
 export type RedemptionRow = {
-  id: number; subject: string; projectName: string; trackerName: string; statusName: string;
-  isClosed: boolean; createdOn: string; updatedOn: string; url: string;
-  requested: number; anchorDate: string;
+  id: number;
+  subject: string;
+  projectName: string;
+  trackerName: string;
+  statusName: string;
+  isClosed: boolean;
+  createdOn: string;
+  updatedOn: string;
+  url: string;
+  requested: number;
+  anchorDate: string;
 };
 
 type EarningSqlRow = Omit<EarningRow, "isClosed"> & { isClosed: number | boolean };
@@ -47,9 +63,9 @@ export async function fetchRedemptions(db: Db): Promise<RedemptionRow[]> {
   return result.map((r) => ({ ...r, isClosed: Boolean(r.isClosed) }));
 }
 
-export async function fetchRelations(db: Db): Promise<
-  Array<{ earningId: number; redemptionId: number; allocatedHours: number | null }>
-> {
+export async function fetchRelations(
+  db: Db,
+): Promise<Array<{ earningId: number; redemptionId: number; allocatedHours: number | null }>> {
   // Filter relation_type at the SQL boundary so we don't pull other types into memory.
   const rows = await db
     .select()
@@ -75,9 +91,17 @@ export async function fetchRelations(db: Db): Promise<
     const fromRole = roleById.get(r.issueFromId);
     const toRole = roleById.get(r.issueToId);
     if (fromRole === "earning" && toRole === "redemption") {
-      out.push({ earningId: r.issueFromId, redemptionId: r.issueToId, allocatedHours: r.allocatedHours });
+      out.push({
+        earningId: r.issueFromId,
+        redemptionId: r.issueToId,
+        allocatedHours: r.allocatedHours,
+      });
     } else if (fromRole === "redemption" && toRole === "earning") {
-      out.push({ earningId: r.issueToId, redemptionId: r.issueFromId, allocatedHours: r.allocatedHours });
+      out.push({
+        earningId: r.issueToId,
+        redemptionId: r.issueFromId,
+        allocatedHours: r.allocatedHours,
+      });
     }
   }
   return out;

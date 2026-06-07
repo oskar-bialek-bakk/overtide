@@ -1,10 +1,5 @@
+import type { Balance, EarningIssue, RedemptionIssue, SyncRun } from "@overtide/shared";
 import { useQuery } from "@tanstack/react-query";
-import type {
-  Balance,
-  EarningIssue,
-  RedemptionIssue,
-  SyncRun,
-} from "@overtide/shared";
 import { apiFetch } from "./client";
 
 export const qk = {

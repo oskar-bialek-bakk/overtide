@@ -1,8 +1,8 @@
+import { useBalance, useUnlinked } from "@/api/queries";
+import { AnimatedNumber } from "@/components/balance/AnimatedNumber";
+import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { CircleAlert, CircleCheck, TriangleAlert } from "lucide-react";
-import { useBalance, useUnlinked } from "@/api/queries";
-import { cn } from "@/lib/utils";
-import { AnimatedNumber } from "@/components/balance/AnimatedNumber";
 
 type Tone = "green" | "yellow" | "grey" | "destructive";
 

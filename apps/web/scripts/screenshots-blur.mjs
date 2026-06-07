@@ -14,9 +14,9 @@
 //                            the dashboard so subjects peek out from behind it),
 //                            then summon the palette with Ctrl/Cmd+K
 
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { mkdirSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

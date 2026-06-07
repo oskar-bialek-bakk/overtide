@@ -31,12 +31,15 @@ export async function finishSyncRun(
     errorMessage?: string;
   },
 ): Promise<void> {
-  await db.update(syncRuns).set({
-    status: result.status,
-    finishedAt: new Date().toISOString(),
-    issuesUpserted: result.issuesUpserted ?? 0,
-    timeEntriesUpserted: result.timeEntriesUpserted ?? 0,
-    relationsUpserted: result.relationsUpserted ?? 0,
-    errorMessage: result.errorMessage ?? null,
-  }).where(eq(syncRuns.id, id));
+  await db
+    .update(syncRuns)
+    .set({
+      status: result.status,
+      finishedAt: new Date().toISOString(),
+      issuesUpserted: result.issuesUpserted ?? 0,
+      timeEntriesUpserted: result.timeEntriesUpserted ?? 0,
+      relationsUpserted: result.relationsUpserted ?? 0,
+      errorMessage: result.errorMessage ?? null,
+    })
+    .where(eq(syncRuns.id, id));
 }

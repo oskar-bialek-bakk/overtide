@@ -11,9 +11,7 @@ test("app boots, dashboard renders balance card", async ({ page }) => {
 test("command palette opens with Ctrl+K", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("ControlOrMeta+K");
-  await expect(
-    page.getByPlaceholder("Type a command or jump to a page…"),
-  ).toBeVisible();
+  await expect(page.getByPlaceholder("Type a command or jump to a page…")).toBeVisible();
 });
 
 test("navigates to /unlinked from top bar", async ({ page }) => {

@@ -1,16 +1,23 @@
 import { Database } from "bun:sqlite";
+import { afterEach, describe, expect, it } from "bun:test";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { http, HttpResponse } from "msw";
-import { afterEach, describe, expect, it } from "bun:test";
-import * as schema from "../db/schema";
 import { fixtureSync } from "../../test/fixtures/redmine/sync_basic";
 import { startMsw } from "../../test/helpers/msw";
-import { runSync } from "./orchestrator";
+import * as schema from "../db/schema";
 import { RedmineClient } from "../redmine/client";
 import { RedmineEndpoints } from "../redmine/endpoints";
+import { runSync } from "./orchestrator";
 
-const env = { redmineUrl: "https://r.test", auth: { kind: "apiKey" as const, apiKey: "k" }, redemptionTrackerId: 12, overtimeActivityId: 8, port: 0, logLevel: "info" };
+const env = {
+  redmineUrl: "https://r.test",
+  auth: { kind: "apiKey" as const, apiKey: "k" },
+  redemptionTrackerId: 12,
+  overtimeActivityId: 8,
+  port: 0,
+  logLevel: "info",
+};
 
 function memDb() {
   const sqlite = new Database(":memory:");
@@ -26,9 +33,20 @@ afterEach(() => server.close());
 describe("runSync", () => {
   it("populates db end-to-end", async () => {
     server = startMsw(
-      http.get("https://r.test/users/current.json", () => HttpResponse.json({ user: fixtureSync.user })),
-      http.get("https://r.test/time_entries.json", () => HttpResponse.json({ time_entries: fixtureSync.timeEntries, total_count: 3, offset: 0, limit: 100 })),
-      http.get("https://r.test/issues.json", () => HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 })),
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entries: fixtureSync.timeEntries,
+          total_count: 3,
+          offset: 0,
+          limit: 100,
+        }),
+      ),
+      http.get("https://r.test/issues.json", () =>
+        HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 }),
+      ),
     );
     const db = memDb();
     const endpoints = new RedmineEndpoints(new RedmineClient(env));
@@ -50,9 +68,20 @@ describe("runSync", () => {
 
   it("preserves allocated_hours + createdLocally on existing relations across syncs", async () => {
     server = startMsw(
-      http.get("https://r.test/users/current.json", () => HttpResponse.json({ user: fixtureSync.user })),
-      http.get("https://r.test/time_entries.json", () => HttpResponse.json({ time_entries: fixtureSync.timeEntries, total_count: 3, offset: 0, limit: 100 })),
-      http.get("https://r.test/issues.json", () => HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 })),
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entries: fixtureSync.timeEntries,
+          total_count: 3,
+          offset: 0,
+          limit: 100,
+        }),
+      ),
+      http.get("https://r.test/issues.json", () =>
+        HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 }),
+      ),
     );
     const db = memDb();
     const endpoints = new RedmineEndpoints(new RedmineClient(env));
@@ -81,17 +110,30 @@ describe("runSync", () => {
     // issue 1, so the manual link must survive.
     let issuesCalls = 0;
     server = startMsw(
-      http.get("https://r.test/users/current.json", () => HttpResponse.json({ user: fixtureSync.user })),
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
       http.get("https://r.test/time_entries.json", () => {
         if (issuesCalls === 0) {
-          return HttpResponse.json({ time_entries: fixtureSync.timeEntries, total_count: 3, offset: 0, limit: 100 });
+          return HttpResponse.json({
+            time_entries: fixtureSync.timeEntries,
+            total_count: 3,
+            offset: 0,
+            limit: 100,
+          });
         }
         const earningOnly = fixtureSync.timeEntries.filter((t) => t.issue.id === 1);
-        return HttpResponse.json({ time_entries: earningOnly, total_count: earningOnly.length, offset: 0, limit: 100 });
+        return HttpResponse.json({
+          time_entries: earningOnly,
+          total_count: earningOnly.length,
+          offset: 0,
+          limit: 100,
+        });
       }),
       http.get("https://r.test/issues.json", () => {
         issuesCalls += 1;
-        if (issuesCalls === 1) return HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 });
+        if (issuesCalls === 1)
+          return HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 });
         const earningOnly = fixtureSync.issues.filter((i) => i.id === 1);
         return HttpResponse.json({ issues: earningOnly, total_count: 1 });
       }),
@@ -115,11 +157,21 @@ describe("runSync", () => {
     // First sync brings relation 500 in; second sync returns issues without it.
     let callCount = 0;
     server = startMsw(
-      http.get("https://r.test/users/current.json", () => HttpResponse.json({ user: fixtureSync.user })),
-      http.get("https://r.test/time_entries.json", () => HttpResponse.json({ time_entries: fixtureSync.timeEntries, total_count: 3, offset: 0, limit: 100 })),
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entries: fixtureSync.timeEntries,
+          total_count: 3,
+          offset: 0,
+          limit: 100,
+        }),
+      ),
       http.get("https://r.test/issues.json", () => {
         callCount += 1;
-        if (callCount === 1) return HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 });
+        if (callCount === 1)
+          return HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 });
         const stripped = fixtureSync.issues.map((i) => ({ ...i, relations: [] }));
         return HttpResponse.json({ issues: stripped, total_count: 2 });
       }),

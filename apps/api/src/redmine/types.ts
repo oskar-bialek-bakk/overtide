@@ -60,7 +60,9 @@ export const trackerSchema = z.object({ id: z.number(), name: z.string() });
 export const trackersResponseSchema = z.object({ trackers: z.array(trackerSchema) });
 
 export const activitySchema = z.object({ id: z.number(), name: z.string() });
-export const activitiesResponseSchema = z.object({ time_entry_activities: z.array(activitySchema) });
+export const activitiesResponseSchema = z.object({
+  time_entry_activities: z.array(activitySchema),
+});
 
 export type RedmineTimeEntry = z.infer<typeof redmineTimeEntrySchema>;
 export type RedmineIssue = z.infer<typeof redmineIssueSchema>;

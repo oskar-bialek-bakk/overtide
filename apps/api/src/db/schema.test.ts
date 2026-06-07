@@ -1,7 +1,7 @@
 import { Database } from "bun:sqlite";
+import { describe, expect, it } from "bun:test";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
-import { describe, expect, it } from "bun:test";
 import * as schema from "./schema";
 
 function memDb() {

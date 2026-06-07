@@ -29,11 +29,14 @@ export const createRedemptionRequestSchema = z
      *  everything on `startDate`. Sum of `hours` must equal `totalHours`. */
     daySchedule: z.array(wizardDayScheduleEntrySchema).min(1).optional(),
   })
-  .refine((v) => v.endDate >= v.startDate, { message: "endDate must be >= startDate", path: ["endDate"] })
-  .refine(
-    (v) => Math.abs(v.totalHours - v.allocations.reduce((s, a) => s + a.hours, 0)) < 1e-6,
-    { message: "sum(allocations) must equal totalHours", path: ["allocations"] },
-  )
+  .refine((v) => v.endDate >= v.startDate, {
+    message: "endDate must be >= startDate",
+    path: ["endDate"],
+  })
+  .refine((v) => Math.abs(v.totalHours - v.allocations.reduce((s, a) => s + a.hours, 0)) < 1e-6, {
+    message: "sum(allocations) must equal totalHours",
+    path: ["allocations"],
+  })
   .refine(
     (v) =>
       !v.daySchedule ||
@@ -41,7 +44,8 @@ export const createRedemptionRequestSchema = z
     { message: "sum(daySchedule.hours) must equal totalHours", path: ["daySchedule"] },
   )
   .refine(
-    (v) => !v.daySchedule || v.daySchedule.every((d) => d.date >= v.startDate && d.date <= v.endDate),
+    (v) =>
+      !v.daySchedule || v.daySchedule.every((d) => d.date >= v.startDate && d.date <= v.endDate),
     { message: "daySchedule dates must fall inside [startDate, endDate]", path: ["daySchedule"] },
   );
 export type CreateRedemptionRequest = z.infer<typeof createRedemptionRequestSchema>;

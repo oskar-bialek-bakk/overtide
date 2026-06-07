@@ -24,8 +24,7 @@ export function createApp(opts?: { dbPath?: string }) {
     .from(syncRuns)
     .where(eq(syncRuns.status, "running"))
     .all();
-  db
-    .update(syncRuns)
+  db.update(syncRuns)
     .set({
       status: "failed",
       finishedAt: new Date().toISOString(),

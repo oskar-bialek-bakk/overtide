@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
-import type { Db } from "../db/client";
 import type { Env } from "../config/env";
+import type { Db } from "../db/client";
 import { fetchEarnings, fetchRedemptions, fetchRelations } from "../db/queries";
 import { ok } from "../lib/envelope";
 import { computeFIFO } from "../matching/fifo";

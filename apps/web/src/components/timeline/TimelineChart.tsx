@@ -1,3 +1,5 @@
+import { useTimeline } from "@/api/queries";
+import { chartTooltipProps } from "@/components/charts/tooltip";
 import {
   Area,
   Bar,
@@ -9,8 +11,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useTimeline } from "@/api/queries";
-import { chartTooltipProps } from "@/components/charts/tooltip";
 
 const dayShort = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, {
@@ -31,14 +31,11 @@ export function TimelineChart() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          Running balance — area shows cumulative available hours over time;
-          bars show daily earned (green) and redeemed (red) activity.
+          Running balance — area shows cumulative available hours over time; bars show daily earned
+          (green) and redeemed (red) activity.
         </div>
         <div className="text-sm tabular-nums">
-          latest:{" "}
-          <span className="font-medium">
-            {lastPoint?.cumulative.toFixed(1) ?? "0.0"}h
-          </span>
+          latest: <span className="font-medium">{lastPoint?.cumulative.toFixed(1) ?? "0.0"}h</span>
         </div>
       </div>
       <div className="h-96 rounded-2xl border border-border/60 bg-card/40 p-4">
@@ -50,11 +47,7 @@ export function TimelineChart() {
                 <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05} />
               </linearGradient>
             </defs>
-            <CartesianGrid
-              stroke="hsl(var(--border))"
-              strokeDasharray="3 3"
-              vertical={false}
-            />
+            <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="date"
               stroke="hsl(var(--muted-foreground))"

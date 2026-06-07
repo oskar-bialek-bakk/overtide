@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { computeFIFO, type FIFOInput } from "./fifo";
+import { type FIFOInput, computeFIFO } from "./fifo";
 
 type Case = {
   name: string;
@@ -32,10 +32,16 @@ const cases: Case[] = [
         { id: 2, earned: 5, anchorDate: "2026-01-10" },
       ],
       redemptions: [{ id: 10, requested: 7, anchorDate: "2026-02-01" }],
-      relations: [{ earningId: 1, redemptionId: 10 }, { earningId: 2, redemptionId: 10 }],
+      relations: [
+        { earningId: 1, redemptionId: 10 },
+        { earningId: 2, redemptionId: 10 },
+      ],
     },
     expect: {
-      totalsEarned: 8, totalsRedeemed: 7, totalsAvailable: 1, totalsUnlinked: 0,
+      totalsEarned: 8,
+      totalsRedeemed: 7,
+      totalsAvailable: 1,
+      totalsUnlinked: 0,
       perEarning: { 1: { consumed: 3, remaining: 0 }, 2: { consumed: 4, remaining: 1 } },
     },
   },
@@ -47,7 +53,10 @@ const cases: Case[] = [
       relations: [{ earningId: 1, redemptionId: 10 }],
     },
     expect: {
-      totalsEarned: 2, totalsRedeemed: 2, totalsAvailable: 0, totalsUnlinked: 3,
+      totalsEarned: 2,
+      totalsRedeemed: 2,
+      totalsAvailable: 0,
+      totalsUnlinked: 3,
       perRedemption: { 10: { covered: 2, unlinked: 3 } },
     },
   },
@@ -68,10 +77,16 @@ const cases: Case[] = [
         { id: 10, requested: 3, anchorDate: "2026-02-01" },
         { id: 11, requested: 4, anchorDate: "2026-02-05" },
       ],
-      relations: [{ earningId: 1, redemptionId: 10 }, { earningId: 1, redemptionId: 11 }],
+      relations: [
+        { earningId: 1, redemptionId: 10 },
+        { earningId: 1, redemptionId: 11 },
+      ],
     },
     expect: {
-      totalsEarned: 5, totalsRedeemed: 5, totalsAvailable: 0, totalsUnlinked: 2,
+      totalsEarned: 5,
+      totalsRedeemed: 5,
+      totalsAvailable: 0,
+      totalsUnlinked: 2,
       perRedemption: { 10: { covered: 3, unlinked: 0 }, 11: { covered: 2, unlinked: 2 } },
     },
   },
@@ -83,10 +98,16 @@ const cases: Case[] = [
         { id: 1, earned: 1, anchorDate: "2026-01-01" },
       ],
       redemptions: [{ id: 10, requested: 1, anchorDate: "2026-02-01" }],
-      relations: [{ earningId: 1, redemptionId: 10 }, { earningId: 2, redemptionId: 10 }],
+      relations: [
+        { earningId: 1, redemptionId: 10 },
+        { earningId: 2, redemptionId: 10 },
+      ],
     },
     expect: {
-      totalsEarned: 2, totalsRedeemed: 1, totalsAvailable: 1, totalsUnlinked: 0,
+      totalsEarned: 2,
+      totalsRedeemed: 1,
+      totalsAvailable: 1,
+      totalsUnlinked: 0,
       perEarning: { 1: { consumed: 1, remaining: 0 }, 2: { consumed: 0, remaining: 1 } },
     },
   },
@@ -111,7 +132,10 @@ const cases: Case[] = [
       ],
     },
     expect: {
-      totalsEarned: 16, totalsRedeemed: 5, totalsAvailable: 11, totalsUnlinked: 0,
+      totalsEarned: 16,
+      totalsRedeemed: 5,
+      totalsAvailable: 11,
+      totalsUnlinked: 0,
       perEarning: { 1: { consumed: 0, remaining: 8 }, 2: { consumed: 5, remaining: 3 } },
       perRedemption: { 10: { covered: 5, unlinked: 0 } },
     },
@@ -131,7 +155,10 @@ const cases: Case[] = [
       ],
     },
     expect: {
-      totalsEarned: 20, totalsRedeemed: 6, totalsAvailable: 14, totalsUnlinked: 0,
+      totalsEarned: 20,
+      totalsRedeemed: 6,
+      totalsAvailable: 14,
+      totalsUnlinked: 0,
       perEarning: { 1: { consumed: 4, remaining: 6 }, 2: { consumed: 2, remaining: 8 } },
       perRedemption: { 10: { covered: 6, unlinked: 0 } },
     },
@@ -153,7 +180,10 @@ const cases: Case[] = [
       ],
     },
     expect: {
-      totalsEarned: 10, totalsRedeemed: 10, totalsAvailable: 0, totalsUnlinked: 0,
+      totalsEarned: 10,
+      totalsRedeemed: 10,
+      totalsAvailable: 0,
+      totalsUnlinked: 0,
       perEarning: { 1: { consumed: 10, remaining: 0 } },
       perRedemption: { 10: { covered: 5, unlinked: 0 }, 11: { covered: 5, unlinked: 0 } },
     },

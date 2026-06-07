@@ -1,5 +1,4 @@
-import { Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { useEarning } from "@/api/queries";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -9,8 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEarning } from "@/api/queries";
 import { dateShort, hours } from "@/lib/format";
+import { Link } from "@tanstack/react-router";
+import { ExternalLink } from "lucide-react";
 
 export function EarningTable() {
   const q = useEarning();
@@ -32,11 +32,7 @@ export function EarningTable() {
         {q.data.map((e) => (
           <TableRow key={e.id} className="hover:bg-secondary/40">
             <TableCell>
-              <Link
-                to="/issue/$id"
-                params={{ id: String(e.id) }}
-                className="hover:underline"
-              >
+              <Link to="/issue/$id" params={{ id: String(e.id) }} className="hover:underline">
                 #{e.id} {e.subject}
               </Link>
             </TableCell>

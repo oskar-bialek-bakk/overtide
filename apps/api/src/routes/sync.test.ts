@@ -1,16 +1,23 @@
 import { Database } from "bun:sqlite";
+import { afterEach, describe, expect, it } from "bun:test";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
+import { Hono } from "hono";
 import { http, HttpResponse } from "msw";
-import { afterEach, describe, expect, it } from "bun:test";
-import * as schema from "../db/schema";
 import { fixtureSync } from "../../test/fixtures/redmine/sync_basic";
 import { startMsw } from "../../test/helpers/msw";
-import { Hono } from "hono";
-import { syncRoutes } from "./sync";
+import * as schema from "../db/schema";
 import { errorHandler } from "../middleware/errors";
+import { syncRoutes } from "./sync";
 
-const env = { redmineUrl: "https://r.test", auth: { kind: "apiKey" as const, apiKey: "k" }, redemptionTrackerId: 12, overtimeActivityId: 8, port: 0, logLevel: "info" };
+const env = {
+  redmineUrl: "https://r.test",
+  auth: { kind: "apiKey" as const, apiKey: "k" },
+  redemptionTrackerId: 12,
+  overtimeActivityId: 8,
+  port: 0,
+  logLevel: "info",
+};
 
 function memDb() {
   const sqlite = new Database(":memory:");
@@ -26,9 +33,20 @@ afterEach(() => server.close());
 describe("POST /api/sync", () => {
   it("runs sync and returns success", async () => {
     server = startMsw(
-      http.get("https://r.test/users/current.json", () => HttpResponse.json({ user: fixtureSync.user })),
-      http.get("https://r.test/time_entries.json", () => HttpResponse.json({ time_entries: fixtureSync.timeEntries, total_count: 3, offset: 0, limit: 100 })),
-      http.get("https://r.test/issues.json", () => HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 })),
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entries: fixtureSync.timeEntries,
+          total_count: 3,
+          offset: 0,
+          limit: 100,
+        }),
+      ),
+      http.get("https://r.test/issues.json", () =>
+        HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 }),
+      ),
     );
     const db = memDb();
     const app = new Hono();

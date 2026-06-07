@@ -1,14 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
-import {
-  buildRedemptionDescription,
-  buildRedemptionSubject,
-  businessDaysBetween,
-  defaultDaySchedule,
-  deriveInitials,
-  type EarningForDescription,
-  type WizardDayScheduleEntry,
-} from "@overtide/shared";
+import { useCreateRedemption } from "@/api/mutations";
+import { useEarning } from "@/api/queries";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,10 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useEarning } from "@/api/queries";
-import { useCreateRedemption } from "@/api/mutations";
-import { cn } from "@/lib/utils";
 import { dateShort, hours } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import {
+  type EarningForDescription,
+  type WizardDayScheduleEntry,
+  buildRedemptionDescription,
+  buildRedemptionSubject,
+  businessDaysBetween,
+  defaultDaySchedule,
+  deriveInitials,
+} from "@overtide/shared";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
   open: boolean;
@@ -193,8 +193,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
     const v = parseHours(picks.get(c.id) ?? "") ?? 0;
     return v > c.remaining + 1e-6;
   });
-  const enoughCapacity =
-    candidates.reduce((s, c) => s + c.remaining, 0) + 1e-6 >= totalHours;
+  const enoughCapacity = candidates.reduce((s, c) => s + c.remaining, 0) + 1e-6 >= totalHours;
 
   const idx = STEPS.indexOf(step);
   const goNext = () => setStep(STEPS[Math.min(idx + 1, STEPS.length - 1)]!);
@@ -266,8 +265,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
               />
             </label>
             <div className="text-xs text-muted-foreground">
-              Subject preview:{" "}
-              <span className="text-foreground font-medium">{subjectPreview}</span>
+              Subject preview: <span className="text-foreground font-medium">{subjectPreview}</span>
             </div>
           </div>
         )}
@@ -335,8 +333,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
                           #{c.id} {c.subject}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {c.projectName} · {dateShort(c.anchorDate)} ·{" "}
-                          {hours(c.remaining)} free
+                          {c.projectName} · {dateShort(c.anchorDate)} · {hours(c.remaining)} free
                         </div>
                       </button>
                       {isOn && (
@@ -377,10 +374,7 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
                 <strong className="tabular-nums text-foreground">{hours(totalHours)}</strong>
                 {" · Assigned: "}
                 <strong
-                  className={cn(
-                    "tabular-nums",
-                    daysExact ? "text-emerald-500" : "text-amber-500",
-                  )}
+                  className={cn("tabular-nums", daysExact ? "text-emerald-500" : "text-amber-500")}
                 >
                   {hours(dayTotal)}
                 </strong>
@@ -440,9 +434,8 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
             <div>
               <div className="flex items-center justify-between">
                 <div className="text-xs text-muted-foreground">
-                  Description{descriptionDirty && (
-                    <span className="ml-1 text-amber-500">· edited</span>
-                  )}
+                  Description
+                  {descriptionDirty && <span className="ml-1 text-amber-500">· edited</span>}
                 </div>
                 {descriptionDirty && (
                   <button
@@ -469,7 +462,8 @@ export function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = 
                 className="mt-1 text-xs"
               />
               <div className="mt-1 text-xs text-muted-foreground">
-                Time-entry comments are auto-generated per allocation and aren't affected by edits here.
+                Time-entry comments are auto-generated per allocation and aren't affected by edits
+                here.
               </div>
             </div>
             <div>

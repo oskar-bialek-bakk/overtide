@@ -1,5 +1,5 @@
-import { setupServer } from "msw/node";
 import type { RequestHandler } from "msw";
+import { setupServer } from "msw/node";
 export function startMsw(...handlers: RequestHandler[]) {
   const server = setupServer(...handlers);
   server.listen({ onUnhandledRequest: "error" });

@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { RedemptionTable } from "@/components/issues/RedemptionTable";
 import { CreateRedemptionWizard } from "@/components/redemption-wizard/CreateRedemptionWizard";
+import { Button } from "@/components/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 function RedemptionsPage() {
   const [wizardOpen, setWizardOpen] = useState(false);

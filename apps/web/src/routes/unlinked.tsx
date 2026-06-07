@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/states/EmptyState";
-import { RelationLinker } from "@/components/linker/RelationLinker";
 import { useUnlinked } from "@/api/queries";
+import { RelationLinker } from "@/components/linker/RelationLinker";
+import { EmptyState } from "@/components/states/EmptyState";
+import { Button } from "@/components/ui/button";
 import { dateShort, hours } from "@/lib/format";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 function UnlinkedPage() {
   const q = useUnlinked();
@@ -38,11 +38,7 @@ function UnlinkedPage() {
               {r.projectName} · {dateShort(r.anchorDate)} · needs {hours(r.unlinked)}
             </div>
           </div>
-          <Button
-            onClick={() =>
-              setTarget({ id: r.id, subject: r.subject, unlinked: r.unlinked })
-            }
-          >
+          <Button onClick={() => setTarget({ id: r.id, subject: r.subject, unlinked: r.unlinked })}>
             Pick earning to link
           </Button>
         </div>

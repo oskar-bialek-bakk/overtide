@@ -1,6 +1,6 @@
+import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 export function NavLink({ to, children }: { to: string; children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

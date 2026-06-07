@@ -11,23 +11,27 @@ import {
 
 describe("buildRedemptionSubject", () => {
   it("formats single day", () => {
-    expect(buildRedemptionSubject({ startDate: "2026-05-04", endDate: "2026-05-04", initials: "OB" }))
-      .toBe("Odbiór nadgodzin OB 04.05");
+    expect(
+      buildRedemptionSubject({ startDate: "2026-05-04", endDate: "2026-05-04", initials: "OB" }),
+    ).toBe("Odbiór nadgodzin OB 04.05");
   });
 
   it("formats same-month range", () => {
-    expect(buildRedemptionSubject({ startDate: "2026-05-04", endDate: "2026-05-08", initials: "OB" }))
-      .toBe("Odbiór nadgodzin OB 04-08.05");
+    expect(
+      buildRedemptionSubject({ startDate: "2026-05-04", endDate: "2026-05-08", initials: "OB" }),
+    ).toBe("Odbiór nadgodzin OB 04-08.05");
   });
 
   it("formats cross-month range", () => {
-    expect(buildRedemptionSubject({ startDate: "2026-04-28", endDate: "2026-05-02", initials: "OB" }))
-      .toBe("Odbiór nadgodzin OB 28.04-02.05");
+    expect(
+      buildRedemptionSubject({ startDate: "2026-04-28", endDate: "2026-05-02", initials: "OB" }),
+    ).toBe("Odbiór nadgodzin OB 28.04-02.05");
   });
 
   it("falls back to ISO for cross-year range", () => {
-    expect(buildRedemptionSubject({ startDate: "2026-12-30", endDate: "2027-01-02", initials: "OB" }))
-      .toBe("Odbiór nadgodzin OB 2026-12-30 — 2027-01-02");
+    expect(
+      buildRedemptionSubject({ startDate: "2026-12-30", endDate: "2027-01-02", initials: "OB" }),
+    ).toBe("Odbiór nadgodzin OB 2026-12-30 — 2027-01-02");
   });
 });
 
@@ -38,10 +42,15 @@ describe("buildRedemptionDescription", () => {
       [115498, { id: 115498, subject: "Onboarding Foo" }],
     ]);
     const desc = buildRedemptionDescription(
-      [{ earningId: 114518, hours: 4 }, { earningId: 115498, hours: 3.5 }],
+      [
+        { earningId: 114518, hours: 4 },
+        { earningId: 115498, hours: 3.5 },
+      ],
       earnings,
     );
-    expect(desc).toBe("Odbiór 4h z #114518 (R&D - support migracji)\nOdbiór 3.5h z #115498 (Onboarding Foo)");
+    expect(desc).toBe(
+      "Odbiór 4h z #114518 (R&D - support migracji)\nOdbiór 3.5h z #115498 (Onboarding Foo)",
+    );
   });
 
   it("falls back gracefully for unknown earnings", () => {
@@ -97,30 +106,36 @@ describe("createRedemptionRequestSchema", () => {
   });
 
   it("rejects mismatched sum", () => {
-    expect(() => createRedemptionRequestSchema.parse({
-      startDate: "2026-05-04",
-      endDate: "2026-05-04",
-      totalHours: 8,
-      allocations: [{ earningId: 1, hours: 5 }],
-    })).toThrow();
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-05-04",
+        endDate: "2026-05-04",
+        totalHours: 8,
+        allocations: [{ earningId: 1, hours: 5 }],
+      }),
+    ).toThrow();
   });
 
   it("rejects endDate < startDate", () => {
-    expect(() => createRedemptionRequestSchema.parse({
-      startDate: "2026-05-05",
-      endDate: "2026-05-04",
-      totalHours: 8,
-      allocations: [{ earningId: 1, hours: 8 }],
-    })).toThrow();
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-05-05",
+        endDate: "2026-05-04",
+        totalHours: 8,
+        allocations: [{ earningId: 1, hours: 8 }],
+      }),
+    ).toThrow();
   });
 
   it("rejects empty allocations", () => {
-    expect(() => createRedemptionRequestSchema.parse({
-      startDate: "2026-05-04",
-      endDate: "2026-05-04",
-      totalHours: 8,
-      allocations: [],
-    })).toThrow();
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-05-04",
+        endDate: "2026-05-04",
+        totalHours: 8,
+        allocations: [],
+      }),
+    ).toThrow();
   });
 
   it("accepts an optional description override", () => {
@@ -150,36 +165,44 @@ describe("createRedemptionRequestSchema", () => {
   });
 
   it("rejects daySchedule whose sum doesn't match totalHours", () => {
-    expect(() => createRedemptionRequestSchema.parse({
-      startDate: "2026-05-04",
-      endDate: "2026-05-05",
-      totalHours: 16,
-      allocations: [{ earningId: 1, hours: 16 }],
-      daySchedule: [
-        { date: "2026-05-04", hours: 8 },
-        { date: "2026-05-05", hours: 7 },
-      ],
-    })).toThrow();
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-05-04",
+        endDate: "2026-05-05",
+        totalHours: 16,
+        allocations: [{ earningId: 1, hours: 16 }],
+        daySchedule: [
+          { date: "2026-05-04", hours: 8 },
+          { date: "2026-05-05", hours: 7 },
+        ],
+      }),
+    ).toThrow();
   });
 
   it("rejects daySchedule dates outside the range", () => {
-    expect(() => createRedemptionRequestSchema.parse({
-      startDate: "2026-05-04",
-      endDate: "2026-05-05",
-      totalHours: 16,
-      allocations: [{ earningId: 1, hours: 16 }],
-      daySchedule: [
-        { date: "2026-05-04", hours: 8 },
-        { date: "2026-05-10", hours: 8 },
-      ],
-    })).toThrow();
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-05-04",
+        endDate: "2026-05-05",
+        totalHours: 16,
+        allocations: [{ earningId: 1, hours: 16 }],
+        daySchedule: [
+          { date: "2026-05-04", hours: 8 },
+          { date: "2026-05-10", hours: 8 },
+        ],
+      }),
+    ).toThrow();
   });
 });
 
 describe("enumerateBusinessDays / defaultDaySchedule", () => {
   it("enumerates Mon-Fri only", () => {
     expect(enumerateBusinessDays("2026-05-04", "2026-05-10")).toEqual([
-      "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08",
+      "2026-05-04",
+      "2026-05-05",
+      "2026-05-06",
+      "2026-05-07",
+      "2026-05-08",
     ]);
   });
 
