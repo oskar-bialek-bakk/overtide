@@ -14,16 +14,17 @@ export function backupRoutes(deps: { db: Db }) {
 
   r.get("/export", async (c) => {
     const exportedAt = new Date().toISOString();
-    const payload = {
+    const payload = await deps.db.transaction(async (tx) => ({
       version: 1,
       exportedAt,
-      issues: await deps.db.select().from(issues),
-      timeEntries: await deps.db.select().from(timeEntries),
-      issueRelations: await deps.db.select().from(issueRelations),
-      syncRuns: await deps.db.select().from(syncRuns),
-      redemptionOperations: await deps.db.select().from(redemptionOperations),
-      appConfig: await deps.db.select().from(appConfig),
-    };
+      issues: await tx.select().from(issues),
+      timeEntries: await tx.select().from(timeEntries),
+      issueRelations: await tx.select().from(issueRelations),
+      syncRuns: await tx.select().from(syncRuns),
+      redemptionOperations: await tx.select().from(redemptionOperations),
+      appConfig: await tx.select().from(appConfig),
+    }));
+    c.header("Cache-Control", "no-store");
     c.header(
       "Content-Disposition",
       `attachment; filename="overtide-backup-${exportedAt.slice(0, 10)}.json"`,

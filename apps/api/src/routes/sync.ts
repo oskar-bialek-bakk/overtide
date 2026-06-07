@@ -36,7 +36,7 @@ export function syncRoutes(deps: { db: Db; env: Env }) {
 
   r.get("/status", async (c) => {
     const [last] = await deps.db.select().from(syncRuns).orderBy(desc(syncRuns.startedAt)).limit(1);
-    const stale = !last?.finishedAt || Date.now() - Date.parse(last.finishedAt) > STALE_SYNC_MS;
+    const stale = isStaleSyncRun(last ?? null);
     return ok(c, { lastRun: last ?? null, stale });
   });
 
@@ -49,4 +49,13 @@ export function syncRoutes(deps: { db: Db; env: Env }) {
   });
 
   return r;
+}
+
+function isStaleSyncRun(run: typeof syncRuns.$inferSelect | null) {
+  if (!run) return true;
+  const timestamp = run.status === "running" ? run.startedAt : run.finishedAt;
+  if (!timestamp) return true;
+  const time = Date.parse(timestamp);
+  if (!Number.isFinite(time)) return true;
+  return Date.now() - time > STALE_SYNC_MS;
 }

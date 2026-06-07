@@ -22,6 +22,7 @@ describe("GET /api/backup/export", () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("application/json");
     expect(res.headers.get("content-disposition")).toContain("overtide-backup-");
+    expect(res.headers.get("cache-control")).toBe("no-store");
     const json = await res.json();
     expect(json.version).toBe(1);
     expect(Array.isArray(json.issues)).toBe(true);

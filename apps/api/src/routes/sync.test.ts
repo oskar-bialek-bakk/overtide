@@ -97,4 +97,40 @@ describe("POST /api/sync", () => {
       overtimeOnRedemptionIgnored: 1,
     });
   });
+
+  it("uses startedAt for running sync staleness", async () => {
+    const db = memDb();
+    await db.insert(schema.syncRuns).values({
+      startedAt: new Date().toISOString(),
+      status: "running",
+    });
+    const app = new Hono();
+    app.onError(errorHandler);
+    app.route("/api/sync", syncRoutes({ db, env }));
+
+    const res = await app.request("/api/sync/status");
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.stale).toBe(false);
+    expect(body.data.lastRun.status).toBe("running");
+  });
+
+  it("treats invalid status timestamps as stale", async () => {
+    const db = memDb();
+    await db.insert(schema.syncRuns).values({
+      startedAt: "not-a-date",
+      finishedAt: "not-a-date",
+      status: "success",
+    });
+    const app = new Hono();
+    app.onError(errorHandler);
+    app.route("/api/sync", syncRoutes({ db, env }));
+
+    const res = await app.request("/api/sync/status");
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.stale).toBe(true);
+  });
 });
