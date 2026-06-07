@@ -11,7 +11,7 @@ import { Hono } from "hono";
 import type { Env } from "../config/env";
 import type { Db } from "../db/client";
 import { fetchEarnings, fetchRedemptions, fetchRelations } from "../db/queries";
-import { issueRelations, issues, timeEntries } from "../db/schema";
+import { issueRelations, issues, redemptionOperations, timeEntries } from "../db/schema";
 import { AppError, ok } from "../lib/envelope";
 import { logger } from "../lib/logger";
 import { computeFIFO } from "../matching/fifo";
@@ -189,6 +189,9 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
     // 5. Mirror everything successfully written.
     const url = `${deps.env.redmineUrl}/issues/${createdIssue.id}`;
     const nowISO = new Date().toISOString();
+    let retryableOperationId: number | undefined;
+    const warning = warnings.length > 0 ? warnings.join("; ") : null;
+    const operationStatus = warning ? "partial" : "success";
     deps.db.transaction((tx) => {
       tx.insert(issues)
         .values({
@@ -253,9 +256,24 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
           .onConflictDoNothing()
           .run();
       }
+
+      const operation = tx
+        .insert(redemptionOperations)
+        .values({
+          redemptionIssueId: createdIssue.id,
+          status: operationStatus,
+          warning,
+          missingTimeEntries: tePlans.length - createdTimeEntries.length,
+          missingRelations: body.allocations.length - createdRelations.length,
+          requestJson: JSON.stringify(body),
+          createdAt: nowISO,
+          updatedAt: nowISO,
+        })
+        .returning({ id: redemptionOperations.id })
+        .get();
+      retryableOperationId = operation.id;
     });
 
-    const warning = warnings.length > 0 ? warnings.join("; ") : null;
     return c.json(
       {
         data: {
@@ -263,6 +281,9 @@ export function redemptionsRoutes(deps: { db: Db; env: Env }) {
           url,
           subject: createdIssue.subject,
           ...(warning ? { warning } : {}),
+          ...(retryableOperationId && operationStatus === "partial"
+            ? { retryableOperationId }
+            : {}),
         },
       },
       201,

@@ -97,6 +97,27 @@ export const syncRuns = sqliteTable(
   }),
 );
 
+export const redemptionOperations = sqliteTable(
+  "redemption_operations",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    redemptionIssueId: integer("redemption_issue_id")
+      .notNull()
+      .references(() => issues.id, { onDelete: "cascade" }),
+    status: text("status", { enum: ["success", "partial", "failed"] }).notNull(),
+    warning: text("warning"),
+    missingTimeEntries: integer("missing_time_entries").notNull().default(0),
+    missingRelations: integer("missing_relations").notNull().default(0),
+    requestJson: text("request_json").notNull(),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (t) => ({
+    redemptionIdx: index("idx_redemption_operations_issue").on(t.redemptionIssueId),
+    statusIdx: index("idx_redemption_operations_status").on(t.status),
+  }),
+);
+
 export const appConfig = sqliteTable("app_config", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
