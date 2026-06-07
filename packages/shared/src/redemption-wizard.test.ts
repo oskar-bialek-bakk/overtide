@@ -33,6 +33,12 @@ describe("buildRedemptionSubject", () => {
       buildRedemptionSubject({ startDate: "2026-12-30", endDate: "2027-01-02", initials: "OB" }),
     ).toBe("Odbiór nadgodzin OB 2026-12-30 — 2027-01-02");
   });
+
+  it("rejects impossible calendar dates", () => {
+    expect(() =>
+      buildRedemptionSubject({ startDate: "2026-02-31", endDate: "2026-03-01", initials: "OB" }),
+    ).toThrow("bad date 2026-02-31");
+  });
 });
 
 describe("buildRedemptionDescription", () => {
@@ -190,6 +196,27 @@ describe("createRedemptionRequestSchema", () => {
           { date: "2026-05-04", hours: 8 },
           { date: "2026-05-10", hours: 8 },
         ],
+      }),
+    ).toThrow();
+  });
+
+  it("rejects impossible start/end and daySchedule dates", () => {
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-02-31",
+        endDate: "2026-03-01",
+        totalHours: 8,
+        allocations: [{ earningId: 1, hours: 8 }],
+      }),
+    ).toThrow();
+
+    expect(() =>
+      createRedemptionRequestSchema.parse({
+        startDate: "2026-02-27",
+        endDate: "2026-03-02",
+        totalHours: 8,
+        allocations: [{ earningId: 1, hours: 8 }],
+        daySchedule: [{ date: "2026-02-30", hours: 8 }],
       }),
     ).toThrow();
   });

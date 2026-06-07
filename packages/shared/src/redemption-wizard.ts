@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const ISO_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+const isoDateSchema = z
+  .string()
+  .regex(ISO_DATE_RE)
+  .refine(isValidISODate, { message: "date must be a real YYYY-MM-DD date" });
+
 /** Allocation requested by the wizard: take `hours` from earning `earningId`. */
 export const wizardAllocationSchema = z.object({
   earningId: z.number().int().positive(),
@@ -9,7 +15,7 @@ export type WizardAllocation = z.infer<typeof wizardAllocationSchema>;
 
 /** One row in the per-day breakdown step: `hours` of redemption time on `date`. */
 export const wizardDayScheduleEntrySchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  date: isoDateSchema,
   hours: z.number().positive(),
 });
 export type WizardDayScheduleEntry = z.infer<typeof wizardDayScheduleEntrySchema>;
@@ -17,8 +23,8 @@ export type WizardDayScheduleEntry = z.infer<typeof wizardDayScheduleEntrySchema
 /** Input the client POSTs to /api/redemptions/create. */
 export const createRedemptionRequestSchema = z
   .object({
-    startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    startDate: isoDateSchema,
+    endDate: isoDateSchema,
     totalHours: z.number().positive(),
     allocations: z.array(wizardAllocationSchema).min(1),
     /** Optional override for the Redmine issue description. When absent the backend
@@ -62,18 +68,29 @@ export type CreateRedemptionResponse = z.infer<typeof createRedemptionResponseSc
 /** Earning data the frontend needs to render the description preview parity-correct. */
 export type EarningForDescription = { id: number; subject: string };
 
-const PL_MONTHS_MAX_DAY = 31;
-
 function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
 function parseISO(d: string): { y: number; m: number; d: number } {
-  const [y, m, day] = d.split("-").map(Number);
-  if (!y || !m || !day || m < 1 || m > 12 || day < 1 || day > PL_MONTHS_MAX_DAY) {
+  const match = ISO_DATE_RE.exec(d);
+  if (!match || !isValidISODate(d)) {
     throw new Error(`bad date ${d}`);
   }
-  return { y, m, d: day };
+  const [, y, m, day] = match;
+  return { y: Number(y), m: Number(m), d: Number(day) };
+}
+
+function isValidISODate(value: string): boolean {
+  const match = ISO_DATE_RE.exec(value);
+  if (!match) return false;
+  const [, yText, mText, dText] = match;
+  const y = Number(yText);
+  const m = Number(mText);
+  const d = Number(dText);
+  if (y < 1000 || m < 1 || m > 12 || d < 1) return false;
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
 }
 
 /**
