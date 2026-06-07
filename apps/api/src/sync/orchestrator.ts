@@ -65,6 +65,9 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
     let issuesUpserted = 0;
     let teUpserted = 0;
     let relUpserted = 0;
+    let relationsSkippedUnknownIssue = 0;
+    let relationsSkippedSameRole = 0;
+    let overtimeOnRedemptionIgnored = 0;
 
     await db.transaction(async (tx) => {
       for (const { issue, role } of classified) {
@@ -77,6 +80,7 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         if (!keptIds.has(te.issue.id)) continue;
         const owningRole = roleByIssueId.get(te.issue.id);
         if (owningRole === "redemption" && te.activity.id === env.overtimeActivityId) {
+          overtimeOnRedemptionIgnored += 1;
           logger.warn(
             { teId: te.id, issueId: te.issue.id },
             "overtime activity on redemption issue — ignored",
@@ -115,9 +119,22 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         const knownDbRoleById = new Map(knownRows.map((x) => [x.id, x.role] as const));
         const roleOf = (id: number) => roleByIssueId.get(id) ?? knownDbRoleById.get(id);
 
-        const normalizedFresh = allFresh
-          .map((r) => ({ raw: r, normalized: normalizeRelatesRelation(r, roleOf) }))
-          .filter((r) => r.normalized !== null);
+        const normalizedFresh: {
+          raw: (typeof allFresh)[number];
+          normalized: { kind: "valid"; earningId: number; redemptionId: number };
+        }[] = [];
+        for (const r of allFresh) {
+          const normalized = normalizeRelatesRelation(r, roleOf);
+          if (normalized.kind === "unknownIssue") {
+            relationsSkippedUnknownIssue += 1;
+            continue;
+          }
+          if (normalized.kind === "sameRole") {
+            relationsSkippedSameRole += 1;
+            continue;
+          }
+          normalizedFresh.push({ raw: r, normalized });
+        }
         const validFreshIds = new Set(normalizedFresh.map((r) => r.raw.id));
 
         const existingConnected = await tx
@@ -133,7 +150,6 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         }
 
         for (const { raw: r, normalized } of normalizedFresh) {
-          if (!normalized) continue;
           await tx
             .insert(issueRelations)
             .values({
@@ -166,6 +182,9 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
       issuesUpserted,
       timeEntriesUpserted: teUpserted,
       relationsUpserted: relUpserted,
+      relationsSkippedUnknownIssue,
+      relationsSkippedSameRole,
+      overtimeOnRedemptionIgnored,
     });
 
     return {
@@ -174,6 +193,9 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
       issuesUpserted,
       timeEntriesUpserted: teUpserted,
       relationsUpserted: relUpserted,
+      relationsSkippedUnknownIssue,
+      relationsSkippedSameRole,
+      overtimeOnRedemptionIgnored,
     };
   } catch (e) {
     const msg = e instanceof Error ? e.message.slice(0, 2048) : String(e);
@@ -214,14 +236,20 @@ type IssueRole = "earning" | "redemption";
 function normalizeRelatesRelation(
   relation: { issue_id: number; issue_to_id: number },
   roleOf: (id: number) => IssueRole | undefined,
-): { earningId: number; redemptionId: number } | null {
+):
+  | { kind: "valid"; earningId: number; redemptionId: number }
+  | { kind: "unknownIssue" }
+  | { kind: "sameRole" } {
   const fromRole = roleOf(relation.issue_id);
   const toRole = roleOf(relation.issue_to_id);
+  if (!fromRole || !toRole) {
+    return { kind: "unknownIssue" };
+  }
   if (fromRole === "earning" && toRole === "redemption") {
-    return { earningId: relation.issue_id, redemptionId: relation.issue_to_id };
+    return { kind: "valid", earningId: relation.issue_id, redemptionId: relation.issue_to_id };
   }
   if (fromRole === "redemption" && toRole === "earning") {
-    return { earningId: relation.issue_to_id, redemptionId: relation.issue_id };
+    return { kind: "valid", earningId: relation.issue_to_id, redemptionId: relation.issue_id };
   }
-  return null;
+  return { kind: "sameRole" };
 }

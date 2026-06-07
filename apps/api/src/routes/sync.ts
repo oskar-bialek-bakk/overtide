@@ -10,6 +10,8 @@ import { RedmineEndpoints } from "../redmine/endpoints";
 import { SyncInProgressError } from "../sync/lock";
 import { runSync } from "../sync/orchestrator";
 
+const STALE_SYNC_MS = 1000 * 60 * 60 * 24 * 7;
+
 export function syncRoutes(deps: { db: Db; env: Env }) {
   const r = new Hono();
 
@@ -32,6 +34,12 @@ export function syncRoutes(deps: { db: Db; env: Env }) {
     return ok(c, rows);
   });
 
+  r.get("/status", async (c) => {
+    const [last] = await deps.db.select().from(syncRuns).orderBy(desc(syncRuns.startedAt)).limit(1);
+    const stale = isStaleSyncRun(last ?? null);
+    return ok(c, { lastRun: last ?? null, stale });
+  });
+
   r.get("/:id", async (c) => {
     const id = Number(c.req.param("id"));
     if (!Number.isFinite(id)) throw new AppError("BAD_ID", 400, "id must be a number");
@@ -41,4 +49,13 @@ export function syncRoutes(deps: { db: Db; env: Env }) {
   });
 
   return r;
+}
+
+function isStaleSyncRun(run: typeof syncRuns.$inferSelect | null) {
+  if (!run) return true;
+  const timestamp = run.status === "running" ? run.startedAt : run.finishedAt;
+  if (!timestamp) return true;
+  const time = Date.parse(timestamp);
+  if (!Number.isFinite(time)) return true;
+  return Date.now() - time > STALE_SYNC_MS;
 }

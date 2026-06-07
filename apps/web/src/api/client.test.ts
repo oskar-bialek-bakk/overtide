@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ApiClientError, apiFetch } from "./client";
+import { z } from "zod";
+import { ApiClientError, apiFetch, apiFetchSchema } from "./client";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -61,6 +62,22 @@ describe("apiFetch", () => {
     );
     await expect(apiFetch("/api/x")).rejects.toMatchObject({
       code: "BAD_RESPONSE",
+    });
+  });
+
+  it("throws BAD_RESPONSE_SCHEMA when data does not match the expected schema", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify({ data: { total: "bad" } }), { status: 200 }),
+        ),
+    );
+    await expect(
+      apiFetchSchema("/api/balance", z.object({ total: z.number() })),
+    ).rejects.toMatchObject({
+      code: "BAD_RESPONSE_SCHEMA",
     });
   });
 });

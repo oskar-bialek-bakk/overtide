@@ -1,7 +1,9 @@
 import { useHealth } from "@/api/queries";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
+import { Download } from "lucide-react";
 
 function SettingsPage() {
   const q = useHealth();
@@ -35,6 +37,19 @@ function SettingsPage() {
           <div className="text-sm text-muted-foreground">
             Last sync: {q.data.lastSync ?? "never"}
           </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-5 space-y-3">
+          <div className="text-sm uppercase tracking-wider text-muted-foreground">Local backup</div>
+          <a
+            href="/api/backup/export"
+            download
+            className={buttonVariants({ variant: "secondary" })}
+          >
+            <Download size={14} />
+            Download backup
+          </a>
         </CardContent>
       </Card>
     </div>

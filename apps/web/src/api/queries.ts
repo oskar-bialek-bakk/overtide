@@ -1,6 +1,16 @@
-import type { Balance, EarningIssue, RedemptionIssue, SyncRun } from "@overtide/shared";
+import {
+  balanceSchema,
+  earningIssueSchema,
+  healthDataSchema,
+  issueDetailSchema,
+  redemptionIssueSchema,
+  syncRunSchema,
+  syncStatusSchema,
+  timelinePointSchema,
+} from "@overtide/shared";
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch } from "./client";
+import { z } from "zod";
+import { apiFetchSchema } from "./client";
 
 export const qk = {
   health: ["health"] as const,
@@ -11,74 +21,62 @@ export const qk = {
   unlinked: ["unlinked"] as const,
   issue: (id: number) => ["issue", id] as const,
   syncHistory: ["sync", "history"] as const,
-};
-
-export type HealthData = {
-  redmine: "ok" | "unreachable" | "auth_failed" | "rest_disabled";
-  db: "ok";
-  lastSync: string | null;
-  errors: { code: string; message: string }[];
-};
-
-export type TimelinePoint = {
-  date: string;
-  earned: number;
-  redeemed: number;
-  cumulative: number;
-};
-
-export type IssueDetail = {
-  issue: unknown;
-  timeEntries: unknown[];
-  relations: unknown[];
+  syncStatus: ["sync", "status"] as const,
 };
 
 export const useHealth = () =>
   useQuery({
     queryKey: qk.health,
-    queryFn: () => apiFetch<HealthData>("/api/health"),
+    queryFn: () => apiFetchSchema("/api/health", healthDataSchema),
     refetchInterval: 30_000,
   });
 
 export const useBalance = () =>
   useQuery({
     queryKey: qk.balance,
-    queryFn: () => apiFetch<Balance>("/api/balance"),
+    queryFn: () => apiFetchSchema("/api/balance", balanceSchema),
   });
 
 export const useTimeline = () =>
   useQuery({
     queryKey: qk.timeline,
-    queryFn: () => apiFetch<TimelinePoint[]>("/api/balance/timeline"),
+    queryFn: () => apiFetchSchema("/api/balance/timeline", z.array(timelinePointSchema)),
   });
 
 export const useEarning = () =>
   useQuery({
     queryKey: qk.earning,
-    queryFn: () => apiFetch<EarningIssue[]>("/api/issues/earning"),
+    queryFn: () => apiFetchSchema("/api/issues/earning", z.array(earningIssueSchema)),
   });
 
 export const useRedemption = () =>
   useQuery({
     queryKey: qk.redemption,
-    queryFn: () => apiFetch<RedemptionIssue[]>("/api/issues/redemption"),
+    queryFn: () => apiFetchSchema("/api/issues/redemption", z.array(redemptionIssueSchema)),
   });
 
 export const useUnlinked = () =>
   useQuery({
     queryKey: qk.unlinked,
-    queryFn: () => apiFetch<RedemptionIssue[]>("/api/unlinked"),
+    queryFn: () => apiFetchSchema("/api/unlinked", z.array(redemptionIssueSchema)),
   });
 
 export const useSyncHistory = () =>
   useQuery({
     queryKey: qk.syncHistory,
-    queryFn: () => apiFetch<SyncRun[]>("/api/sync/history?limit=20"),
+    queryFn: () => apiFetchSchema("/api/sync/history?limit=20", z.array(syncRunSchema)),
+  });
+
+export const useSyncStatus = () =>
+  useQuery({
+    queryKey: qk.syncStatus,
+    queryFn: () => apiFetchSchema("/api/sync/status", syncStatusSchema),
+    refetchInterval: 30_000,
   });
 
 export const useIssue = (id: number) =>
   useQuery({
     queryKey: qk.issue(id),
-    queryFn: () => apiFetch<IssueDetail>(`/api/issues/${id}`),
+    queryFn: () => apiFetchSchema(`/api/issues/${id}`, issueDetailSchema),
     enabled: Number.isFinite(id),
   });

@@ -1,3 +1,5 @@
+import type { z } from "zod";
+
 export class ApiClientError extends Error {
   constructor(
     public code: string,
@@ -45,4 +47,17 @@ export async function apiFetch<T>(path: string, opts: ApiFetchOptions = {}): Pro
   }
   if (json.data !== undefined) return json.data;
   throw new ApiClientError("BAD_RESPONSE", "neither data nor error", undefined, res.status);
+}
+
+export async function apiFetchSchema<TSchema extends z.ZodTypeAny>(
+  path: string,
+  schema: TSchema,
+  opts: ApiFetchOptions = {},
+): Promise<z.infer<TSchema>> {
+  const data = await apiFetch<unknown>(path, opts);
+  const parsed = schema.safeParse(data);
+  if (!parsed.success) {
+    throw new ApiClientError("BAD_RESPONSE_SCHEMA", "response did not match schema", parsed.error);
+  }
+  return parsed.data;
 }
