@@ -1,6 +1,17 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
-  "files": { "ignore": ["node_modules", ".claude", "dist", "drizzle", "data", "**/*.gen.ts"] },
+  "files": {
+    "ignore": [
+      "node_modules",
+      ".claude",
+      "dist",
+      "drizzle",
+      "data",
+      "test-results",
+      "playwright-report",
+      "**/*.gen.ts"
+    ]
+  },
   "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100, "lineEnding": "crlf" },
   "linter": {
     "enabled": true,

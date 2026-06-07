@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, or } from "drizzle-orm";
 import type { Env } from "../config/env";
 import type { Db } from "../db/client";
 import { appConfig, issueRelations, issues, timeEntries } from "../db/schema";
@@ -98,45 +98,48 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
         // bug: when only the earning had new TE, manual links to a
         // redemption outside the window got wiped.
         const allFresh = (issue.relations ?? []).filter((r) => r.relation_type === "relates");
-        const allFreshIds = new Set(allFresh.map((r) => r.id));
+        // For insert/upsert we need both sides to exist in `issues` (FK).
+        // The other side may live in `keptIds` (this sync) or already be in
+        // DB from a prior one. Pull roles too, so relation orientation is a
+        // local invariant rather than an accident of Redmine's payload order.
+        const otherIds = Array.from(
+          new Set(allFresh.flatMap((r) => [r.issue_id, r.issue_to_id])),
+        ).filter((id) => !keptIds.has(id));
+        const knownRows =
+          otherIds.length === 0
+            ? []
+            : await tx
+                .select({ id: issues.id, role: issues.role })
+                .from(issues)
+                .where(inArray(issues.id, otherIds));
+        const knownDbRoleById = new Map(knownRows.map((x) => [x.id, x.role] as const));
+        const roleOf = (id: number) => roleByIssueId.get(id) ?? knownDbRoleById.get(id);
 
-        const existingFrom = await tx
+        const normalizedFresh = allFresh
+          .map((r) => ({ raw: r, normalized: normalizeRelatesRelation(r, roleOf) }))
+          .filter((r) => r.normalized !== null);
+        const validFreshIds = new Set(normalizedFresh.map((r) => r.raw.id));
+
+        const existingConnected = await tx
           .select({ id: issueRelations.id })
           .from(issueRelations)
-          .where(eq(issueRelations.issueFromId, issue.id));
-        for (const ex of existingFrom) {
-          if (!allFreshIds.has(ex.id)) {
+          .where(
+            or(eq(issueRelations.issueFromId, issue.id), eq(issueRelations.issueToId, issue.id)),
+          );
+        for (const ex of existingConnected) {
+          if (!validFreshIds.has(ex.id)) {
             await tx.delete(issueRelations).where(eq(issueRelations.id, ex.id));
           }
         }
 
-        // For insert/upsert we still need both sides to exist in `issues`
-        // (FK). The other side may live in `keptIds` (this sync) or already
-        // be in DB from a prior one.
-        const otherIds = Array.from(
-          new Set(allFresh.flatMap((r) => [r.issue_id, r.issue_to_id])),
-        ).filter((id) => !keptIds.has(id));
-        const knownInDb =
-          otherIds.length === 0
-            ? new Set<number>()
-            : new Set(
-                (
-                  await tx
-                    .select({ id: issues.id })
-                    .from(issues)
-                    .where(inArray(issues.id, otherIds))
-                ).map((x) => x.id),
-              );
-        const isKnown = (id: number) => keptIds.has(id) || knownInDb.has(id);
-
-        for (const r of allFresh) {
-          if (!isKnown(r.issue_id) || !isKnown(r.issue_to_id)) continue;
+        for (const { raw: r, normalized } of normalizedFresh) {
+          if (!normalized) continue;
           await tx
             .insert(issueRelations)
             .values({
               id: r.id,
-              issueFromId: r.issue_id,
-              issueToId: r.issue_to_id,
+              issueFromId: normalized.earningId,
+              issueToId: normalized.redemptionId,
               relationType: r.relation_type,
               createdLocally: false,
               mirroredAt: new Date().toISOString(),
@@ -146,8 +149,8 @@ export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: 
               // Intentionally NOT in the set clause: allocatedHours, createdLocally,
               // mirroredAt. Those are local-only state we don't want sync to clobber.
               set: {
-                issueFromId: r.issue_id,
-                issueToId: r.issue_to_id,
+                issueFromId: normalized.earningId,
+                issueToId: normalized.redemptionId,
                 relationType: r.relation_type,
               },
             });
@@ -204,4 +207,21 @@ function clampFloor(candidate: string | undefined, floor: string | undefined): s
   if (!floor) return candidate;
   if (!candidate) return floor;
   return candidate < floor ? floor : candidate;
+}
+
+type IssueRole = "earning" | "redemption";
+
+function normalizeRelatesRelation(
+  relation: { issue_id: number; issue_to_id: number },
+  roleOf: (id: number) => IssueRole | undefined,
+): { earningId: number; redemptionId: number } | null {
+  const fromRole = roleOf(relation.issue_id);
+  const toRole = roleOf(relation.issue_to_id);
+  if (fromRole === "earning" && toRole === "redemption") {
+    return { earningId: relation.issue_id, redemptionId: relation.issue_to_id };
+  }
+  if (fromRole === "redemption" && toRole === "earning") {
+    return { earningId: relation.issue_to_id, redemptionId: relation.issue_id };
+  }
+  return null;
 }

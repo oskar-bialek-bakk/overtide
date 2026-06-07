@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it } from "bun:test";
+import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { http, HttpResponse } from "msw";
@@ -60,6 +61,37 @@ describe("runSync", () => {
 
     const tes = await db.select().from(schema.timeEntries);
     expect(tes).toHaveLength(3);
+
+    const rels = await db.select().from(schema.issueRelations);
+    expect(rels).toHaveLength(1);
+    expect(rels[0]).toMatchObject({ issueFromId: 1, issueToId: 2, relationType: "relates" });
+  });
+
+  it("stores Redmine relations as earning -> redemption even when Redmine reports them reversed", async () => {
+    const reversedIssues = fixtureSync.issues.map((issue) => ({
+      ...issue,
+      relations: [{ id: 500, issue_id: 2, issue_to_id: 1, relation_type: "relates" }],
+    }));
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entries: fixtureSync.timeEntries,
+          total_count: 3,
+          offset: 0,
+          limit: 100,
+        }),
+      ),
+      http.get("https://r.test/issues.json", () =>
+        HttpResponse.json({ issues: reversedIssues, total_count: 2 }),
+      ),
+    );
+    const db = memDb();
+    const endpoints = new RedmineEndpoints(new RedmineClient(env));
+
+    await runSync({ db, endpoints, env });
 
     const rels = await db.select().from(schema.issueRelations);
     expect(rels).toHaveLength(1);
@@ -183,12 +215,57 @@ describe("runSync", () => {
     await runSync({ db, endpoints, env });
     expect((await db.select().from(schema.issueRelations)).length).toBe(0);
   });
+
+  it("drops a relation when the redemption side no longer reports it", async () => {
+    // Redmine exposes relations from both issues. If an incremental sync only
+    // fetches the redemption, reconciliation must still inspect links where
+    // that issue is the `issue_to_id` in our normalized local table.
+    let issuesCalls = 0;
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () => {
+        if (issuesCalls === 0) {
+          return HttpResponse.json({
+            time_entries: fixtureSync.timeEntries,
+            total_count: 3,
+            offset: 0,
+            limit: 100,
+          });
+        }
+        const redemptionOnly = fixtureSync.timeEntries.filter((t) => t.issue.id === 2);
+        return HttpResponse.json({
+          time_entries: redemptionOnly,
+          total_count: redemptionOnly.length,
+          offset: 0,
+          limit: 100,
+        });
+      }),
+      http.get("https://r.test/issues.json", () => {
+        issuesCalls += 1;
+        if (issuesCalls === 1)
+          return HttpResponse.json({ issues: fixtureSync.issues, total_count: 2 });
+        const redemptionOnly = fixtureSync.issues
+          .filter((i) => i.id === 2)
+          .map((i) => ({ ...i, relations: [] }));
+        return HttpResponse.json({ issues: redemptionOnly, total_count: 1 });
+      }),
+    );
+    const db = memDb();
+    const endpoints = new RedmineEndpoints(new RedmineClient(env));
+
+    await runSync({ db, endpoints, env });
+    expect((await db.select().from(schema.issueRelations)).length).toBe(1);
+
+    await runSync({ db, endpoints, env });
+
+    expect((await db.select().from(schema.issueRelations)).length).toBe(0);
+  });
 });
 
 // Local helper — Drizzle's eq is awkward in test fixtures; inline import keeps
 // the orchestrator test self-contained.
 function eqId(id: number) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { eq } = require("drizzle-orm") as typeof import("drizzle-orm");
   return eq(schema.issueRelations.id, id);
 }
