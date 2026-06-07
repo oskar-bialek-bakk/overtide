@@ -67,4 +67,34 @@ describe("POST /api/sync", () => {
     const res = await app.request("/api/sync", { method: "POST" });
     expect(res.status).toBe(409);
   });
+
+  it("returns sync status with stale marker", async () => {
+    const db = memDb();
+    const finishedAt = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
+    await db.insert(schema.syncRuns).values({
+      startedAt: finishedAt,
+      finishedAt,
+      status: "success",
+      issuesUpserted: 2,
+      timeEntriesUpserted: 3,
+      relationsUpserted: 1,
+      relationsSkippedUnknownIssue: 1,
+      relationsSkippedSameRole: 0,
+      overtimeOnRedemptionIgnored: 1,
+    });
+    const app = new Hono();
+    app.onError(errorHandler);
+    app.route("/api/sync", syncRoutes({ db, env }));
+
+    const res = await app.request("/api/sync/status");
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.data.stale).toBe(true);
+    expect(body.data.lastRun).toMatchObject({
+      status: "success",
+      relationsSkippedUnknownIssue: 1,
+      overtimeOnRedemptionIgnored: 1,
+    });
+  });
 });

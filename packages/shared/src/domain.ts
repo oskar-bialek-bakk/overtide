@@ -56,6 +56,15 @@ export const syncRunSchema = z.object({
   issuesUpserted: z.number(),
   timeEntriesUpserted: z.number(),
   relationsUpserted: z.number(),
+  relationsSkippedUnknownIssue: z.number(),
+  relationsSkippedSameRole: z.number(),
+  overtimeOnRedemptionIgnored: z.number(),
   errorMessage: z.string().nullable(),
 });
 export type SyncRun = z.infer<typeof syncRunSchema>;
+
+export const syncStatusSchema = z.object({
+  lastRun: syncRunSchema.nullable(),
+  stale: z.boolean(),
+});
+export type SyncStatus = z.infer<typeof syncStatusSchema>;

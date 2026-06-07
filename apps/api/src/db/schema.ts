@@ -90,6 +90,9 @@ export const syncRuns = sqliteTable(
     issuesUpserted: integer("issues_upserted").notNull().default(0),
     timeEntriesUpserted: integer("time_entries_upserted").notNull().default(0),
     relationsUpserted: integer("relations_upserted").notNull().default(0),
+    relationsSkippedUnknownIssue: integer("relations_skipped_unknown_issue").notNull().default(0),
+    relationsSkippedSameRole: integer("relations_skipped_same_role").notNull().default(0),
+    overtimeOnRedemptionIgnored: integer("overtime_on_redemption_ignored").notNull().default(0),
     errorMessage: text("error_message"),
   },
   (t) => ({

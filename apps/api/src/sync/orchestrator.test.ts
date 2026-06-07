@@ -67,6 +67,88 @@ describe("runSync", () => {
     expect(rels[0]).toMatchObject({ issueFromId: 1, issueToId: 2, relationType: "relates" });
   });
 
+  it("reports skipped relation and ignored overtime counters", async () => {
+    const timeEntries = [
+      ...fixtureSync.timeEntries,
+      {
+        id: 103,
+        user: { id: 7 },
+        issue: { id: 2 },
+        hours: 1,
+        activity: { id: 8, name: "Nadgodziny" },
+        spent_on: "2026-01-16",
+        comments: null,
+        created_on: "2026-01-16T00:00:00Z",
+        updated_on: "2026-01-16T00:00:00Z",
+      },
+      {
+        id: 104,
+        user: { id: 7 },
+        issue: { id: 3 },
+        hours: 2,
+        activity: { id: 8, name: "Nadgodziny" },
+        spent_on: "2026-01-17",
+        comments: null,
+        created_on: "2026-01-17T00:00:00Z",
+        updated_on: "2026-01-17T00:00:00Z",
+      },
+    ];
+    const issues = [
+      {
+        ...fixtureSync.issues[0],
+        relations: [
+          { id: 500, issue_id: 1, issue_to_id: 2, relation_type: "relates" },
+          { id: 501, issue_id: 1, issue_to_id: 999, relation_type: "relates" },
+          { id: 502, issue_id: 1, issue_to_id: 3, relation_type: "relates" },
+        ],
+      },
+      fixtureSync.issues[1],
+      {
+        id: 3,
+        project: { id: 1, name: "Dev" },
+        tracker: { id: 5, name: "Bug" },
+        status: { id: 1, name: "Open", is_closed: false },
+        subject: "Second earning",
+        created_on: "2026-01-17T00:00:00Z",
+        updated_on: "2026-01-17T00:00:00Z",
+        relations: [],
+      },
+    ];
+    server = startMsw(
+      http.get("https://r.test/users/current.json", () =>
+        HttpResponse.json({ user: fixtureSync.user }),
+      ),
+      http.get("https://r.test/time_entries.json", () =>
+        HttpResponse.json({
+          time_entries: timeEntries,
+          total_count: timeEntries.length,
+          offset: 0,
+          limit: 100,
+        }),
+      ),
+      http.get("https://r.test/issues.json", () =>
+        HttpResponse.json({ issues, total_count: issues.length }),
+      ),
+    );
+    const db = memDb();
+    const endpoints = new RedmineEndpoints(new RedmineClient(env));
+
+    const result = await runSync({ db, endpoints, env });
+
+    expect(result).toMatchObject({
+      relationsSkippedUnknownIssue: 1,
+      relationsSkippedSameRole: 1,
+      overtimeOnRedemptionIgnored: 1,
+    });
+
+    const [run] = await db.select().from(schema.syncRuns);
+    expect(run).toMatchObject({
+      relationsSkippedUnknownIssue: 1,
+      relationsSkippedSameRole: 1,
+      overtimeOnRedemptionIgnored: 1,
+    });
+  });
+
   it("stores Redmine relations as earning -> redemption even when Redmine reports them reversed", async () => {
     const reversedIssues = fixtureSync.issues.map((issue) => ({
       ...issue,

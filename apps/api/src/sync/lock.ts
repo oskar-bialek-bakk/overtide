@@ -28,6 +28,9 @@ export async function finishSyncRun(
     issuesUpserted?: number;
     timeEntriesUpserted?: number;
     relationsUpserted?: number;
+    relationsSkippedUnknownIssue?: number;
+    relationsSkippedSameRole?: number;
+    overtimeOnRedemptionIgnored?: number;
     errorMessage?: string;
   },
 ): Promise<void> {
@@ -39,6 +42,9 @@ export async function finishSyncRun(
       issuesUpserted: result.issuesUpserted ?? 0,
       timeEntriesUpserted: result.timeEntriesUpserted ?? 0,
       relationsUpserted: result.relationsUpserted ?? 0,
+      relationsSkippedUnknownIssue: result.relationsSkippedUnknownIssue ?? 0,
+      relationsSkippedSameRole: result.relationsSkippedSameRole ?? 0,
+      overtimeOnRedemptionIgnored: result.overtimeOnRedemptionIgnored ?? 0,
       errorMessage: result.errorMessage ?? null,
     })
     .where(eq(syncRuns.id, id));

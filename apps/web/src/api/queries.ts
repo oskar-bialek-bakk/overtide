@@ -1,4 +1,4 @@
-import type { Balance, EarningIssue, RedemptionIssue, SyncRun } from "@overtide/shared";
+import type { Balance, EarningIssue, RedemptionIssue, SyncRun, SyncStatus } from "@overtide/shared";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "./client";
 
@@ -11,6 +11,7 @@ export const qk = {
   unlinked: ["unlinked"] as const,
   issue: (id: number) => ["issue", id] as const,
   syncHistory: ["sync", "history"] as const,
+  syncStatus: ["sync", "status"] as const,
 };
 
 export type HealthData = {
@@ -74,6 +75,13 @@ export const useSyncHistory = () =>
   useQuery({
     queryKey: qk.syncHistory,
     queryFn: () => apiFetch<SyncRun[]>("/api/sync/history?limit=20"),
+  });
+
+export const useSyncStatus = () =>
+  useQuery({
+    queryKey: qk.syncStatus,
+    queryFn: () => apiFetch<SyncStatus>("/api/sync/status"),
+    refetchInterval: 30_000,
   });
 
 export const useIssue = (id: number) =>
