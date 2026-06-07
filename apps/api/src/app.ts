@@ -5,6 +5,7 @@ import { createDb } from "./db/client";
 import { syncRuns } from "./db/schema";
 import { logger } from "./lib/logger";
 import { errorHandler } from "./middleware/errors";
+import { backupRoutes } from "./routes/backup";
 import { balanceRoutes } from "./routes/balance";
 import { healthRoutes } from "./routes/health";
 import { issuesRoutes } from "./routes/issues";
@@ -46,5 +47,6 @@ export function createApp(opts?: { dbPath?: string }) {
   app.route("/api/unlinked", unlinkedRoutes({ db, env }));
   app.route("/api/relations", relationsRoutes({ db, env }));
   app.route("/api/redemptions", redemptionsRoutes({ db, env }));
+  app.route("/api/backup", backupRoutes({ db }));
   return { app, env, db };
 }
