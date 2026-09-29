@@ -1,0 +1,3531 @@
+{
+  "version": 1,
+  "meta": {
+    "lastScanned": "2026-09-29T09:15:47.905Z",
+    "fileCount": 148,
+    "hits": 0,
+    "misses": 0,
+    "renderedHash": "f679139c8617331d56d34fefdf5b3266213fb4e70a35c19f5fffbc2400fee3ab",
+    "storeUpdatedAt": "2026-09-29T09:15:47.907Z",
+    "rootHash": "342eac474fd7876a"
+  },
+  "files": {
+    ".gitignore": {
+      "description": "Git ignore rules",
+      "tokens": 152,
+      "hash": "7f907d70855bfefb",
+      "size": 572,
+      "mtimeMs": 1780841379585.5042,
+      "updatedAt": "2026-09-29T09:15:47.590Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "AGENTS.md": {
+      "description": "OpenWolf",
+      "tokens": 75,
+      "hash": "e401f79554a8d796",
+      "size": 297,
+      "mtimeMs": 1790673346206.6182,
+      "updatedAt": "2026-09-29T09:15:47.592Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/0000_purple_blue_marvel.sql": {
+      "description": "SQL: tables: app_config, issue_relations, issues, sync_runs",
+      "tokens": 744,
+      "hash": "c103ad3f17deaab0",
+      "size": 2602,
+      "mtimeMs": 1778534393027.6804,
+      "updatedAt": "2026-09-29T09:15:47.594Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/0002_dazzling_namora.sql": {
+      "description": "SQL: 1 alter(s)",
+      "tokens": 17,
+      "hash": "7d1d5ede695dcc17",
+      "size": 57,
+      "mtimeMs": 1778582857175.6558,
+      "updatedAt": "2026-09-29T09:15:47.595Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/0003_redemption_operations.sql": {
+      "description": "SQL: tables: redemption_operations",
+      "tokens": 204,
+      "hash": "e405cb430fb5f10c",
+      "size": 714,
+      "mtimeMs": 1780859972496.379,
+      "updatedAt": "2026-09-29T09:15:47.596Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/0004_sync_observability.sql": {
+      "description": "SQL: 3 alter(s)",
+      "tokens": 90,
+      "hash": "fb34057486070d80",
+      "size": 314,
+      "mtimeMs": 1780863751246.0955,
+      "updatedAt": "2026-09-29T09:15:47.597Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/meta/_journal.json": {
+      "description": "",
+      "tokens": 195,
+      "hash": "8abf766adc3f5ed8",
+      "size": 681,
+      "mtimeMs": 1780863751249.111,
+      "updatedAt": "2026-09-29T09:15:47.598Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/meta/0000_snapshot.json": {
+      "description": "",
+      "tokens": 3563,
+      "hash": "9fc3b8002317f733",
+      "size": 12470,
+      "mtimeMs": 1778534393028.943,
+      "updatedAt": "2026-09-29T09:15:47.598Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/meta/0002_snapshot.json": {
+      "description": "",
+      "tokens": 4459,
+      "hash": "dc70c732995714c1",
+      "size": 15606,
+      "mtimeMs": 1780859972497.377,
+      "updatedAt": "2026-09-29T09:15:47.599Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle/meta/0003_snapshot.json": {
+      "description": "",
+      "tokens": 4680,
+      "hash": "9a90a314f86268bf",
+      "size": 16379,
+      "mtimeMs": 1780863751248.109,
+      "updatedAt": "2026-09-29T09:15:47.600Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/drizzle.config.ts": {
+      "description": "Drizzle ORM configuration",
+      "tokens": 60,
+      "hash": "05ec31492e84946d",
+      "size": 208,
+      "mtimeMs": 1778534393027.6804,
+      "updatedAt": "2026-09-29T09:15:47.601Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 228,
+      "hash": "399a384584a2e5ed",
+      "size": 797,
+      "mtimeMs": 1780841379586.727,
+      "updatedAt": "2026-09-29T09:15:47.601Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/scripts/migrate.ts": {
+      "description": "Declares dbPath",
+      "tokens": 168,
+      "hash": "b7793b2e15512c9d",
+      "size": 585,
+      "mtimeMs": 1780841379587.8582,
+      "updatedAt": "2026-09-29T09:15:47.602Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/api/src/app.ts": {
+      "description": "Exports createApp",
+      "tokens": 589,
+      "hash": "7e8520e5ca792b2b",
+      "size": 2060,
+      "mtimeMs": 1780863751250.1099,
+      "updatedAt": "2026-09-29T09:15:47.604Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "createApp",
+          "kind": "fn",
+          "startLine": 17,
+          "endLine": 52,
+          "tokens": 391
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/logger.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/backup.ts",
+        "apps/api/src/routes/balance.ts",
+        "apps/api/src/routes/health.ts",
+        "apps/api/src/routes/issues.ts",
+        "apps/api/src/routes/redemptions.ts",
+        "apps/api/src/routes/relations.ts",
+        "apps/api/src/routes/sync.ts",
+        "apps/api/src/routes/unlinked.ts"
+      ],
+      "importance": 0.1471
+    },
+    "apps/api/src/config/env.test.ts": {
+      "description": "Declares minimal",
+      "tokens": 856,
+      "hash": "f3fbd5bbbad63eb1",
+      "size": 2993,
+      "mtimeMs": 1780841379589.3655,
+      "updatedAt": "2026-09-29T09:15:47.604Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/config/env.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/config/env.ts": {
+      "description": "Project id for the \"Urlopy\" project; required to create redemptions.",
+      "tokens": 825,
+      "hash": "029933e7f7631069",
+      "size": 2885,
+      "mtimeMs": 1780841379590.5977,
+      "updatedAt": "2026-09-29T09:15:47.605Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Env",
+          "kind": "section",
+          "startLine": 21,
+          "endLine": 36,
+          "tokens": 203
+        },
+        {
+          "name": "loadEnv",
+          "kind": "fn",
+          "startLine": 38,
+          "endLine": 70,
+          "tokens": 367
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.6681
+    },
+    "apps/api/src/db/client.ts": {
+      "description": "Exports Db, createDb",
+      "tokens": 272,
+      "hash": "f5bfb2f6b7c1d1d6",
+      "size": 951,
+      "mtimeMs": 1780841379591.6072,
+      "updatedAt": "2026-09-29T09:15:47.606Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/schema.ts"
+      ],
+      "importance": 0.4398
+    },
+    "apps/api/src/db/queries.test.ts": {
+      "description": "Declares memDb",
+      "tokens": 852,
+      "hash": "ccfb878a701316b1",
+      "size": 2981,
+      "mtimeMs": 1780841379591.6072,
+      "updatedAt": "2026-09-29T09:15:47.607Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "memDb",
+          "kind": "fn",
+          "startLine": 8,
+          "endLine": 14,
+          "tokens": 63
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/db/queries.ts",
+        "apps/api/src/db/schema.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/db/queries.ts": {
+      "description": "Exports EarningRow, RedemptionRow, fetchEarnings, fetchRedemptions, fetchRelations",
+      "tokens": 1108,
+      "hash": "9d79a50c3e8d98f2",
+      "size": 3878,
+      "mtimeMs": 1780841379592.9539,
+      "updatedAt": "2026-09-29T09:15:47.608Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "EarningRow",
+          "kind": "section",
+          "startLine": 5,
+          "endLine": 17,
+          "tokens": 75
+        },
+        {
+          "name": "RedemptionRow",
+          "kind": "section",
+          "startLine": 19,
+          "endLine": 31,
+          "tokens": 77
+        },
+        {
+          "name": "EarningSqlRow",
+          "kind": "section",
+          "startLine": 33,
+          "endLine": 33,
+          "tokens": 24
+        },
+        {
+          "name": "RedemptionSqlRow",
+          "kind": "section",
+          "startLine": 34,
+          "endLine": 34,
+          "tokens": 26
+        },
+        {
+          "name": "fetchEarnings",
+          "kind": "fn",
+          "startLine": 36,
+          "endLine": 49,
+          "tokens": 218
+        },
+        {
+          "name": "fetchRedemptions",
+          "kind": "fn",
+          "startLine": 51,
+          "endLine": 64,
+          "tokens": 196
+        },
+        {
+          "name": "fetchRelations",
+          "kind": "fn",
+          "startLine": 66,
+          "endLine": 108,
+          "tokens": 445
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts"
+      ],
+      "importance": 0.1879
+    },
+    "apps/api/src/db/schema.test.ts": {
+      "description": "Declares memDb",
+      "tokens": 412,
+      "hash": "6b854f0cbe795746",
+      "size": 1441,
+      "mtimeMs": 1780841379593.9553,
+      "updatedAt": "2026-09-29T09:15:47.608Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/schema.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/db/schema.ts": {
+      "description": "Exports issues, timeEntries, issueRelations, syncRuns + 2 more",
+      "tokens": 1375,
+      "hash": "27b67a463f643695",
+      "size": 4815,
+      "mtimeMs": 1780863751252.11,
+      "updatedAt": "2026-09-29T09:15:47.609Z",
+      "source": "scan",
+      "importance": 1
+    },
+    "apps/api/src/index.ts": {
+      "description": "",
+      "tokens": 113,
+      "hash": "dc306de7601b1e70",
+      "size": 393,
+      "mtimeMs": 1780841379595.954,
+      "updatedAt": "2026-09-29T09:15:47.609Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/app.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/lib/envelope.ts": {
+      "description": "Exports AppError, ok, fail",
+      "tokens": 150,
+      "hash": "1048ce11f1f4b8e8",
+      "size": 524,
+      "mtimeMs": 1778534393032.9817,
+      "updatedAt": "2026-09-29T09:15:47.610Z",
+      "source": "scan",
+      "importance": 0.2715
+    },
+    "apps/api/src/lib/logger.ts": {
+      "description": "Exports logger",
+      "tokens": 150,
+      "hash": "dc736071ee20457a",
+      "size": 524,
+      "mtimeMs": 1780841379595.954,
+      "updatedAt": "2026-09-29T09:15:47.611Z",
+      "source": "scan",
+      "importance": 0.2022
+    },
+    "apps/api/src/matching/fifo.test.ts": {
+      "description": "Declares FIFOInput",
+      "tokens": 2134,
+      "hash": "9247023f98ef0ef6",
+      "size": 7470,
+      "mtimeMs": 1780841379597.9604,
+      "updatedAt": "2026-09-29T09:15:47.612Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Case",
+          "kind": "section",
+          "startLine": 4,
+          "endLine": 15,
+          "tokens": 98
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "type Case = {",
+      "imports": [
+        "apps/api/src/matching/fifo.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/matching/fifo.ts": {
+      "description": "Manual override. NULL → algorithm allocates this pair greedily.",
+      "tokens": 1288,
+      "hash": "63aa4bff6e218b4c",
+      "size": 4520,
+      "mtimeMs": 1780840322427.1465,
+      "updatedAt": "2026-09-29T09:15:47.614Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "FIFOInput",
+          "kind": "section",
+          "startLine": 1,
+          "endLine": 10,
+          "tokens": 107
+        },
+        {
+          "name": "Allocation",
+          "kind": "section",
+          "startLine": 12,
+          "endLine": 12,
+          "tokens": 25
+        },
+        {
+          "name": "FIFOResult",
+          "kind": "section",
+          "startLine": 14,
+          "endLine": 19,
+          "tokens": 94
+        },
+        {
+          "name": "byAnchorThenId",
+          "kind": "fn",
+          "startLine": 21,
+          "endLine": 28,
+          "tokens": 68
+        },
+        {
+          "name": "computeFIFO",
+          "kind": "fn",
+          "startLine": 30,
+          "endLine": 112,
+          "tokens": 993
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.2217
+    },
+    "apps/api/src/middleware/errors.ts": {
+      "description": "Exports errorHandler",
+      "tokens": 284,
+      "hash": "9ac118e3178f76bf",
+      "size": 991,
+      "mtimeMs": 1780841379597.9604,
+      "updatedAt": "2026-09-29T09:15:47.615Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/lib/logger.ts"
+      ],
+      "importance": 0.221
+    },
+    "apps/api/src/redmine/auth.test.ts": {
+      "description": "Declares base",
+      "tokens": 234,
+      "hash": "aabdcfba7f41ae8f",
+      "size": 816,
+      "mtimeMs": 1780841379598.9536,
+      "updatedAt": "2026-09-29T09:15:47.616Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/redmine/auth.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/redmine/auth.ts": {
+      "description": "Exports buildAuthHeaders",
+      "tokens": 98,
+      "hash": "a4611301c7340cb6",
+      "size": 343,
+      "mtimeMs": 1778534393035.9824,
+      "updatedAt": "2026-09-29T09:15:47.617Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/config/env.ts"
+      ],
+      "importance": 0.2551
+    },
+    "apps/api/src/redmine/client.test.ts": {
+      "description": "API routes: GET (6 endpoints)",
+      "tokens": 545,
+      "hash": "1c17195fd9d8d6cd",
+      "size": 1906,
+      "mtimeMs": 1780841379600.0972,
+      "updatedAt": "2026-09-29T09:15:47.618Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/test/helpers/msw.ts",
+        "apps/api/src/redmine/client.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/redmine/client.ts": {
+      "description": "Exports RedmineError, RedmineClient",
+      "tokens": 888,
+      "hash": "8d7f0c8509534f0d",
+      "size": 3108,
+      "mtimeMs": 1780841379601.108,
+      "updatedAt": "2026-09-29T09:15:47.619Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "RedmineError",
+          "kind": "class",
+          "startLine": 4,
+          "endLine": 13,
+          "tokens": 56
+        },
+        {
+          "name": "RedmineError.constructor",
+          "kind": "method",
+          "startLine": 5,
+          "endLine": 12,
+          "tokens": 43
+        },
+        {
+          "name": "RedmineClient",
+          "kind": "class",
+          "startLine": 18,
+          "endLine": 89,
+          "tokens": 738
+        },
+        {
+          "name": "RedmineClient.constructor",
+          "kind": "method",
+          "startLine": 19,
+          "endLine": 19,
+          "tokens": 10
+        },
+        {
+          "name": "RedmineClient.get",
+          "kind": "method",
+          "startLine": 21,
+          "endLine": 29,
+          "tokens": 98
+        },
+        {
+          "name": "RedmineClient.post",
+          "kind": "method",
+          "startLine": 31,
+          "endLine": 33,
+          "tokens": 39
+        },
+        {
+          "name": "RedmineClient.delete",
+          "kind": "method",
+          "startLine": 35,
+          "endLine": 37,
+          "tokens": 34
+        },
+        {
+          "name": "RedmineClient.request",
+          "kind": "method",
+          "startLine": 39,
+          "endLine": 88,
+          "tokens": 545
+        },
+        {
+          "name": "backoffMs",
+          "kind": "fn",
+          "startLine": 91,
+          "endLine": 93,
+          "tokens": 26
+        },
+        {
+          "name": "sleep",
+          "kind": "fn",
+          "startLine": 94,
+          "endLine": 96,
+          "tokens": 25
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/redmine/auth.ts"
+      ],
+      "importance": 0.3336
+    },
+    "apps/api/src/redmine/endpoints.test.ts": {
+      "description": "API routes: GET, POST (7 endpoints)",
+      "tokens": 1742,
+      "hash": "43cbd59f6cc7fd96",
+      "size": 6107,
+      "mtimeMs": 1780841379602.1177,
+      "updatedAt": "2026-09-29T09:15:47.619Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/test/helpers/msw.ts",
+        "apps/api/src/redmine/client.ts",
+        "apps/api/src/redmine/endpoints.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/redmine/endpoints.ts": {
+      "description": "API routes: GET, POST, DELETE (10 endpoints)",
+      "tokens": 1235,
+      "hash": "076006028f116184",
+      "size": 4320,
+      "mtimeMs": 1780841379603.118,
+      "updatedAt": "2026-09-29T09:15:47.619Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "CreateIssueInput",
+          "kind": "section",
+          "startLine": 14,
+          "endLine": 22,
+          "tokens": 56
+        },
+        {
+          "name": "CreateTimeEntryInput",
+          "kind": "section",
+          "startLine": 24,
+          "endLine": 30,
+          "tokens": 42
+        },
+        {
+          "name": "CurrentUser",
+          "kind": "section",
+          "startLine": 32,
+          "endLine": 38,
+          "tokens": 51
+        },
+        {
+          "name": "RedmineEndpoints",
+          "kind": "class",
+          "startLine": 40,
+          "endLine": 142,
+          "tokens": 993
+        },
+        {
+          "name": "RedmineEndpoints.constructor",
+          "kind": "method",
+          "startLine": 41,
+          "endLine": 41,
+          "tokens": 13
+        },
+        {
+          "name": "RedmineEndpoints.currentUserId",
+          "kind": "method",
+          "startLine": 43,
+          "endLine": 46,
+          "tokens": 48
+        },
+        {
+          "name": "RedmineEndpoints.currentUser",
+          "kind": "method",
+          "startLine": 48,
+          "endLine": 51,
+          "tokens": 48
+        },
+        {
+          "name": "RedmineEndpoints.trackers",
+          "kind": "method",
+          "startLine": 53,
+          "endLine": 56,
+          "tokens": 39
+        },
+        {
+          "name": "RedmineEndpoints.activities",
+          "kind": "method",
+          "startLine": 58,
+          "endLine": 61,
+          "tokens": 51
+        },
+        {
+          "name": "RedmineEndpoints.timeEntries",
+          "kind": "method",
+          "startLine": 63,
+          "endLine": 71,
+          "tokens": 97
+        },
+        {
+          "name": "RedmineEndpoints.iterAllTimeEntries",
+          "kind": "method",
+          "startLine": 73,
+          "endLine": 85,
+          "tokens": 113
+        },
+        {
+          "name": "RedmineEndpoints.issuesByIds",
+          "kind": "method",
+          "startLine": 87,
+          "endLine": 101,
+          "tokens": 142
+        },
+        {
+          "name": "RedmineEndpoints.createRelation",
+          "kind": "method",
+          "startLine": 103,
+          "endLine": 109,
+          "tokens": 99
+        },
+        {
+          "name": "RedmineEndpoints.deleteRelation",
+          "kind": "method",
+          "startLine": 111,
+          "endLine": 113,
+          "tokens": 31
+        },
+        {
+          "name": "RedmineEndpoints.createIssue",
+          "kind": "method",
+          "startLine": 115,
+          "endLine": 128,
+          "tokens": 165
+        },
+        {
+          "name": "RedmineEndpoints.createTimeEntry",
+          "kind": "method",
+          "startLine": 130,
+          "endLine": 141,
+          "tokens": 132
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/redmine/client.ts"
+      ],
+      "importance": 0.1672
+    },
+    "apps/api/src/redmine/types.ts": {
+      "description": "Zod schemas: redmineUserSchema, usersCurrentResponseSchema, redmineTimeEntrySchema, timeEntriesResponseSchema + 9 more",
+      "tokens": 728,
+      "hash": "f3fe2dfe2517c7ff",
+      "size": 2548,
+      "mtimeMs": 1780841379603.118,
+      "updatedAt": "2026-09-29T09:15:47.620Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "RedmineTimeEntry",
+          "kind": "section",
+          "startLine": 67,
+          "endLine": 67,
+          "tokens": 21
+        },
+        {
+          "name": "RedmineIssue",
+          "kind": "section",
+          "startLine": 68,
+          "endLine": 68,
+          "tokens": 18
+        },
+        {
+          "name": "RedmineRelation",
+          "kind": "section",
+          "startLine": 69,
+          "endLine": 69,
+          "tokens": 20
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.3135
+    },
+    "apps/api/src/routes/backup.test.ts": {
+      "description": "API routes: GET (3 endpoints)",
+      "tokens": 438,
+      "hash": "19ed2c7643613fcd",
+      "size": 1533,
+      "mtimeMs": 1780863751253.1106,
+      "updatedAt": "2026-09-29T09:15:47.621Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/backup.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/backup.ts": {
+      "description": "API routes: GET (1 endpoints)",
+      "tokens": 302,
+      "hash": "7d228b677355b8b1",
+      "size": 1057,
+      "mtimeMs": 1780863751254.3938,
+      "updatedAt": "2026-09-29T09:15:47.621Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/client.ts"
+      ],
+      "importance": 0.1117
+    },
+    "apps/api/src/routes/balance.test.ts": {
+      "description": "env: setupDb",
+      "tokens": 780,
+      "hash": "582b5d8a8098a425",
+      "size": 2727,
+      "mtimeMs": 1780841379605.1182,
+      "updatedAt": "2026-09-29T09:15:47.622Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "setupDb",
+          "kind": "fn",
+          "startLine": 19,
+          "endLine": 87,
+          "tokens": 493
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/balance.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/balance.ts": {
+      "description": "API routes: GET (2 endpoints)",
+      "tokens": 535,
+      "hash": "99220ee3eda4f571",
+      "size": 1872,
+      "mtimeMs": 1780841379606.118,
+      "updatedAt": "2026-09-29T09:15:47.622Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "balanceRoutes",
+          "kind": "fn",
+          "startLine": 9,
+          "endLine": 45,
+          "tokens": 443
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/queries.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/matching/fifo.ts"
+      ],
+      "importance": 0.1117
+    },
+    "apps/api/src/routes/health.ts": {
+      "description": "API routes: GET (1 endpoints)",
+      "tokens": 420,
+      "hash": "3b3edb1a0102b2d3",
+      "size": 1467,
+      "mtimeMs": 1780841379607.4612,
+      "updatedAt": "2026-09-29T09:15:47.623Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/redmine/client.ts",
+        "apps/api/src/redmine/endpoints.ts"
+      ],
+      "importance": 0.0892
+    },
+    "apps/api/src/routes/issues.test.ts": {
+      "description": "apps/api/src/routes/issues.test.ts — adapt setupDb from balance.test.ts",
+      "tokens": 565,
+      "hash": "fb77f0c85e07052d",
+      "size": 1979,
+      "mtimeMs": 1780841379608.4739,
+      "updatedAt": "2026-09-29T09:15:47.623Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/issues.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/issues.ts": {
+      "description": "API routes: GET (3 endpoints)",
+      "tokens": 779,
+      "hash": "83c9bca2131b7754",
+      "size": 2726,
+      "mtimeMs": 1780841379608.9817,
+      "updatedAt": "2026-09-29T09:15:47.624Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "issuesRoutes",
+          "kind": "fn",
+          "startLine": 10,
+          "endLine": 74,
+          "tokens": 665
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/queries.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/matching/fifo.ts"
+      ],
+      "importance": 0.1117
+    },
+    "apps/api/src/routes/redemptions.test.ts": {
+      "description": "API routes: GET, POST (9 endpoints)",
+      "tokens": 7130,
+      "hash": "c0f3bdbfb4b1321e",
+      "size": 24975,
+      "mtimeMs": 1780861131114.4597,
+      "updatedAt": "2026-09-29T09:15:47.624Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "seedDb",
+          "kind": "fn",
+          "startLine": 25,
+          "endLine": 93,
+          "tokens": 534
+        },
+        {
+          "name": "makeApp",
+          "kind": "fn",
+          "startLine": 95,
+          "endLine": 100,
+          "tokens": 54
+        },
+        {
+          "name": "eqId",
+          "kind": "fn",
+          "startLine": 708,
+          "endLine": 714,
+          "tokens": 91
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "function seedDb(opts: { capacityHoursPerEarning?: number } = {}) {\nfunction makeApp(db: Db, env: Env = baseEnv) {\nfunction eqId(id: number) {",
+      "imports": [
+        "apps/api/test/helpers/msw.ts",
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/redemptions.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/redemptions.ts": {
+      "description": "API routes: POST (2 endpoints)",
+      "tokens": 5536,
+      "hash": "de032d943763bfb8",
+      "size": 19378,
+      "mtimeMs": 1780861131115.4634,
+      "updatedAt": "2026-09-29T09:15:47.625Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "TePlan",
+          "kind": "section",
+          "startLine": 23,
+          "endLine": 23,
+          "tokens": 20
+        },
+        {
+          "name": "redemptionsRoutes",
+          "kind": "fn",
+          "startLine": 25,
+          "endLine": 472,
+          "tokens": 4576
+        },
+        {
+          "name": "parseStoredRedemptionRequest",
+          "kind": "fn",
+          "startLine": 474,
+          "endLine": 484,
+          "tokens": 95
+        },
+        {
+          "name": "formatHours",
+          "kind": "fn",
+          "startLine": 486,
+          "endLine": 488,
+          "tokens": 29
+        },
+        {
+          "name": "buildTimeEntryComment",
+          "kind": "fn",
+          "startLine": 490,
+          "endLine": 495,
+          "tokens": 72
+        },
+        {
+          "name": "hasMatchingTimeEntry",
+          "kind": "fn",
+          "startLine": 497,
+          "endLine": 515,
+          "tokens": 126
+        },
+        {
+          "name": "planTimeEntries",
+          "kind": "fn",
+          "startLine": 524,
+          "endLine": 544,
+          "tokens": 262
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "type TePlan = { spentOn: string; earningId: number; hours: number };\nexport function redemptionsRoutes(deps: { db: Db; env: Env }) {\nfunction parseStoredRedemptionRequest(raw: string): CreateRedemptionRequest {\nfunction formatHours(h: number): string {\nfunction buildTimeEntryComment(\nfunction hasMatchingTimeEntry(\nfunction planTimeEntries(",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/queries.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/lib/logger.ts",
+        "apps/api/src/matching/fifo.ts",
+        "apps/api/src/redmine/client.ts",
+        "apps/api/src/redmine/endpoints.ts"
+      ],
+      "importance": 0.1004
+    },
+    "apps/api/src/routes/relations.test.ts": {
+      "description": "API routes: POST (1 endpoints)",
+      "tokens": 1452,
+      "hash": "c5e680379ac809e1",
+      "size": 5080,
+      "mtimeMs": 1780841379611.1497,
+      "updatedAt": "2026-09-29T09:15:47.626Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "seed",
+          "kind": "fn",
+          "startLine": 21,
+          "endLine": 87,
+          "tokens": 427
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/test/helpers/msw.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/relations.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/relations.ts": {
+      "description": "API routes: POST, DELETE (2 endpoints)",
+      "tokens": 1728,
+      "hash": "7232879f21c45094",
+      "size": 6050,
+      "mtimeMs": 1780841379611.6616,
+      "updatedAt": "2026-09-29T09:15:47.626Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "relationsRoutes",
+          "kind": "fn",
+          "startLine": 24,
+          "endLine": 125,
+          "tokens": 989
+        },
+        {
+          "name": "validateAllocatedHours",
+          "kind": "fn",
+          "startLine": 127,
+          "endLine": 171,
+          "tokens": 465
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/queries.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/matching/fifo.ts",
+        "apps/api/src/redmine/client.ts",
+        "apps/api/src/redmine/endpoints.ts"
+      ],
+      "importance": 0.1061
+    },
+    "apps/api/src/routes/sync.test.ts": {
+      "description": "API routes: GET (3 endpoints)",
+      "tokens": 1272,
+      "hash": "61744ee8bc65f16c",
+      "size": 4451,
+      "mtimeMs": 1780863751256.4119,
+      "updatedAt": "2026-09-29T09:15:47.626Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "memDb",
+          "kind": "fn",
+          "startLine": 22,
+          "endLine": 28,
+          "tokens": 63
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/test/fixtures/redmine/sync_basic.ts",
+        "apps/api/test/helpers/msw.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/sync.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/sync.ts": {
+      "description": "API routes: POST, GET (4 endpoints)",
+      "tokens": 660,
+      "hash": "c0250df3a5bdbd3c",
+      "size": 2309,
+      "mtimeMs": 1780863751257.4116,
+      "updatedAt": "2026-09-29T09:15:47.627Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "syncRoutes",
+          "kind": "fn",
+          "startLine": 15,
+          "endLine": 52,
+          "tokens": 407
+        },
+        {
+          "name": "isStaleSyncRun",
+          "kind": "fn",
+          "startLine": 54,
+          "endLine": 61,
+          "tokens": 97
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/redmine/client.ts",
+        "apps/api/src/redmine/endpoints.ts",
+        "apps/api/src/sync/lock.ts",
+        "apps/api/src/sync/orchestrator.ts"
+      ],
+      "importance": 0.1027
+    },
+    "apps/api/src/routes/unlinked.test.ts": {
+      "description": "env: setupDb",
+      "tokens": 774,
+      "hash": "a65f23c6c9c138ec",
+      "size": 2711,
+      "mtimeMs": 1780841379612.863,
+      "updatedAt": "2026-09-29T09:15:47.627Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "setupDb",
+          "kind": "fn",
+          "startLine": 19,
+          "endLine": 84,
+          "tokens": 456
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/middleware/errors.ts",
+        "apps/api/src/routes/unlinked.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/routes/unlinked.ts": {
+      "description": "API routes: GET (1 endpoints)",
+      "tokens": 370,
+      "hash": "002b10cb99ae98f3",
+      "size": 1293,
+      "mtimeMs": 1780841379612.863,
+      "updatedAt": "2026-09-29T09:15:47.628Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/queries.ts",
+        "apps/api/src/lib/envelope.ts",
+        "apps/api/src/matching/fifo.ts"
+      ],
+      "importance": 0.1117
+    },
+    "apps/api/src/sync/classify.test.ts": {
+      "description": "Declares make",
+      "tokens": 444,
+      "hash": "de1ff840c0d17acf",
+      "size": 1551,
+      "mtimeMs": 1778534393040.9822,
+      "updatedAt": "2026-09-29T09:15:47.629Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/redmine/types.ts",
+        "apps/api/src/sync/classify.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/sync/classify.ts": {
+      "description": "Exports classifyIssue",
+      "tokens": 131,
+      "hash": "e5d7736aa99c148b",
+      "size": 458,
+      "mtimeMs": 1780841379614.1272,
+      "updatedAt": "2026-09-29T09:15:47.629Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/redmine/types.ts"
+      ],
+      "importance": 0.1229
+    },
+    "apps/api/src/sync/lock.test.ts": {
+      "description": "Declares memDb",
+      "tokens": 348,
+      "hash": "2e1330023da9e7e8",
+      "size": 1215,
+      "mtimeMs": 1780841379615.14,
+      "updatedAt": "2026-09-29T09:15:47.629Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/sync/lock.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/sync/lock.ts": {
+      "description": "Exports SyncInProgressError, acquireSyncRun, finishSyncRun",
+      "tokens": 479,
+      "hash": "f81b30bae7363607",
+      "size": 1675,
+      "mtimeMs": 1780863751258.412,
+      "updatedAt": "2026-09-29T09:15:47.630Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts"
+      ],
+      "importance": 0.1339
+    },
+    "apps/api/src/sync/normalize.test.ts": {
+      "description": "Declares baseIssue",
+      "tokens": 455,
+      "hash": "d16ac678bb534b33",
+      "size": 1592,
+      "mtimeMs": 1778534393041.9824,
+      "updatedAt": "2026-09-29T09:15:47.630Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/redmine/types.ts",
+        "apps/api/src/sync/normalize.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/sync/normalize.ts": {
+      "description": "Exports normalizeIssue, normalizeTimeEntry",
+      "tokens": 386,
+      "hash": "319f5f22f063b609",
+      "size": 1351,
+      "mtimeMs": 1780841379616.136,
+      "updatedAt": "2026-09-29T09:15:47.631Z",
+      "source": "scan",
+      "imports": [
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/redmine/types.ts"
+      ],
+      "importance": 0.1229
+    },
+    "apps/api/src/sync/orchestrator.test.ts": {
+      "description": "API routes: GET (21 endpoints)",
+      "tokens": 3710,
+      "hash": "daca444e2b6b21e1",
+      "size": 12992,
+      "mtimeMs": 1780863751259.4094,
+      "updatedAt": "2026-09-29T09:15:47.633Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "memDb",
+          "kind": "fn",
+          "startLine": 23,
+          "endLine": 29,
+          "tokens": 63
+        },
+        {
+          "name": "eqId",
+          "kind": "fn",
+          "startLine": 351,
+          "endLine": 353,
+          "tokens": 22
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "function memDb() {\nfunction eqId(id: number) {",
+      "imports": [
+        "apps/api/test/fixtures/redmine/sync_basic.ts",
+        "apps/api/test/helpers/msw.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/redmine/client.ts",
+        "apps/api/src/redmine/endpoints.ts",
+        "apps/api/src/sync/orchestrator.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/api/src/sync/orchestrator.ts": {
+      "description": "Exports runSync",
+      "tokens": 2925,
+      "hash": "8d07e4d740836b2c",
+      "size": 10243,
+      "mtimeMs": 1780863751259.4094,
+      "updatedAt": "2026-09-29T09:15:47.634Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "runSync",
+          "kind": "fn",
+          "startLine": 14,
+          "endLine": 205,
+          "tokens": 2249
+        },
+        {
+          "name": "readConfig",
+          "kind": "fn",
+          "startLine": 207,
+          "endLine": 210,
+          "tokens": 57
+        },
+        {
+          "name": "writeConfig",
+          "kind": "fn",
+          "startLine": 212,
+          "endLine": 220,
+          "tokens": 89
+        },
+        {
+          "name": "minusDaysIso",
+          "kind": "fn",
+          "startLine": 222,
+          "endLine": 226,
+          "tokens": 49
+        },
+        {
+          "name": "clampFloor",
+          "kind": "fn",
+          "startLine": 228,
+          "endLine": 232,
+          "tokens": 63
+        },
+        {
+          "name": "IssueRole",
+          "kind": "section",
+          "startLine": 234,
+          "endLine": 234,
+          "tokens": 13
+        },
+        {
+          "name": "normalizeRelatesRelation",
+          "kind": "fn",
+          "startLine": 236,
+          "endLine": 255,
+          "tokens": 228
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export async function runSync(args: { db: Db; endpoints: RedmineEndpoints; env: Env }) {\nasync function readConfig(db: Db, key: string): Promise<string | undefined> {\nasync function writeConfig(db: Db, key: string, value: string): Promise<void> {\nfunction minusDaysIso(iso: string, days: number): string {\nfunction clampFloor(candidate: string | undefined, floor: string | undefined): string | undefined {\ntype IssueRole = \"earning\" | \"redemption\";\nfunction normalizeRelatesRelation(",
+      "imports": [
+        "apps/api/src/config/env.ts",
+        "apps/api/src/db/client.ts",
+        "apps/api/src/db/schema.ts",
+        "apps/api/src/lib/logger.ts",
+        "apps/api/src/redmine/endpoints.ts",
+        "apps/api/src/redmine/types.ts",
+        "apps/api/src/sync/classify.ts",
+        "apps/api/src/sync/lock.ts",
+        "apps/api/src/sync/normalize.ts"
+      ],
+      "importance": 0.1017
+    },
+    "apps/api/test/fixtures/redmine/sync_basic.ts": {
+      "description": "Exports fixtureSync",
+      "tokens": 478,
+      "hash": "af86be90cf3e155e",
+      "size": 1672,
+      "mtimeMs": 1780841379618.6553,
+      "updatedAt": "2026-09-29T09:15:47.635Z",
+      "source": "scan",
+      "importance": 0.1043
+    },
+    "apps/api/test/helpers/msw.ts": {
+      "description": "Exports startMsw",
+      "tokens": 75,
+      "hash": "b926bc3967099d27",
+      "size": 260,
+      "mtimeMs": 1780841379619.6567,
+      "updatedAt": "2026-09-29T09:15:47.635Z",
+      "source": "scan",
+      "importance": 0.1888
+    },
+    "apps/api/tsconfig.json": {
+      "description": "TypeScript configuration",
+      "tokens": 49,
+      "hash": "9b19d04596c94771",
+      "size": 169,
+      "mtimeMs": 1780841379620.656,
+      "updatedAt": "2026-09-29T09:15:47.636Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/components.json": {
+      "description": "",
+      "tokens": 157,
+      "hash": "18c73607b5d2b980",
+      "size": 549,
+      "mtimeMs": 1778577324817.8918,
+      "updatedAt": "2026-09-29T09:15:47.637Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/e2e/redemption-wizard.spec.ts": {
+      "description": "Declares dialog",
+      "tokens": 1028,
+      "hash": "09ac06f5ecf05d79",
+      "size": 3615,
+      "mtimeMs": 1778609356942.9028,
+      "updatedAt": "2026-09-29T09:15:47.638Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/e2e/smoke.spec.ts": {
+      "description": "",
+      "tokens": 265,
+      "hash": "420512702d3bda11",
+      "size": 928,
+      "mtimeMs": 1780841379621.6565,
+      "updatedAt": "2026-09-29T09:15:47.638Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/index.html": {
+      "description": "Overtide",
+      "tokens": 131,
+      "hash": "4f9fb8b82483aad4",
+      "size": 491,
+      "mtimeMs": 1778577324818.8943,
+      "updatedAt": "2026-09-29T09:15:47.639Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 412,
+      "hash": "8ac82872c8343726",
+      "size": 1442,
+      "mtimeMs": 1778674436423.0012,
+      "updatedAt": "2026-09-29T09:15:47.639Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/playwright.config.ts": {
+      "description": "Playwright test configuration",
+      "tokens": 230,
+      "hash": "9f87a4bac940501b",
+      "size": 803,
+      "mtimeMs": 1778577324818.8943,
+      "updatedAt": "2026-09-29T09:15:47.639Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/postcss.config.js": {
+      "description": "PostCSS configuration",
+      "tokens": 18,
+      "hash": "e509558d3bdf129b",
+      "size": 61,
+      "mtimeMs": 1778577324819.8938,
+      "updatedAt": "2026-09-29T09:15:47.639Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/scripts/screenshots-blur.mjs": {
+      "description": "Capture the three \"client-sensitive\" README screenshots with subject",
+      "tokens": 1607,
+      "hash": "05e8a5a3b04e0294",
+      "size": 6054,
+      "mtimeMs": 1780841379621.6565,
+      "updatedAt": "2026-09-29T09:15:47.640Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "withBluredScreenshot",
+          "kind": "fn",
+          "startLine": 58,
+          "endLine": 70,
+          "tokens": 193
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/scripts/screenshots.mjs": {
+      "description": "Capture README screenshots against a running dev stack.",
+      "tokens": 1108,
+      "hash": "8172a3382d29cbf9",
+      "size": 4168,
+      "mtimeMs": 1780841379622.6553,
+      "updatedAt": "2026-09-29T09:15:47.641Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/api/client.test.ts": {
+      "description": "Declares fetchMock",
+      "tokens": 743,
+      "hash": "34d54a18b3287e45",
+      "size": 2600,
+      "mtimeMs": 1780863751260.4114,
+      "updatedAt": "2026-09-29T09:15:47.642Z",
+      "source": "scan",
+      "imports": [
+        "apps/web/src/api/client.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/web/src/api/client.ts": {
+      "description": "Exports ApiClientError, ApiFetchOptions, apiFetch, apiFetchSchema",
+      "tokens": 529,
+      "hash": "550c5a7c05cba79d",
+      "size": 1851,
+      "mtimeMs": 1780863751261.6648,
+      "updatedAt": "2026-09-29T09:15:47.643Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "ApiClientError",
+          "kind": "class",
+          "startLine": 3,
+          "endLine": 13,
+          "tokens": 70
+        },
+        {
+          "name": "ApiClientError.constructor",
+          "kind": "method",
+          "startLine": 4,
+          "endLine": 12,
+          "tokens": 56
+        },
+        {
+          "name": "ApiFetchOptions",
+          "kind": "section",
+          "startLine": 15,
+          "endLine": 19,
+          "tokens": 34
+        },
+        {
+          "name": "Envelope",
+          "kind": "section",
+          "startLine": 21,
+          "endLine": 24,
+          "tokens": 30
+        },
+        {
+          "name": "apiFetch",
+          "kind": "fn",
+          "startLine": 26,
+          "endLine": 50,
+          "tokens": 263
+        },
+        {
+          "name": "apiFetchSchema",
+          "kind": "fn",
+          "startLine": 52,
+          "endLine": 63,
+          "tokens": 121
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.2773
+    },
+    "apps/web/src/api/mutations.ts": {
+      "description": "Optional hour override; omit for greedy FIFO.",
+      "tokens": 1389,
+      "hash": "1aae29262157d4af",
+      "size": 4859,
+      "mtimeMs": 1780863751262.6836,
+      "updatedAt": "2026-09-29T09:15:47.644Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "SyncResult",
+          "kind": "section",
+          "startLine": 19,
+          "endLine": 19,
+          "tokens": 17
+        },
+        {
+          "name": "useRunSync",
+          "kind": "fn",
+          "startLine": 21,
+          "endLine": 37,
+          "tokens": 178
+        },
+        {
+          "name": "CreateRelationVars",
+          "kind": "section",
+          "startLine": 39,
+          "endLine": 44,
+          "tokens": 54
+        },
+        {
+          "name": "CreateRelationResult",
+          "kind": "section",
+          "startLine": 51,
+          "endLine": 51,
+          "tokens": 23
+        },
+        {
+          "name": "useCreateRelation",
+          "kind": "fn",
+          "startLine": 56,
+          "endLine": 71,
+          "tokens": 154
+        },
+        {
+          "name": "invalidateRelationQueries",
+          "kind": "fn",
+          "startLine": 73,
+          "endLine": 78,
+          "tokens": 84
+        },
+        {
+          "name": "useCreateRedemption",
+          "kind": "fn",
+          "startLine": 80,
+          "endLine": 101,
+          "tokens": 225
+        },
+        {
+          "name": "RetryRedemptionOperationResult",
+          "kind": "section",
+          "startLine": 111,
+          "endLine": 111,
+          "tokens": 29
+        },
+        {
+          "name": "useRetryRedemptionOperation",
+          "kind": "fn",
+          "startLine": 113,
+          "endLine": 139,
+          "tokens": 259
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/web/src/api/client.ts",
+        "apps/web/src/api/queries.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/web/src/api/queries.ts": {
+      "description": "Exports qk, useHealth, useBalance, useTimeline + 6 more",
+      "tokens": 672,
+      "hash": "3dd7f412ebe602f3",
+      "size": 2350,
+      "mtimeMs": 1780863751263.6804,
+      "updatedAt": "2026-09-29T09:15:47.644Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "useHealth",
+          "kind": "fn",
+          "startLine": 27,
+          "endLine": 32,
+          "tokens": 51
+        },
+        {
+          "name": "useBalance",
+          "kind": "fn",
+          "startLine": 34,
+          "endLine": 38,
+          "tokens": 42
+        },
+        {
+          "name": "useTimeline",
+          "kind": "fn",
+          "startLine": 40,
+          "endLine": 44,
+          "tokens": 50
+        },
+        {
+          "name": "useEarning",
+          "kind": "fn",
+          "startLine": 46,
+          "endLine": 50,
+          "tokens": 48
+        },
+        {
+          "name": "useRedemption",
+          "kind": "fn",
+          "startLine": 52,
+          "endLine": 56,
+          "tokens": 52
+        },
+        {
+          "name": "useUnlinked",
+          "kind": "fn",
+          "startLine": 58,
+          "endLine": 62,
+          "tokens": 48
+        },
+        {
+          "name": "useSyncHistory",
+          "kind": "fn",
+          "startLine": 64,
+          "endLine": 68,
+          "tokens": 51
+        },
+        {
+          "name": "useSyncStatus",
+          "kind": "fn",
+          "startLine": 70,
+          "endLine": 75,
+          "tokens": 55
+        },
+        {
+          "name": "useIssue",
+          "kind": "fn",
+          "startLine": 77,
+          "endLine": 82,
+          "tokens": 58
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/web/src/api/client.ts"
+      ],
+      "importance": 0.1133
+    },
+    "apps/web/src/components/balance/AnimatedNumber.tsx": {
+      "description": "AnimatedNumber — uses useEffect",
+      "tokens": 166,
+      "hash": "881a686053c9a3ac",
+      "size": 581,
+      "mtimeMs": 1778577324820.8933,
+      "updatedAt": "2026-09-29T09:15:47.645Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/balance/BalanceBreakdown.tsx": {
+      "description": "BalanceBreakdown — renders chart",
+      "tokens": 2263,
+      "hash": "8d89451689e7b298",
+      "size": 7923,
+      "mtimeMs": 1780841379625.6558,
+      "updatedAt": "2026-09-29T09:15:47.646Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Slice",
+          "kind": "section",
+          "startLine": 11,
+          "endLine": 11,
+          "tokens": 18
+        },
+        {
+          "name": "View",
+          "kind": "section",
+          "startLine": 12,
+          "endLine": 12,
+          "tokens": 10
+        },
+        {
+          "name": "BalanceBreakdown",
+          "kind": "fn",
+          "startLine": 14,
+          "endLine": 174,
+          "tokens": 1950
+        },
+        {
+          "name": "ViewTab",
+          "kind": "fn",
+          "startLine": 176,
+          "endLine": 201,
+          "tokens": 150
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "type Slice = { name: string; value: number; fill: string };\ntype View = \"remaining\" | \"all\";\nexport function BalanceBreakdown() {\nfunction ViewTab({",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/balance/BalanceCard.tsx": {
+      "description": "Stat",
+      "tokens": 720,
+      "hash": "3de92dd9caa058fc",
+      "size": 2519,
+      "mtimeMs": 1780841379627.1409,
+      "updatedAt": "2026-09-29T09:15:47.648Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Tone",
+          "kind": "section",
+          "startLine": 8,
+          "endLine": 8,
+          "tokens": 14
+        },
+        {
+          "name": "Stat",
+          "kind": "fn",
+          "startLine": 10,
+          "endLine": 50,
+          "tokens": 333
+        },
+        {
+          "name": "BalanceCard",
+          "kind": "fn",
+          "startLine": 52,
+          "endLine": 76,
+          "tokens": 280
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/balance/BalancePill.tsx": {
+      "description": "pickTone",
+      "tokens": 585,
+      "hash": "d995d6a7ad1e492c",
+      "size": 2045,
+      "mtimeMs": 1780841379628.4324,
+      "updatedAt": "2026-09-29T09:15:47.648Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Tone",
+          "kind": "section",
+          "startLine": 7,
+          "endLine": 7,
+          "tokens": 17
+        },
+        {
+          "name": "pickTone",
+          "kind": "fn",
+          "startLine": 9,
+          "endLine": 16,
+          "tokens": 107
+        },
+        {
+          "name": "BalancePill",
+          "kind": "fn",
+          "startLine": 25,
+          "endLine": 52,
+          "tokens": 287
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/charts/tooltip.ts": {
+      "description": "Shared Recharts <Tooltip /> styling — white pill on dark theme so it",
+      "tokens": 178,
+      "hash": "7f00d55cfa890028",
+      "size": 623,
+      "mtimeMs": 1780840322509.07,
+      "updatedAt": "2026-09-29T09:15:47.650Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/command/CommandPalette.tsx": {
+      "description": "PAGES — uses useState, useNavigate, useEffect",
+      "tokens": 640,
+      "hash": "c525ee06eb7e9f24",
+      "size": 2242,
+      "mtimeMs": 1780841379628.4324,
+      "updatedAt": "2026-09-29T09:15:47.652Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "CommandPalette",
+          "kind": "fn",
+          "startLine": 16,
+          "endLine": 73,
+          "tokens": 510
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/issues/EarningTable.tsx": {
+      "description": "EarningTable — renders table",
+      "tokens": 734,
+      "hash": "948ad96a25486fa5",
+      "size": 2569,
+      "mtimeMs": 1780841379629.7175,
+      "updatedAt": "2026-09-29T09:15:47.654Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "EarningTable",
+          "kind": "fn",
+          "startLine": 15,
+          "endLine": 70,
+          "tokens": 630
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/issues/IssueDetailPanel.tsx": {
+      "description": "IssueDetailPanel — uses useRouter",
+      "tokens": 1436,
+      "hash": "c23fddf1cb7496c3",
+      "size": 5028,
+      "mtimeMs": 1780841379629.7175,
+      "updatedAt": "2026-09-29T09:15:47.655Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "IssueShape",
+          "kind": "section",
+          "startLine": 9,
+          "endLine": 19,
+          "tokens": 65
+        },
+        {
+          "name": "TimeEntryShape",
+          "kind": "section",
+          "startLine": 21,
+          "endLine": 27,
+          "tokens": 39
+        },
+        {
+          "name": "RelationShape",
+          "kind": "section",
+          "startLine": 29,
+          "endLine": 35,
+          "tokens": 41
+        },
+        {
+          "name": "IssueDetailPanel",
+          "kind": "fn",
+          "startLine": 37,
+          "endLine": 142,
+          "tokens": 1185
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/issues/RedemptionTable.tsx": {
+      "description": "RedemptionTable — renders table",
+      "tokens": 984,
+      "hash": "3c68f417fc93c19c",
+      "size": 3444,
+      "mtimeMs": 1780841379631.0247,
+      "updatedAt": "2026-09-29T09:15:47.655Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "RedemptionTable",
+          "kind": "fn",
+          "startLine": 16,
+          "endLine": 90,
+          "tokens": 865
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/layout/AppShell.tsx": {
+      "description": "AppShell",
+      "tokens": 115,
+      "hash": "0295158d3dc335e0",
+      "size": 401,
+      "mtimeMs": 1780841379632.502,
+      "updatedAt": "2026-09-29T09:15:47.656Z",
+      "source": "scan",
+      "imports": [
+        "apps/web/src/components/layout/TopBar.tsx"
+      ],
+      "importance": 0.0795
+    },
+    "apps/web/src/components/layout/NavLink.tsx": {
+      "description": "NavLink",
+      "tokens": 202,
+      "hash": "61da3b2b71204da5",
+      "size": 704,
+      "mtimeMs": 1780841379632.502,
+      "updatedAt": "2026-09-29T09:15:47.657Z",
+      "source": "scan",
+      "importance": 0.2046
+    },
+    "apps/web/src/components/layout/TopBar.tsx": {
+      "description": "TopBar",
+      "tokens": 414,
+      "hash": "076becd2733f0947",
+      "size": 1447,
+      "mtimeMs": 1780841379633.5007,
+      "updatedAt": "2026-09-29T09:15:47.657Z",
+      "source": "scan",
+      "imports": [
+        "apps/web/src/components/layout/NavLink.tsx"
+      ],
+      "importance": 0.1471
+    },
+    "apps/web/src/components/linker/RelationLinker.tsx": {
+      "description": "Empty string = greedy FIFO. Numeric string = explicit override.",
+      "tokens": 2183,
+      "hash": "d76d6bd0f5fcdc8f",
+      "size": 7651,
+      "mtimeMs": 1780841379635.0706,
+      "updatedAt": "2026-09-29T09:15:47.658Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Props",
+          "kind": "section",
+          "startLine": 17,
+          "endLine": 23,
+          "tokens": 45
+        },
+        {
+          "name": "Pick",
+          "kind": "section",
+          "startLine": 25,
+          "endLine": 28,
+          "tokens": 33
+        },
+        {
+          "name": "parseHours",
+          "kind": "fn",
+          "startLine": 30,
+          "endLine": 34,
+          "tokens": 52
+        },
+        {
+          "name": "RelationLinker",
+          "kind": "fn",
+          "startLine": 36,
+          "endLine": 210,
+          "tokens": 1896
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "type Props = {\ntype Pick = {\nfunction parseHours(s: string): number | null {\nexport function RelationLinker({",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/redemption-wizard/CreateRedemptionWizard.tsx": {
+      "description": "Falls back to deriveInitials at runtime if not provided.",
+      "tokens": 6684,
+      "hash": "c7891591b3f91766",
+      "size": 23414,
+      "mtimeMs": 1780861131119.9792,
+      "updatedAt": "2026-09-29T09:15:47.659Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Props",
+          "kind": "section",
+          "startLine": 27,
+          "endLine": 32,
+          "tokens": 50
+        },
+        {
+          "name": "Step",
+          "kind": "section",
+          "startLine": 34,
+          "endLine": 34,
+          "tokens": 16
+        },
+        {
+          "name": "DayRow",
+          "kind": "section",
+          "startLine": 37,
+          "endLine": 37,
+          "tokens": 15
+        },
+        {
+          "name": "PartialRedemptionResult",
+          "kind": "section",
+          "startLine": 38,
+          "endLine": 42,
+          "tokens": 32
+        },
+        {
+          "name": "todayISO",
+          "kind": "fn",
+          "startLine": 44,
+          "endLine": 44,
+          "tokens": 18
+        },
+        {
+          "name": "parseHours",
+          "kind": "fn",
+          "startLine": 46,
+          "endLine": 50,
+          "tokens": 52
+        },
+        {
+          "name": "CreateRedemptionWizard",
+          "kind": "fn",
+          "startLine": 52,
+          "endLine": 579,
+          "tokens": 6029
+        },
+        {
+          "name": "labelFor",
+          "kind": "fn",
+          "startLine": 581,
+          "endLine": 586,
+          "tokens": 63
+        },
+        {
+          "name": "dayLabel",
+          "kind": "fn",
+          "startLine": 588,
+          "endLine": 593,
+          "tokens": 86
+        },
+        {
+          "name": "defaultInitials",
+          "kind": "fn",
+          "startLine": 595,
+          "endLine": 600,
+          "tokens": 58
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "type Props = {\ntype Step = \"dates\" | \"earnings\" | \"days\" | \"preview\";\ntype DayRow = { date: string; hoursInput: string };\ntype PartialRedemptionResult = {\nconst todayISO = () => new Date().toISOString().slice(0, 10);\nfunction parseHours(s: string): number | null {\nexport function CreateRedemptionWizard({ open, onOpenChange, fallbackInitials = \"OB\" }: Props) {\nfunction labelFor(s: Step) {\nfunction dayLabel(iso: string): string {\nexport function defaultInitials(",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/redemption-wizard/wizard.test.ts": {
+      "description": "Sanity test that the web bundle resolves the shared builder so the preview",
+      "tokens": 212,
+      "hash": "e8d044dc27925624",
+      "size": 742,
+      "mtimeMs": 1780841379636.083,
+      "updatedAt": "2026-09-29T09:15:47.660Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/states/EmptyState.tsx": {
+      "description": "EmptyState",
+      "tokens": 145,
+      "hash": "bdb6a04202bac11b",
+      "size": 507,
+      "mtimeMs": 1778577324826.9917,
+      "updatedAt": "2026-09-29T09:15:47.660Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/sync/SyncButton.tsx": {
+      "description": "SyncButton",
+      "tokens": 156,
+      "hash": "fafcbb0c5e562f27",
+      "size": 547,
+      "mtimeMs": 1780841379637.082,
+      "updatedAt": "2026-09-29T09:15:47.661Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/sync/SyncRunBadge.tsx": {
+      "description": "relativeTime",
+      "tokens": 207,
+      "hash": "170b6e82b70ee859",
+      "size": 723,
+      "mtimeMs": 1780841379638.0815,
+      "updatedAt": "2026-09-29T09:15:47.662Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/timeline/TimelineChart.tsx": {
+      "description": "dayShort — renders chart",
+      "tokens": 940,
+      "hash": "a8f07b122c9f3fcd",
+      "size": 3291,
+      "mtimeMs": 1780841379639.0818,
+      "updatedAt": "2026-09-29T09:15:47.662Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "dayShort",
+          "kind": "fn",
+          "startLine": 15,
+          "endLine": 19,
+          "tokens": 38
+        },
+        {
+          "name": "TimelineChart",
+          "kind": "fn",
+          "startLine": 21,
+          "endLine": 90,
+          "tokens": 825
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/badge.tsx": {
+      "description": "badgeVariants",
+      "tokens": 558,
+      "hash": "bd909a0cbe469be3",
+      "size": 1953,
+      "mtimeMs": 1780841379639.0818,
+      "updatedAt": "2026-09-29T09:15:47.663Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Badge",
+          "kind": "fn",
+          "startLine": 27,
+          "endLine": 47,
+          "tokens": 122
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/button.tsx": {
+      "description": "buttonVariants",
+      "tokens": 935,
+      "hash": "808fad37c55d2ea9",
+      "size": 3270,
+      "mtimeMs": 1780841379640.0813,
+      "updatedAt": "2026-09-29T09:15:47.664Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Button",
+          "kind": "fn",
+          "startLine": 43,
+          "endLine": 56,
+          "tokens": 92
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/card.tsx": {
+      "description": "Card",
+      "tokens": 772,
+      "hash": "7c095dab5083c346",
+      "size": 2700,
+      "mtimeMs": 1780841379641.0808,
+      "updatedAt": "2026-09-29T09:15:47.665Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Card",
+          "kind": "fn",
+          "startLine": 5,
+          "endLine": 21,
+          "tokens": 183
+        },
+        {
+          "name": "CardHeader",
+          "kind": "fn",
+          "startLine": 23,
+          "endLine": 34,
+          "tokens": 149
+        },
+        {
+          "name": "CardTitle",
+          "kind": "fn",
+          "startLine": 36,
+          "endLine": 47,
+          "tokens": 85
+        },
+        {
+          "name": "CardDescription",
+          "kind": "fn",
+          "startLine": 49,
+          "endLine": 57,
+          "tokens": 69
+        },
+        {
+          "name": "CardAction",
+          "kind": "fn",
+          "startLine": 59,
+          "endLine": 67,
+          "tokens": 76
+        },
+        {
+          "name": "CardContent",
+          "kind": "fn",
+          "startLine": 69,
+          "endLine": 77,
+          "tokens": 68
+        },
+        {
+          "name": "CardFooter",
+          "kind": "fn",
+          "startLine": 79,
+          "endLine": 90,
+          "tokens": 90
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/dialog.tsx": {
+      "description": "Dialog — renders modal",
+      "tokens": 1153,
+      "hash": "a8e370ef5dd26870",
+      "size": 4035,
+      "mtimeMs": 1780841379642.0815,
+      "updatedAt": "2026-09-29T09:15:47.666Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Dialog",
+          "kind": "fn",
+          "startLine": 8,
+          "endLine": 10,
+          "tokens": 37
+        },
+        {
+          "name": "DialogTrigger",
+          "kind": "fn",
+          "startLine": 12,
+          "endLine": 14,
+          "tokens": 43
+        },
+        {
+          "name": "DialogPortal",
+          "kind": "fn",
+          "startLine": 16,
+          "endLine": 18,
+          "tokens": 42
+        },
+        {
+          "name": "DialogClose",
+          "kind": "fn",
+          "startLine": 20,
+          "endLine": 22,
+          "tokens": 41
+        },
+        {
+          "name": "DialogOverlay",
+          "kind": "fn",
+          "startLine": 24,
+          "endLine": 35,
+          "tokens": 126
+        },
+        {
+          "name": "DialogContent",
+          "kind": "fn",
+          "startLine": 37,
+          "endLine": 69,
+          "tokens": 334
+        },
+        {
+          "name": "DialogHeader",
+          "kind": "fn",
+          "startLine": 71,
+          "endLine": 75,
+          "tokens": 57
+        },
+        {
+          "name": "DialogFooter",
+          "kind": "fn",
+          "startLine": 77,
+          "endLine": 100,
+          "tokens": 169
+        },
+        {
+          "name": "DialogTitle",
+          "kind": "fn",
+          "startLine": 102,
+          "endLine": 110,
+          "tokens": 73
+        },
+        {
+          "name": "DialogDescription",
+          "kind": "fn",
+          "startLine": 112,
+          "endLine": 123,
+          "tokens": 106
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/dropdown-menu.tsx": {
+      "description": "DropdownMenu",
+      "tokens": 2581,
+      "hash": "0632d45e861a0c86",
+      "size": 9033,
+      "mtimeMs": 1780841379642.0815,
+      "updatedAt": "2026-09-29T09:15:47.666Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "DropdownMenu",
+          "kind": "fn",
+          "startLine": 9,
+          "endLine": 11,
+          "tokens": 40
+        },
+        {
+          "name": "DropdownMenuPortal",
+          "kind": "fn",
+          "startLine": 13,
+          "endLine": 15,
+          "tokens": 45
+        },
+        {
+          "name": "DropdownMenuTrigger",
+          "kind": "fn",
+          "startLine": 17,
+          "endLine": 19,
+          "tokens": 46
+        },
+        {
+          "name": "DropdownMenuContent",
+          "kind": "fn",
+          "startLine": 21,
+          "endLine": 50,
+          "tokens": 406
+        },
+        {
+          "name": "DropdownMenuGroup",
+          "kind": "fn",
+          "startLine": 52,
+          "endLine": 54,
+          "tokens": 44
+        },
+        {
+          "name": "DropdownMenuLabel",
+          "kind": "fn",
+          "startLine": 56,
+          "endLine": 74,
+          "tokens": 117
+        },
+        {
+          "name": "DropdownMenuItem",
+          "kind": "fn",
+          "startLine": 76,
+          "endLine": 97,
+          "tokens": 305
+        },
+        {
+          "name": "DropdownMenuSub",
+          "kind": "fn",
+          "startLine": 99,
+          "endLine": 101,
+          "tokens": 46
+        },
+        {
+          "name": "DropdownMenuSubTrigger",
+          "kind": "fn",
+          "startLine": 103,
+          "endLine": 125,
+          "tokens": 255
+        },
+        {
+          "name": "DropdownMenuSubContent",
+          "kind": "fn",
+          "startLine": 127,
+          "endLine": 149,
+          "tokens": 254
+        },
+        {
+          "name": "DropdownMenuCheckboxItem",
+          "kind": "fn",
+          "startLine": 151,
+          "endLine": 182,
+          "tokens": 318
+        },
+        {
+          "name": "DropdownMenuRadioGroup",
+          "kind": "fn",
+          "startLine": 184,
+          "endLine": 186,
+          "tokens": 50
+        },
+        {
+          "name": "DropdownMenuRadioItem",
+          "kind": "fn",
+          "startLine": 188,
+          "endLine": 217,
+          "tokens": 300
+        },
+        {
+          "name": "DropdownMenuSeparator",
+          "kind": "fn",
+          "startLine": 219,
+          "endLine": 227,
+          "tokens": 78
+        },
+        {
+          "name": "DropdownMenuShortcut",
+          "kind": "fn",
+          "startLine": 229,
+          "endLine": 240,
+          "tokens": 103
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {\nfunction DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {\nfunction DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {\nfunction DropdownMenuContent({\nfunction DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {\nfunction DropdownMenuLabel({\nfunction DropdownMenuItem({\nfunction DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {\nfunction DropdownMenuSubTrigger({\nfunction DropdownMenuSubContent({\nfunction DropdownMenuCheckboxItem({\nfunction DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {\nfunction DropdownMenuRadioItem({\nfunction DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.Props) {\nfunction DropdownMenuShortcut({ className, ...props }: React.ComponentProps<\"span\">) {",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/input.tsx": {
+      "description": "Input",
+      "tokens": 309,
+      "hash": "304444871ad9c6c7",
+      "size": 1079,
+      "mtimeMs": 1780841379643.0808,
+      "updatedAt": "2026-09-29T09:15:47.667Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/separator.tsx": {
+      "description": "Separator",
+      "tokens": 157,
+      "hash": "686ab5509694a98e",
+      "size": 549,
+      "mtimeMs": 1780841379644.082,
+      "updatedAt": "2026-09-29T09:15:47.667Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/sheet.tsx": {
+      "description": "Sheet",
+      "tokens": 1269,
+      "hash": "2d445afe75715f7a",
+      "size": 4441,
+      "mtimeMs": 1780841379645.0815,
+      "updatedAt": "2026-09-29T09:15:47.668Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Sheet",
+          "kind": "fn",
+          "startLine": 10,
+          "endLine": 12,
+          "tokens": 36
+        },
+        {
+          "name": "SheetTrigger",
+          "kind": "fn",
+          "startLine": 14,
+          "endLine": 16,
+          "tokens": 42
+        },
+        {
+          "name": "SheetClose",
+          "kind": "fn",
+          "startLine": 18,
+          "endLine": 20,
+          "tokens": 40
+        },
+        {
+          "name": "SheetPortal",
+          "kind": "fn",
+          "startLine": 22,
+          "endLine": 24,
+          "tokens": 41
+        },
+        {
+          "name": "SheetOverlay",
+          "kind": "fn",
+          "startLine": 26,
+          "endLine": 37,
+          "tokens": 120
+        },
+        {
+          "name": "SheetContent",
+          "kind": "fn",
+          "startLine": 39,
+          "endLine": 74,
+          "tokens": 591
+        },
+        {
+          "name": "SheetHeader",
+          "kind": "fn",
+          "startLine": 76,
+          "endLine": 84,
+          "tokens": 66
+        },
+        {
+          "name": "SheetFooter",
+          "kind": "fn",
+          "startLine": 86,
+          "endLine": 94,
+          "tokens": 67
+        },
+        {
+          "name": "SheetTitle",
+          "kind": "fn",
+          "startLine": 96,
+          "endLine": 104,
+          "tokens": 73
+        },
+        {
+          "name": "SheetDescription",
+          "kind": "fn",
+          "startLine": 106,
+          "endLine": 114,
+          "tokens": 78
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/skeleton.tsx": {
+      "description": "Skeleton",
+      "tokens": 84,
+      "hash": "7c46c61ce775ae89",
+      "size": 291,
+      "mtimeMs": 1780841379645.0815,
+      "updatedAt": "2026-09-29T09:15:47.668Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/table.tsx": {
+      "description": "Table — renders table",
+      "tokens": 679,
+      "hash": "4e154fd5b672fa4a",
+      "size": 2375,
+      "mtimeMs": 1780841379646.0813,
+      "updatedAt": "2026-09-29T09:15:47.669Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "Table",
+          "kind": "fn",
+          "startLine": 5,
+          "endLine": 15,
+          "tokens": 94
+        },
+        {
+          "name": "TableHeader",
+          "kind": "fn",
+          "startLine": 17,
+          "endLine": 19,
+          "tokens": 53
+        },
+        {
+          "name": "TableBody",
+          "kind": "fn",
+          "startLine": 21,
+          "endLine": 29,
+          "tokens": 66
+        },
+        {
+          "name": "TableFooter",
+          "kind": "fn",
+          "startLine": 31,
+          "endLine": 39,
+          "tokens": 75
+        },
+        {
+          "name": "TableRow",
+          "kind": "fn",
+          "startLine": 41,
+          "endLine": 52,
+          "tokens": 94
+        },
+        {
+          "name": "TableHead",
+          "kind": "fn",
+          "startLine": 54,
+          "endLine": 65,
+          "tokens": 96
+        },
+        {
+          "name": "TableCell",
+          "kind": "fn",
+          "startLine": 67,
+          "endLine": 75,
+          "tokens": 75
+        },
+        {
+          "name": "TableCaption",
+          "kind": "fn",
+          "startLine": 77,
+          "endLine": 85,
+          "tokens": 71
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/textarea.tsx": {
+      "description": "Textarea",
+      "tokens": 190,
+      "hash": "6bd80114ea72a992",
+      "size": 664,
+      "mtimeMs": 1780841379647.309,
+      "updatedAt": "2026-09-29T09:15:47.669Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/ui/tooltip.tsx": {
+      "description": "TooltipProvider",
+      "tokens": 819,
+      "hash": "08a53aff1a1a1362",
+      "size": 2866,
+      "mtimeMs": 1780841379647.309,
+      "updatedAt": "2026-09-29T09:15:47.670Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "TooltipProvider",
+          "kind": "fn",
+          "startLine": 7,
+          "endLine": 9,
+          "tokens": 53
+        },
+        {
+          "name": "Tooltip",
+          "kind": "fn",
+          "startLine": 11,
+          "endLine": 13,
+          "tokens": 38
+        },
+        {
+          "name": "TooltipTrigger",
+          "kind": "fn",
+          "startLine": 15,
+          "endLine": 17,
+          "tokens": 44
+        },
+        {
+          "name": "TooltipContent",
+          "kind": "fn",
+          "startLine": 19,
+          "endLine": 52,
+          "tokens": 625
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/warnings/DeficitBanner.tsx": {
+      "description": "DeficitBanner",
+      "tokens": 177,
+      "hash": "183bfbb9c1353316",
+      "size": 621,
+      "mtimeMs": 1780841379648.3215,
+      "updatedAt": "2026-09-29T09:15:47.671Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/components/warnings/UnlinkedBanner.tsx": {
+      "description": "UnlinkedBanner",
+      "tokens": 266,
+      "hash": "2f4a89daa1dfa355",
+      "size": 932,
+      "mtimeMs": 1780841379648.3215,
+      "updatedAt": "2026-09-29T09:15:47.671Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/lib/format.ts": {
+      "description": "Exports hours, dateShort",
+      "tokens": 43,
+      "hash": "167f4118acf422cd",
+      "size": 149,
+      "mtimeMs": 1778577324834.2153,
+      "updatedAt": "2026-09-29T09:15:47.673Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/lib/utils.ts": {
+      "description": "Exports cn",
+      "tokens": 50,
+      "hash": "9e45d6d21e0d57bf",
+      "size": 175,
+      "mtimeMs": 1780841379649.3213,
+      "updatedAt": "2026-09-29T09:15:47.674Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/src/main.tsx": {
+      "description": "queryClient",
+      "tokens": 278,
+      "hash": "6bf91453d6fd1bd6",
+      "size": 971,
+      "mtimeMs": 1780841379650.3213,
+      "updatedAt": "2026-09-29T09:15:47.674Z",
+      "source": "scan",
+      "imports": [
+        "apps/web/src/styles/globals.css",
+        "apps/web/src/routeTree.gen.ts"
+      ],
+      "importance": 0.0795
+    },
+    "apps/web/src/routes/__root.tsx": {
+      "description": "RootLayout",
+      "tokens": 253,
+      "hash": "7b131afdce854bdd",
+      "size": 884,
+      "mtimeMs": 1780841379650.3213,
+      "updatedAt": "2026-09-29T09:15:47.675Z",
+      "source": "scan",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/earning.tsx": {
+      "description": "Route",
+      "tokens": 99,
+      "hash": "d963a7989e43fd3e",
+      "size": 346,
+      "mtimeMs": 1780841379651.3225,
+      "updatedAt": "2026-09-29T09:15:47.675Z",
+      "source": "scan",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/index.tsx": {
+      "description": "Route",
+      "tokens": 163,
+      "hash": "fbc2ab7237b21a58",
+      "size": 568,
+      "mtimeMs": 1780841379651.3225,
+      "updatedAt": "2026-09-29T09:15:47.675Z",
+      "source": "scan",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/issue.$id.tsx": {
+      "description": "Route — uses useParams",
+      "tokens": 170,
+      "hash": "5ac131f02402dbfe",
+      "size": 595,
+      "mtimeMs": 1780841379652.3225,
+      "updatedAt": "2026-09-29T09:15:47.676Z",
+      "source": "scan",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/redemptions.tsx": {
+      "description": "RedemptionsPage — uses useState",
+      "tokens": 291,
+      "hash": "a475b15d3c708430",
+      "size": 1018,
+      "mtimeMs": 1780841379652.3225,
+      "updatedAt": "2026-09-29T09:15:47.676Z",
+      "source": "scan",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/settings.tsx": {
+      "description": "SettingsPage",
+      "tokens": 609,
+      "hash": "e7887d1d8851b751",
+      "size": 2129,
+      "mtimeMs": 1780863751264.6836,
+      "updatedAt": "2026-09-29T09:15:47.677Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "SettingsPage",
+          "kind": "fn",
+          "startLine": 8,
+          "endLine": 57,
+          "tokens": 496
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/sync.tsx": {
+      "description": "SyncPage — renders table",
+      "tokens": 1244,
+      "hash": "2553dd7bdc1eefa8",
+      "size": 4353,
+      "mtimeMs": 1780863751266.681,
+      "updatedAt": "2026-09-29T09:15:47.677Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "SyncPage",
+          "kind": "fn",
+          "startLine": 15,
+          "endLine": 90,
+          "tokens": 864
+        },
+        {
+          "name": "SyncStatusBadge",
+          "kind": "fn",
+          "startLine": 92,
+          "endLine": 102,
+          "tokens": 74
+        },
+        {
+          "name": "totalSkipped",
+          "kind": "fn",
+          "startLine": 104,
+          "endLine": 110,
+          "tokens": 50
+        },
+        {
+          "name": "skippedSummary",
+          "kind": "fn",
+          "startLine": 112,
+          "endLine": 120,
+          "tokens": 111
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/timeline.tsx": {
+      "description": "Route — renders chart",
+      "tokens": 99,
+      "hash": "0118620ba052ea9b",
+      "size": 346,
+      "mtimeMs": 1780841379655.3218,
+      "updatedAt": "2026-09-29T09:15:47.678Z",
+      "source": "scan",
+      "importance": 0.0902
+    },
+    "apps/web/src/routes/unlinked.tsx": {
+      "description": "UnlinkedPage",
+      "tokens": 567,
+      "hash": "c038f6e4985aa91a",
+      "size": 1985,
+      "mtimeMs": 1780841379655.3218,
+      "updatedAt": "2026-09-29T09:15:47.678Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "UnlinkedPage",
+          "kind": "fn",
+          "startLine": 9,
+          "endLine": 57,
+          "tokens": 436
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.0902
+    },
+    "apps/web/src/routeTree.gen.ts": {
+      "description": "@ts-nocheck",
+      "tokens": 1681,
+      "hash": "e36ee055c9370180",
+      "size": 5882,
+      "mtimeMs": 1778583055877.8855,
+      "updatedAt": "2026-09-29T09:15:47.679Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "FileRoutesByFullPath",
+          "kind": "section",
+          "startLine": 62,
+          "endLine": 71,
+          "tokens": 90
+        },
+        {
+          "name": "FileRoutesByTo",
+          "kind": "section",
+          "startLine": 72,
+          "endLine": 81,
+          "tokens": 88
+        },
+        {
+          "name": "FileRoutesById",
+          "kind": "section",
+          "startLine": 82,
+          "endLine": 92,
+          "tokens": 98
+        },
+        {
+          "name": "FileRouteTypes",
+          "kind": "section",
+          "startLine": 93,
+          "endLine": 125,
+          "tokens": 170
+        },
+        {
+          "name": "RootRouteChildren",
+          "kind": "section",
+          "startLine": 126,
+          "endLine": 135,
+          "tokens": 95
+        }
+      ],
+      "symbolSource": "ts",
+      "imports": [
+        "apps/web/src/routes/__root.tsx",
+        "apps/web/src/routes/unlinked.tsx",
+        "apps/web/src/routes/timeline.tsx",
+        "apps/web/src/routes/sync.tsx",
+        "apps/web/src/routes/settings.tsx",
+        "apps/web/src/routes/redemptions.tsx",
+        "apps/web/src/routes/earning.tsx",
+        "apps/web/src/routes/index.tsx",
+        "apps/web/src/routes/issue.$id.tsx"
+      ],
+      "importance": 0.1133
+    },
+    "apps/web/src/styles/globals.css": {
+      "description": "Styles: 5 rules, 43 vars, 1 layers",
+      "tokens": 614,
+      "hash": "b43f27bb51869155",
+      "size": 2146,
+      "mtimeMs": 1778577324839.1174,
+      "updatedAt": "2026-09-29T09:15:47.679Z",
+      "source": "scan",
+      "importance": 0.1133
+    },
+    "apps/web/src/test-setup.ts": {
+      "description": "",
+      "tokens": 13,
+      "hash": "60aa525f7ffa6bfd",
+      "size": 44,
+      "mtimeMs": 1778577324839.1174,
+      "updatedAt": "2026-09-29T09:15:47.680Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/tsconfig.json": {
+      "description": "TypeScript configuration",
+      "tokens": 66,
+      "hash": "99762cda7741ddaa",
+      "size": 229,
+      "mtimeMs": 1778577324839.1174,
+      "updatedAt": "2026-09-29T09:15:47.680Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "apps/web/vite.config.ts": {
+      "description": "Vite build configuration",
+      "tokens": 169,
+      "hash": "72a25d1984da566b",
+      "size": 591,
+      "mtimeMs": 1780841379656.3235,
+      "updatedAt": "2026-09-29T09:15:47.681Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "biome.json": {
+      "description": "Biome linter/formatter configuration",
+      "tokens": 155,
+      "hash": "30949bcbf69a0344",
+      "size": 541,
+      "mtimeMs": 1780850821575.6038,
+      "updatedAt": "2026-09-29T09:15:47.682Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "CLAUDE.md": {
+      "description": "OpenWolf",
+      "tokens": 99,
+      "hash": "074d6b42b583729a",
+      "size": 395,
+      "mtimeMs": 1790673346049.922,
+      "updatedAt": "2026-09-29T09:15:47.684Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "dev.cmd": {
+      "description": "",
+      "tokens": 314,
+      "hash": "9da261435ca1f8a3",
+      "size": 1181,
+      "mtimeMs": 1778584069027.0461,
+      "updatedAt": "2026-09-29T09:15:47.685Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "docs/superpowers/plans/2026-05-11-overtide-backend.md": {
+      "description": "Overtide Backend Implementation Plan",
+      "tokens": 25666,
+      "hash": "d5cf9f5c60e10983",
+      "size": 103251,
+      "mtimeMs": 1778534393045.9824,
+      "updatedAt": "2026-09-29T09:15:47.687Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "docs/superpowers/plans/2026-05-11-overtide-frontend.md": {
+      "description": "Overtide Frontend Implementation Plan",
+      "tokens": 15563,
+      "hash": "42796512303ac6da",
+      "size": 62918,
+      "mtimeMs": 1778529985692.8286,
+      "updatedAt": "2026-09-29T09:15:47.687Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "docs/superpowers/plans/2026-05-12-redemption-wizard.md": {
+      "description": "Redemption Wizard",
+      "tokens": 3683,
+      "hash": "3cee37f7eebe7719",
+      "size": 15123,
+      "mtimeMs": 1778609356944.9106,
+      "updatedAt": "2026-09-29T09:15:47.688Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "docs/superpowers/plans/2026-06-07-overtide-reliability-hardening.md": {
+      "description": "Overtide Reliability Hardening Implementation Plan",
+      "tokens": 5065,
+      "hash": "b32ab891a3e864ba",
+      "size": 20262,
+      "mtimeMs": 1780859972499.378,
+      "updatedAt": "2026-09-29T09:15:47.688Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "docs/superpowers/specs/2026-05-11-overtide-design.md": {
+      "description": "Overtide — Design Spec",
+      "tokens": 7330,
+      "hash": "5bf653b89426cdd6",
+      "size": 30208,
+      "mtimeMs": 1778529135290.712,
+      "updatedAt": "2026-09-29T09:15:47.689Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 127,
+      "hash": "e578708783aec727",
+      "size": 443,
+      "mtimeMs": 1780841379660.3235,
+      "updatedAt": "2026-09-29T09:15:47.689Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "packages/shared/package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 52,
+      "hash": "cdaa350b313d7289",
+      "size": 180,
+      "mtimeMs": 1778534393045.9824,
+      "updatedAt": "2026-09-29T09:15:47.689Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "packages/shared/src/domain.ts": {
+      "description": "Zod schemas: issueRoleSchema, issueSchema, balanceSchema, healthDataSchema + 8 more",
+      "tokens": 1270,
+      "hash": "0074c8d85e5c89d1",
+      "size": 4444,
+      "mtimeMs": 1780863751268.6824,
+      "updatedAt": "2026-09-29T09:15:47.690Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "IssueRole",
+          "kind": "section",
+          "startLine": 4,
+          "endLine": 4,
+          "tokens": 17
+        },
+        {
+          "name": "Issue",
+          "kind": "section",
+          "startLine": 19,
+          "endLine": 19,
+          "tokens": 14
+        },
+        {
+          "name": "EarningIssue",
+          "kind": "section",
+          "startLine": 26,
+          "endLine": 26,
+          "tokens": 18
+        },
+        {
+          "name": "RedemptionIssue",
+          "kind": "section",
+          "startLine": 34,
+          "endLine": 34,
+          "tokens": 20
+        },
+        {
+          "name": "Balance",
+          "kind": "section",
+          "startLine": 42,
+          "endLine": 42,
+          "tokens": 16
+        },
+        {
+          "name": "HealthData",
+          "kind": "section",
+          "startLine": 55,
+          "endLine": 55,
+          "tokens": 17
+        },
+        {
+          "name": "TimelinePoint",
+          "kind": "section",
+          "startLine": 63,
+          "endLine": 63,
+          "tokens": 19
+        },
+        {
+          "name": "Allocation",
+          "kind": "section",
+          "startLine": 70,
+          "endLine": 70,
+          "tokens": 17
+        },
+        {
+          "name": "SyncRun",
+          "kind": "section",
+          "startLine": 85,
+          "endLine": 85,
+          "tokens": 16
+        },
+        {
+          "name": "SyncStatus",
+          "kind": "section",
+          "startLine": 91,
+          "endLine": 91,
+          "tokens": 17
+        },
+        {
+          "name": "IssueDetailIssue",
+          "kind": "section",
+          "startLine": 112,
+          "endLine": 112,
+          "tokens": 21
+        },
+        {
+          "name": "TimeEntry",
+          "kind": "section",
+          "startLine": 126,
+          "endLine": 126,
+          "tokens": 17
+        },
+        {
+          "name": "IssueRelation",
+          "kind": "section",
+          "startLine": 137,
+          "endLine": 137,
+          "tokens": 19
+        },
+        {
+          "name": "IssueDetail",
+          "kind": "section",
+          "startLine": 144,
+          "endLine": 144,
+          "tokens": 18
+        }
+      ],
+      "symbolSource": "ts",
+      "importance": 0.1021
+    },
+    "packages/shared/src/envelope.test.ts": {
+      "description": "Declares ApiResponse",
+      "tokens": 214,
+      "hash": "e04087abc9f693d0",
+      "size": 747,
+      "mtimeMs": 1780841379661.3186,
+      "updatedAt": "2026-09-29T09:15:47.690Z",
+      "source": "scan",
+      "imports": [
+        "packages/shared/src/envelope.ts"
+      ],
+      "importance": 0.0795
+    },
+    "packages/shared/src/envelope.ts": {
+      "description": "Zod schemas: apiErrorSchema",
+      "tokens": 198,
+      "hash": "f06f9adee146ae05",
+      "size": 690,
+      "mtimeMs": 1780841379662.3198,
+      "updatedAt": "2026-09-29T09:15:47.691Z",
+      "source": "scan",
+      "importance": 0.1697
+    },
+    "packages/shared/src/index.ts": {
+      "description": "",
+      "tokens": 27,
+      "hash": "d3491dc0ac67275b",
+      "size": 94,
+      "mtimeMs": 1778609356946.9163,
+      "updatedAt": "2026-09-29T09:15:47.691Z",
+      "source": "scan",
+      "imports": [
+        "packages/shared/src/envelope.ts",
+        "packages/shared/src/domain.ts",
+        "packages/shared/src/redemption-wizard.ts"
+      ],
+      "importance": 0.0795
+    },
+    "packages/shared/src/redemption-wizard.test.ts": {
+      "description": "Declares earnings",
+      "tokens": 2471,
+      "hash": "6370912b57545bd0",
+      "size": 8659,
+      "mtimeMs": 1780859972499.378,
+      "updatedAt": "2026-09-29T09:15:47.692Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "packages/shared/src/redemption-wizard.ts": {
+      "description": "Allocation requested by the wizard: take `hours` from earning `earningId`.",
+      "tokens": 2494,
+      "hash": "04ad2c3363fc5d9b",
+      "size": 8741,
+      "mtimeMs": 1780859972500.3782,
+      "updatedAt": "2026-09-29T09:15:47.693Z",
+      "source": "scan",
+      "symbols": [
+        {
+          "name": "WizardAllocation",
+          "kind": "section",
+          "startLine": 14,
+          "endLine": 14,
+          "tokens": 21
+        },
+        {
+          "name": "WizardDayScheduleEntry",
+          "kind": "section",
+          "startLine": 21,
+          "endLine": 21,
+          "tokens": 24
+        },
+        {
+          "name": "CreateRedemptionRequest",
+          "kind": "section",
+          "startLine": 57,
+          "endLine": 57,
+          "tokens": 25
+        },
+        {
+          "name": "CreateRedemptionResponse",
+          "kind": "section",
+          "startLine": 67,
+          "endLine": 67,
+          "tokens": 25
+        },
+        {
+          "name": "EarningForDescription",
+          "kind": "section",
+          "startLine": 70,
+          "endLine": 70,
+          "tokens": 20
+        },
+        {
+          "name": "pad",
+          "kind": "fn",
+          "startLine": 72,
+          "endLine": 74,
+          "tokens": 20
+        },
+        {
+          "name": "parseISO",
+          "kind": "fn",
+          "startLine": 76,
+          "endLine": 83,
+          "tokens": 81
+        },
+        {
+          "name": "isValidISODate",
+          "kind": "fn",
+          "startLine": 85,
+          "endLine": 95,
+          "tokens": 131
+        },
+        {
+          "name": "buildRedemptionSubject",
+          "kind": "fn",
+          "startLine": 105,
+          "endLine": 117,
+          "tokens": 163
+        },
+        {
+          "name": "buildRedemptionLines",
+          "kind": "fn",
+          "startLine": 126,
+          "endLine": 134,
+          "tokens": 98
+        },
+        {
+          "name": "buildRedemptionDescription",
+          "kind": "fn",
+          "startLine": 136,
+          "endLine": 141,
+          "tokens": 63
+        },
+        {
+          "name": "deriveInitials",
+          "kind": "fn",
+          "startLine": 153,
+          "endLine": 163,
+          "tokens": 107
+        },
+        {
+          "name": "stripOrgPrefix",
+          "kind": "fn",
+          "startLine": 165,
+          "endLine": 174,
+          "tokens": 135
+        },
+        {
+          "name": "businessDaysBetween",
+          "kind": "fn",
+          "startLine": 177,
+          "endLine": 179,
+          "tokens": 42
+        },
+        {
+          "name": "enumerateBusinessDays",
+          "kind": "fn",
+          "startLine": 182,
+          "endLine": 192,
+          "tokens": 125
+        },
+        {
+          "name": "defaultDaySchedule",
+          "kind": "fn",
+          "startLine": 202,
+          "endLine": 215,
+          "tokens": 147
+        },
+        {
+          "name": "round2",
+          "kind": "fn",
+          "startLine": 217,
+          "endLine": 219,
+          "tokens": 20
+        },
+        {
+          "name": "formatHours",
+          "kind": "fn",
+          "startLine": 221,
+          "endLine": 223,
+          "tokens": 29
+        }
+      ],
+      "symbolSource": "ts",
+      "skeleton": "export type WizardAllocation = z.infer<typeof wizardAllocationSchema>;\nexport type WizardDayScheduleEntry = z.infer<typeof wizardDayScheduleEntrySchema>;\nexport type CreateRedemptionRequest = z.infer<typeof createRedemptionRequestSchema>;\nexport type CreateRedemptionResponse = z.infer<typeof createRedemptionResponseSchema>;\nexport type EarningForDescription = { id: number; subject: string };\nfunction pad(n: number) {\nfunction parseISO(d: string): { y: number; m: number; d: number } {\nfunction isValidISODate(value: string): boolean {\nexport function buildRedemptionSubject(input: {\nexport function buildRedemptionLines(\nexport function buildRedemptionDescription(\nexport function deriveInitials(user: {\nfunction stripOrgPrefix(s: string): string {\nexport function businessDaysBetween(startDate: string, endDate: string): number {\nexport function enumerateBusinessDays(startDate: string, endDate: string): string[] {\nexport function defaultDaySchedule(\nfunction round2(n: number) {\nfunction formatHours(h: number): string {",
+      "importance": 0.1021
+    },
+    "packages/shared/tsconfig.json": {
+      "description": "TypeScript configuration",
+      "tokens": 33,
+      "hash": "ede044062263600a",
+      "size": 114,
+      "mtimeMs": 1780841379664.3193,
+      "updatedAt": "2026-09-29T09:15:47.694Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "README.md": {
+      "description": "Project documentation",
+      "tokens": 3534,
+      "hash": "f76ee12d31a214ed",
+      "size": 14975,
+      "mtimeMs": 1778671569911.1902,
+      "updatedAt": "2026-09-29T09:15:47.695Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "site/.gitignore": {
+      "description": "Git ignore rules",
+      "tokens": 38,
+      "hash": "c6987ff83f283190",
+      "size": 140,
+      "mtimeMs": 1778673443997.4631,
+      "updatedAt": "2026-09-29T09:15:47.696Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "site/.vitepress/config.ts": {
+      "description": "VitePress treats `site/` as the docs root. `sync.mjs` copies the repo",
+      "tokens": 505,
+      "hash": "2ba38f0761452df8",
+      "size": 1774,
+      "mtimeMs": 1778672813699.14,
+      "updatedAt": "2026-09-29T09:15:47.696Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "site/package.json": {
+      "description": "Node.js package manifest",
+      "tokens": 101,
+      "hash": "d1e2da091419165c",
+      "size": 353,
+      "mtimeMs": 1778672813703.6792,
+      "updatedAt": "2026-09-29T09:15:47.696Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "site/README.md": {
+      "description": "Project documentation",
+      "tokens": 341,
+      "hash": "238d5c10b47cdc5e",
+      "size": 1373,
+      "mtimeMs": 1778672813699.14,
+      "updatedAt": "2026-09-29T09:15:47.697Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "site/sync.mjs": {
+      "description": "Sync the repo README + screenshots into the VitePress site source.",
+      "tokens": 534,
+      "hash": "c244798a1acbcffd",
+      "size": 2014,
+      "mtimeMs": 1778672813703.6792,
+      "updatedAt": "2026-09-29T09:15:47.698Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "site/vercel.json": {
+      "description": "",
+      "tokens": 64,
+      "hash": "75264c32badbdf98",
+      "size": 222,
+      "mtimeMs": 1778672813703.6792,
+      "updatedAt": "2026-09-29T09:15:47.698Z",
+      "source": "scan",
+      "importance": 0.0795
+    },
+    "tsconfig.base.json": {
+      "description": "",
+      "tokens": 114,
+      "hash": "f625949061fd4b22",
+      "size": 396,
+      "mtimeMs": 1780841379665.647,
+      "updatedAt": "2026-09-29T09:15:47.699Z",
+      "source": "scan",
+      "importance": 0.0795
+    }
+  },
+  "preamble": [
+    "> Project structure index. Auto-maintained by OpenWolf hooks and daemon.",
+    "> Run `openwolf scan` to generate, or wait for the first Claude Code session.",
+    "> Status: Pending initial scan"
+  ]
+}
